@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import {
   IconButton,
   Avatar,
@@ -37,9 +37,13 @@ import {
   FiMoon,
   FiSun,
   FiMessageCircle,
+  FiPlus,
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
+import ChatContext from '../contexts/ChatContext';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 
 
@@ -66,10 +70,22 @@ const LinkItems = [
 const light_logo = '/images/logo-color.png';
 const dark_logo = '/images/logo-white.png';
 
-export default function Sidebar({
-  children,
-}) {
+export default function Sidebar({children}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {chatMessages,setChatMessages,newChat} = useContext(ChatContext);
+  const chatMsgs = {
+    messages: [
+      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "1",timestamp:5, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
+      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "2",timestamp:4, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
+      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "3",timestamp:3, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
+      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "4",timestamp:2, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
+      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "5",timestamp:1, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
+    ],
+  };
+
+
+
+  
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
@@ -90,7 +106,7 @@ export default function Sidebar({
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Box ml={{ base: 0, md: 60 ,lg: 300}} p="4">
         {children}
       </Box>
     </Box>
@@ -100,15 +116,26 @@ export default function Sidebar({
 
 const SidebarContent = ({ onClose, ...rest }) => {
     const { colorMode, toggleColorMode } = useColorMode();
+    const {chatList,setChatlist} = useContext(ChatContext)
+
+    // Add new chat to the chat list
+
+    const addNewChat = () => {
+
+      setChatlist( currentChats => {
+        
+      })
+
+    }
 
   return (
     <Box
-     
+    color={ colorMode === 'light' ? '#343541': '#D1D5DB'}
       transition="3s ease"
       bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      w={{ base: 'full', md: 60 }}
+      w={{ base: 'full', md: 60 ,lg: 300 }}
       pos="fixed"
       h="full"
       {...rest}>
@@ -123,8 +150,12 @@ const SidebarContent = ({ onClose, ...rest }) => {
        overflowY={'auto'}
        h={'70%'}
       >
-      {LinkItems.map((link) => (
-        <NavItem  key={link.name} icon={link.icon}>
+        <Button color={'#F79229'} borderColor={'#F79229'} mb={0} mt={'auto'} variant={'outline'} borderWidth={2} w={'100%'} leftIcon={<FiPlus />} onClick={addNewChat}>
+                New Chat
+              </Button>
+
+      {chatList?.chats?.map((link) => (
+        <NavItem colorMode={colorMode} key={link.name} icon={link.icon}>
           {link.name}
         </NavItem>
       ))}
@@ -139,19 +170,22 @@ const SidebarContent = ({ onClose, ...rest }) => {
 };
 
 
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ icon, children, colorMode, ...rest }) => {
   return (
     <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
       <Flex
       isTruncated
       noOfLines={1}
+      mt={"0.7em"}
         align="center"
+        bg="#444654"
         p="4"
-        borderRadius="lg"
+        color={ colorMode === 'light' ? '#343541': '#D1D5DB'}
+        borderRadius="6"
         role="group"
         cursor="pointer"
         _hover={{
-          bg: 'cyan.400',
+          bg: '#F79229',
           color: 'white',
         }}
         {...rest}>
@@ -166,6 +200,7 @@ const NavItem = ({ icon, children, ...rest }) => {
           />
         )}
         {children}
+        
       </Flex>
     </Link>
   );
