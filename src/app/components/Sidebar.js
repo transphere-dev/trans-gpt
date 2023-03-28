@@ -42,30 +42,13 @@ import {
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import ChatContext from '../contexts/ChatContext';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { usePathname } from "next/navigation";
 
 
 
-const LinkItems = [
-  { name: 'Translate this passage into Simplified', icon: FiMessageCircle },
-  { name: 'Translate this passage into Simplified', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms ', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-  { name: 'Explain quantum computing in simple terms', icon: FiMessageCircle },
-];
+
 
 const light_logo = '/images/logo-color.png';
 const dark_logo = '/images/logo-white.png';
@@ -73,15 +56,7 @@ const dark_logo = '/images/logo-white.png';
 export default function Sidebar({children}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {chatMessages,setChatMessages,newChat} = useContext(ChatContext);
-  const chatMsgs = {
-    messages: [
-      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "1",timestamp:5, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
-      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "2",timestamp:4, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
-      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "3",timestamp:3, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
-      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "4",timestamp:2, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
-      { name: "Explain quantum computing in simple terms",prompt: "Explain quantum computing in simple terms", id: "5",timestamp:1, msg:"Quantum computing is a type of computing where information is processed using quantum-mechanical phenomena, such as superposition and entanglement. In traditional computing, information is processed using bits, which can have a value of either 0 or 1. In quantum computing, information is processed using quantum bits, or qubits, which can exist in multiple states simultaneously. This allows quantum computers to perform certain types of calculations much faster than traditional computers."},
-    ],
-  };
+
 
 
 
@@ -106,7 +81,7 @@ export default function Sidebar({children}) {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 ,lg: 300}} p="4">
+      <Box ml={{ base: 0, md: 60 ,lg: 300}} p="4%">
         {children}
       </Box>
     </Box>
@@ -116,17 +91,29 @@ export default function Sidebar({children}) {
 
 const SidebarContent = ({ onClose, ...rest }) => {
     const { colorMode, toggleColorMode } = useColorMode();
-    const {chatList,setChatlist} = useContext(ChatContext)
+    const {chatList,setChatlist,setChatMessages} = useContext(ChatContext)
+    const router = useRouter();
+    const pathname = usePathname();
 
     // Add new chat to the chat list
 
     const addNewChat = () => {
-
-      setChatlist( currentChats => {
-        
-      })
+      if(pathname === '/'){
+        setChatMessages([])
+      }
+      else {
+        router.push(`/`)
+      }
 
     }
+    useEffect(() => {
+      
+    
+      return () => {
+        null
+      }
+    }, [chatList])
+    
 
   return (
     <Box
@@ -154,8 +141,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
                 New Chat
               </Button>
 
-      {chatList?.chats?.map((link) => (
-        <NavItem colorMode={colorMode} key={link.name} icon={link.icon}>
+      {chatList?.map((link) => (
+        <NavItem path={pathname} id={link.chatId} colorMode={colorMode} key={link.chatId} icon={FiMessageCircle}>
           {link.name}
         </NavItem>
       ))}
@@ -170,17 +157,22 @@ const SidebarContent = ({ onClose, ...rest }) => {
 };
 
 
-const NavItem = ({ icon, children, colorMode, ...rest }) => {
+const NavItem = ({ id,path,icon, children, colorMode, ...rest }) => {
+  const router = useRouter();
+ 
+  const pathId = path.split('/')[2]
+  console.log(pathId);
+
   return (
-    <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <Box onClick={() => router.push(`/chat/${id}`)} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
       <Flex
       isTruncated
       noOfLines={1}
       mt={"0.7em"}
         align="center"
-        bg="#444654"
+        bg={pathId === id ? '#F79229' :"#444654"}
         p="4"
-        color={ colorMode === 'light' ? '#343541': '#D1D5DB'}
+        color={ colorMode === 'light' ? '#343541': '#fff'}
         borderRadius="6"
         role="group"
         cursor="pointer"
@@ -202,7 +194,7 @@ const NavItem = ({ icon, children, colorMode, ...rest }) => {
         {children}
         
       </Flex>
-    </Link>
+    </Box>
   );
 };
 

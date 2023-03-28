@@ -3,23 +3,24 @@
 
 import { CacheProvider } from '@chakra-ui/next-js'
 import { ChakraProvider } from '@chakra-ui/react'
+import AuthContextWrapper from './components/AuthContextWrapper'
 import ChatContextWrapper from './components/ChatContextWrapper'
 import Sidebar from './components/Sidebar'
 import './globals.css'
 
-export default function RootLayout({
-  children,
-}) {
+export default function RootLayout({children}) {
   return (
     <html lang='en'>
       <head />
       <body>
         <CacheProvider>
+          <AuthContextWrapper>
           <ChatContextWrapper>
           <ChakraProvider>
             <Sidebar children={children} />
             </ChakraProvider>
           </ChatContextWrapper>
+          </AuthContextWrapper>
         </CacheProvider>
       </body>
     </html>
