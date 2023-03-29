@@ -6,6 +6,7 @@ import {
   useColorModeValue,
   Text,
   Button,
+  Textarea,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import { FiSend } from "react-icons/fi";
@@ -57,7 +58,7 @@ export default function ChatInput() {
       >
         <form style={{width: "100%"}} onSubmit={!streaming && message ? sendMessage : null}>
         <FormControl>
-          <Input
+          <Textarea
           placeholder="Enter your text here"
             onChange={(e) => setMessage(e.target.value)}
             border={0}
