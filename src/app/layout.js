@@ -12,12 +12,13 @@ export default function RootLayout({children}) {
   return (
     <html lang='en'>
       <head />
+      <title>TransGPT | Your assistant AI language model</title>
       <body>
         <CacheProvider>
           <AuthContextWrapper>
           <ChatContextWrapper>
           <ChakraProvider>
-            <Sidebar children={children} />
+            <Sidebar>{children}</Sidebar>
             </ChakraProvider>
           </ChatContextWrapper>
           </AuthContextWrapper>

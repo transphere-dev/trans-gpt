@@ -1,7 +1,8 @@
-import { Box, Card, CardBody, CardFooter, CardHeader, Heading } from '@chakra-ui/react'
+import { Box, Card, CardBody, CardFooter, CardHeader, Heading, useColorModeValue } from '@chakra-ui/react'
 import React from 'react'
 
 export default function HomeCard({icon,title,description}) {
+    const bgColor = useColorModeValue("#fff", "#444654");
   return (
     <Box p={'1'}
     borderRadius={10}
@@ -10,7 +11,7 @@ export default function HomeCard({icon,title,description}) {
 
     bgGradient={'linear-gradient(90.54deg, #aa1ecd 36.69%, #f79229 91.01%)'}
     >
-        <Card bg={'#2D2D2D'}
+        <Card bg={bgColor}
         
     >
         <CardHeader pb={0}>

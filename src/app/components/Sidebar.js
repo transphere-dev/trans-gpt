@@ -81,7 +81,7 @@ export default function Sidebar({children}) {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 ,lg: 300}} p="4%">
+      <Box ml={{ base: 0, md: 60 ,lg: 300}} >
         {children}
       </Box>
     </Box>
@@ -98,13 +98,15 @@ const SidebarContent = ({ onClose, ...rest }) => {
     // Add new chat to the chat list
 
     const addNewChat = () => {
-      if(pathname === '/'){
-        setChatMessages([])
-      }
-      else {
-        router.push(`/`)
-      }
+      const chatRoomId = Date.now();
 
+      // if(pathname === '/'){
+      //   setChatMessages([])
+      // }
+      // else {
+      //   router.push(`/`)
+      // }
+      router.push(`/chat/${chatRoomId}`)
     }
     useEffect(() => {
       
@@ -128,7 +130,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {...rest}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-        {colorMode === 'light' ? <Image src={light_logo} /> : <Image src={dark_logo}   />}
+        {colorMode === 'light' ? <Image src={light_logo} alt={'Transphere Sunyu Logo'} /> : <Image src={dark_logo}  alt={'Transphere Sunyu Logo'}  />}
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
@@ -142,7 +144,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
               </Button>
 
       {chatList?.map((link) => (
-        <NavItem path={pathname} id={link.chatId} colorMode={colorMode} key={link.chatId} icon={FiMessageCircle}>
+        <NavItem path={pathname} id={link.chatRoomId} colorMode={colorMode} key={link.chatRoomId} icon={FiMessageCircle}>
           {link.name}
         </NavItem>
       ))}
@@ -230,7 +232,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
       </Text>
 
       <HStack spacing={{ base: '0', md: '6' }}>
-        <IconButton
+        {/* <IconButton
           size="lg"
           variant="ghost"
           aria-label="open menu"
@@ -274,7 +276,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
               <MenuItem>Sign out</MenuItem>
             </MenuList>
           </Menu>
-        </Flex>
+        </Flex> */}
       </HStack>
     </Flex>
   );
