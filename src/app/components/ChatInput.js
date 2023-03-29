@@ -69,7 +69,7 @@ export default function ChatInput() {
             }}
             border={0}
             type="text"
-
+            
             onKeyDown={e => {
 
               // If KeyDown is "Enter"

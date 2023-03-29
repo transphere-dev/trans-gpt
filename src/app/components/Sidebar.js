@@ -161,7 +161,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
 
 const NavItem = ({ id,path,icon, children, colorMode, ...rest }) => {
   const router = useRouter();
- 
+  const bgColor = useColorModeValue('#F7F7F8', '#444654');
+
   const pathId = path.split('/')[2]
   console.log(pathId);
 
@@ -172,7 +173,8 @@ const NavItem = ({ id,path,icon, children, colorMode, ...rest }) => {
       noOfLines={1}
       mt={"0.7em"}
         align="center"
-        bg={pathId === id ? '#F79229' :"#444654"}
+        // bg={pathId === id ? '#F79229' :"#444654"}
+        bg={pathId === id ? '#F79229' : bgColor}
         p="4"
         color={ colorMode === 'light' ? '#343541': '#fff'}
         borderRadius="6"
