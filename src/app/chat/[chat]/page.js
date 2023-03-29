@@ -53,7 +53,7 @@ export default function Page({params}) {
             {chatMessages?.map((each) => {
               return (
                 <>
-                  <ChatBox key={each?.chatRoomId} chat={each} />
+                  <ChatBox key={each?.id} chat={each} />
                 </>
               );
             })}

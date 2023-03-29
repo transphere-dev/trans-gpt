@@ -23,6 +23,46 @@ function ChatContextWrapper({ children }) {
     return arr.some((object) => object.chatRoomId === id);
   }
 
+    const sendMessage =  (e) => {
+      console.log(e);
+      e.preventDefault();
+    setStreaming(true);
+
+    // Create prompt object
+    const promptObj = {
+      id: Date.now(),
+      content: message,
+      model: model,
+      senderId: user.userId,
+      name: message.substring(0, 50),
+      chatRoomId: chatRoomId,
+      role: "user"
+    };
+
+    // Add chat messages to localStorage
+
+
+    setChatMessages((prevChatMessages) => [...prevChatMessages, promptObj]);
+
+    // Filter chatmessages
+    const filteredChatMessages = chatMessages.map(each => ( {role: each.role,content: each.content}))
+    console.log(filteredChatMessages);
+
+  
+
+    // Create request body
+    const payload = {
+      model: model,
+      messages: [
+        { role: "system", content: message},
+       
+    ],
+    };
+    console.log(payload);
+    postRequest(payload, promptObj);
+  };
+
+
   async function postRequest(payload, promptObj) {
 
     await fetch(url+endpoint, {
@@ -38,7 +78,6 @@ function ChatContextWrapper({ children }) {
       .then(response => response.json())
       .then(resp =>{
          console.log(resp);
-         const chatId = Date.now();
 
       // Response object
       const msg = {
@@ -46,8 +85,9 @@ function ChatContextWrapper({ children }) {
         chatId: resp.id,
         senderId: resp.model + "-" + resp.created,
         model: resp.model,
-        message: resp.choices[0].message.content,
+        content: resp.choices[0].message.content,
         name: promptObj?.name,
+        role: resp.choices[0].message.role
       };
 
       setStreaming(false);
@@ -68,26 +108,6 @@ function ChatContextWrapper({ children }) {
       .catch(error => console.error(error));
   }
 
-  const sendMessage = () => {
-    setStreaming(true);
-
-    // Create prompt object
-    const promptObj = {
-      id: Date.now(),
-      message: message,
-      model: model,
-      senderId: user.userId,
-      name: message.substring(0, 50),
-      chatRoomId: chatRoomId,
-    };
-    setChatMessages([...chatMessages, promptObj]);
-
-    const payload = {
-      model: model,
-      messages: [{ role: "system", content: message }],
-    };
-    postRequest(payload, promptObj);
-  };
 
   const values = {
     chatList,
