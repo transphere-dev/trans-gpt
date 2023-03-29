@@ -116,13 +116,16 @@ const SidebarContent = ({ onClose, ...rest }) => {
       }
     }, [chatList])
 
-    
+
     useEffect(() => {
 
       // Fetch Chat List from LocalStorage
-
       const localList = localStorage.getItem('chatList')
+
+      if(localList){
+        
       setChatList(JSON.parse(localList))
+      }
       
     
       return () => {
