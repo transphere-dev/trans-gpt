@@ -62,7 +62,7 @@ export default function ChatInput() {
         <FormControl>
           <Textarea
           
-          placeholder="Enter your text here"
+          placeholder="Enter your text here. Press Shift + Enter to start on a new line."
             onChange={(e) =>{ 
               setMessage(e.target.value)
               
