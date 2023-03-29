@@ -101,8 +101,13 @@ function ChatContextWrapper({ children }) {
       } else {
         // Update Chat List
         setChatList((prevChatList) => {
+          const temp = [...prevChatList, msg]
+          localStorage.setItem('chatList',JSON.stringify(temp))
+
           return [...prevChatList, msg];
+          
         });
+
       }
         })
       .catch(error => console.error(error));

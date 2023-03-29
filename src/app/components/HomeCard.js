@@ -5,6 +5,7 @@ export default function HomeCard({icon,title,description}) {
     const bgColor = useColorModeValue("#fff", "#444654");
   return (
     <Box p={'1'}
+    cursor={'not-allowed'}
     borderRadius={10}
     mt={5}
     w={['100%','100%','100%','25%','25%']}

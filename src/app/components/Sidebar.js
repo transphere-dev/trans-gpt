@@ -91,7 +91,7 @@ export default function Sidebar({children}) {
 
 const SidebarContent = ({ onClose, ...rest }) => {
     const { colorMode, toggleColorMode } = useColorMode();
-    const {chatList,setChatlist,setChatMessages} = useContext(ChatContext)
+    const {chatList,setChatList,setChatMessages} = useContext(ChatContext)
     const router = useRouter();
     const pathname = usePathname();
 
@@ -115,6 +115,20 @@ const SidebarContent = ({ onClose, ...rest }) => {
         null
       }
     }, [chatList])
+
+    
+    useEffect(() => {
+
+      // Fetch Chat List from LocalStorage
+
+      const localList = localStorage.getItem('chatList')
+      setChatList(JSON.parse(localList))
+      
+    
+      return () => {
+        null
+      }
+    }, [])
     
 
   return (
