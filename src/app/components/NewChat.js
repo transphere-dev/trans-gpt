@@ -58,6 +58,8 @@ export default function NewChat() {
           />
         </Flex>
         <Center justify={'left'} color={textColor} flexDirection={'column'}>
+        <Text>To start, Click on New Chat</Text>
+        <br/>
           <Flex>
             New Line: <Kbd ml={4} mr={4}>shift</Kbd> + <Kbd ml={4}>Enter</Kbd>
             

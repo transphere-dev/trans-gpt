@@ -34,6 +34,8 @@ function ChatContextWrapper({ children }) {
 
  // Create ChatRooms
  const createChatRooms = (payload) => {
+  const arr = []
+  arr.push(payload)
 
    localStorage.setItem("chatRooms",JSON.stringify(payload));
 
@@ -47,11 +49,12 @@ function ChatContextWrapper({ children }) {
     // Create prompt object
     const promptObj = {
       id: Date.now(),
+      chatId: Date.now(),
       content: message,
       model: model,
       senderId: user.userId,
       name: message.substring(0, 50),
-      chatRoomId: chatRoomId,
+      chatRoomId: chatRoomId ,
       role: "user",
     };
 
@@ -118,7 +121,7 @@ function ChatContextWrapper({ children }) {
         // Check if Chat ID exists
         if (idExists(msg.chatRoomId, chatList)) {
           console.log("chatroom Id exists");
-          
+
         } else {
 
           // Update Chat List
