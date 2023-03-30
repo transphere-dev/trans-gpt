@@ -2,6 +2,7 @@ import ChatContext from "../contexts/ChatContext.js";
 import { useState, useContext } from "react";
 import AuthContext from "../contexts/AuthContext.js";
 import { usePathname } from "next/navigation";
+import { SSE } from "sse.js";
 
 const url = "https://api.openai.com/v1";
 const endpoint = "/chat/completions";
@@ -16,10 +17,10 @@ function ChatContextWrapper({ children }) {
   const [model, setModel] = useState("gpt-3.5-turbo");
   const [streaming, setStreaming] = useState(false);
   const chatRoomId = usePathname().split("/")[2];
+  const [result, setResult] = useState("");
 
   // Define a function to check if the id already exists in the array
   function idExists(id, arr) {
-
     return arr.some((object) => object?.chatRoomId === id);
   }
 
@@ -32,17 +33,17 @@ function ChatContextWrapper({ children }) {
     chatMessages[chatRoomId]?.messages.push(msg);
   };
 
- // Create ChatRooms
- const createChatRooms = (payload) => {
-  const arr = []
-  arr.push(payload)
+  // Create ChatRooms
+  const createChatRooms = (payload) => {
+    const arr = [];
+    arr.push(payload);
 
-   localStorage.setItem("chatRooms",JSON.stringify(payload));
-
-};
+    localStorage.setItem("chatRooms", JSON.stringify(payload));
+  };
 
   const sendMessage = (e) => {
-    console.log(e);
+    setMessage("");
+
     e.preventDefault();
     setStreaming(true);
 
@@ -54,7 +55,7 @@ function ChatContextWrapper({ children }) {
       model: model,
       senderId: user.userId,
       name: message.substring(0, 50),
-      chatRoomId: chatRoomId ,
+      chatRoomId: chatRoomId,
       role: "user",
     };
 
@@ -64,7 +65,7 @@ function ChatContextWrapper({ children }) {
 
     // Filter chatmessages
     const filteredChatMessages = chatMessages.map((each) => ({
-      role: each.role,
+      role: each?.role,
       content: each.content,
     }));
     console.log(filteredChatMessages);
@@ -73,70 +74,141 @@ function ChatContextWrapper({ children }) {
     const payload = {
       model: model,
       messages: [{ role: "system", content: message }],
+
+      stream: true,
     };
 
     postRequest(payload, promptObj);
   };
 
   async function postRequest(payload, promptObj) {
-    await fetch(url + endpoint, {
-      method: "POST",
-      mode: "cors",
+    let source = new SSE(url + endpoint, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
+        "access-control-allow-origin": "*",
       },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((resp) => {
+      method: "POST",
+      payload: JSON.stringify(payload),
+    });
 
-        // Response object
-        const msg = {
-          chatRoomId: chatRoomId,
-          chatId: resp.id,
-          senderId: resp.model + "-" + resp.created,
-          model: resp.model,
-          content: resp.choices[0].message.content,
-          name: promptObj?.name,
-          role: resp.choices[0].message.role,
-        };
+    source.addEventListener("message", (e) => {
 
-        setStreaming(false);
+      
+      if (e.data != "[DONE]") {
 
-        // Update chat messages
-        setChatMessages((prevChatMessages) => {
-          // Save chatMessages to LocalStorage
-          const temp = [...prevChatMessages, msg];
-          // localStorage.setItem("chatList", JSON.stringify(temp));
-          const indexedObject = temp.reduce((acc, obj) => {
-            acc[obj.chatRoomId] = obj;
-            return acc;
-          }, {});
+        let payload = JSON.parse(e.data);
+        let text = payload.choices[0].delta.content;
 
-          console.log(indexedObject);
-          return [...prevChatMessages, msg];
-        });
-          console.log(chatList);
-        // Check if Chat ID exists
-        if (idExists(msg.chatRoomId, chatList)) {
-          console.log("chatroom Id exists");
+        if (text != undefined) {
+          // if(payload.choices[0].finish_reason === 'stop') {
+          //   console.log('stop');
+          //       payload.chatRoomId = chatRoomId;
+          //       payload.name = text.substring(0,40)
+                
+          // }
+          if(payload && !payload.chatRoomId && !payload.name) {
+            payload.chatRoomId = chatRoomId;
+            payload.name = text.substring(0,40)
+          }
 
-        } else {
+          setChatMessages((prevResult) => {
+            let foundObject =
+              prevResult.find((obj) => obj?.id === payload?.id) || {};
+              
+            if (foundObject && foundObject.id) {
+              foundObject.choices[0].delta.content += text;
 
-          // Update Chat List
-          setChatList((prevChatList) => {
-            
-            // Save ChatList to Localstorage
-            const temp = [msg,...prevChatList];
-            
-            localStorage.setItem("chatList", JSON.stringify(temp));
-
-            return [ msg,...prevChatList];
+              return [...prevResult, foundObject].filter((obj, index, self) => {
+                return index === self.findIndex((t) => t.id === obj.id);
+              });
+            } else {
+              return [...prevResult, payload];
+            }
           });
+
         }
-      })
-      .catch((error) => console.error(error));
+      } else {
+             // Check if Chat ID exists
+      // if (idExists(msg.chatRoomId, chatList)) {
+      //   console.log("chatroom Id exists");
+
+      // } else {
+
+      //   // Update Chat List
+      //   setChatList((prevChatList) => {
+
+      //     // Save ChatList to Localstorage
+      //     const temp = [msg,...prevChatList];
+
+      //     localStorage.setItem("chatList", JSON.stringify(temp));
+
+      //     return [ msg,...prevChatList];
+      //   })
+      // }
+          
+        source.close();
+        setStreaming(false);
+      }
+    });
+
+    source.addEventListener("readystatechange", (e) => {
+      if (e.readyState >= 2) {
+        // setIsLoading(false);
+      }
+    });
+
+    source.stream();
+
+    // .then((response) => response.json())
+    // .then((resp) => {
+
+    //   // Response object
+    //   const msg = {
+    //     chatRoomId: chatRoomId,
+    //     chatId: resp.id,
+    //     senderId: resp.model + "-" + resp.created,
+    //     model: resp.model,
+    //     content: resp.choices[0].message.content,
+    //     name: promptObj?.name,
+    //     role: resp.choices[0].message.role,
+    //   };
+
+    //   setStreaming(false);
+
+    //   // Update chat messages
+    //   setChatMessages((prevChatMessages) => {
+    //     // Save chatMessages to LocalStorage
+    //     const temp = [...prevChatMessages, msg];
+    //     // localStorage.setItem("chatList", JSON.stringify(temp));
+    //     const indexedObject = temp.reduce((acc, obj) => {
+    //       acc[obj.chatRoomId] = obj;
+    //       return acc;
+    //     }, {});
+
+    //     console.log(indexedObject);
+    //     return [...prevChatMessages, msg];
+    //   });
+    //     console.log(chatList);
+    //   // Check if Chat ID exists
+    //   if (idExists(msg.chatRoomId, chatList)) {
+    //     console.log("chatroom Id exists");
+
+    //   } else {
+
+    //     // Update Chat List
+    //     setChatList((prevChatList) => {
+
+    //       // Save ChatList to Localstorage
+    //       const temp = [msg,...prevChatList];
+
+    //       localStorage.setItem("chatList", JSON.stringify(temp));
+
+    //       return [ msg,...prevChatList];
+    //     });
+    //   }
+    // })
+    // .catch((error) => console.error(error));
   }
 
   const values = {
@@ -151,6 +223,7 @@ function ChatContextWrapper({ children }) {
     sendMessage,
     streaming,
     chatRoomId,
+    result,
   };
   return <ChatContext.Provider value={values}>{children}</ChatContext.Provider>;
 }

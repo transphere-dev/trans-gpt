@@ -18,7 +18,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Page({params}) {
   const pathname = usePathname();
-  const { chatMessages , setChatMessages ,chatRoomId } = useContext(ChatContext);
+  const { chatMessages ,result, setChatMessages ,chatRoomId } = useContext(ChatContext);
 
   useEffect(() => {
     console.log(pathname); // Log the current URL path
@@ -29,12 +29,7 @@ export default function Page({params}) {
         };
   }, []);  
   
-  useEffect(() => {
 
-    return () => {
-      null;
-    };
-  }, [chatMessages]);
 
   return (
     <Flex
@@ -43,7 +38,7 @@ export default function Page({params}) {
       justifyContent={"space-between"}
       h={"100%"}
     >
-      {chatMessages.length === 0 ? (
+      {chatMessages?.length === 0 ? (
         <>
           <NewChat />
         </>
@@ -53,7 +48,7 @@ export default function Page({params}) {
             {chatMessages?.map((each) => {
               return (
                 <>
-                  <ChatBox key={each?.id} chat={each} />
+                  <ChatBox key={each.id} chat={each}  />
                 </>
               );
             })}

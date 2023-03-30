@@ -69,6 +69,7 @@ export default function ChatInput() {
             }}
             border={0}
             type="text"
+            value={message}
             
             onKeyDown={e => {
 
