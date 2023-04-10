@@ -85,11 +85,9 @@ export default function Sidebar({children}) {
         {children}
        
       </Box>
-      <br/>
-        <br/>
-        <br/>  <br/>
-        <br/>
-        <br/>
+     <Box h={'12rem'}>
+
+     </Box>
     </Box>
   );
 }
