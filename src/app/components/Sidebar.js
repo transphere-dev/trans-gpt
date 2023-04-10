@@ -83,7 +83,13 @@ export default function Sidebar({children}) {
       <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 ,lg: 300}} >
         {children}
+       
       </Box>
+      <br/>
+        <br/>
+        <br/>  <br/>
+        <br/>
+        <br/>
     </Box>
   );
 }

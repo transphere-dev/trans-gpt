@@ -143,3 +143,9 @@ a {
 .visible {
   opacity: 1 !important;
 }
+#nprogress .bar{
+  background-color: #ffdb58 !important ;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px #ffdb58, 0 0 5px #ffdb58;
+}
