@@ -53,47 +53,10 @@ import { usePathname } from "next/navigation";
 const light_logo = '/images/logo-color.png';
 const dark_logo = '/images/logo-white.png';
 
-export default function Sidebar({children}) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const {chatMessages,setChatMessages,newChat} = useContext(ChatContext);
 
 
 
-
-  
-  return (
-    <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-      <SidebarContent
-        onClose={() => onClose}
-        display={{ base: 'none', md: 'block' }}
-      />
-      <Drawer
-        autoFocus={false}
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        returnFocusOnClose={false}
-        onOverlayClick={onClose}
-        size="full">
-        <DrawerContent>
-          <SidebarContent onClose={onClose} />
-        </DrawerContent>
-      </Drawer>
-      {/* mobilenav */}
-      <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 ,lg: 300}} >
-        {children}
-       
-      </Box>
-     <Box h={'12rem'}>
-
-     </Box>
-    </Box>
-  );
-}
-
-
-const SidebarContent = ({ onClose, ...rest }) => {
+export const SidebarContent = ({ onClose, ...rest }) => {
     const { colorMode, toggleColorMode } = useColorMode();
     const {chatList,setChatList,setChatMessages} = useContext(ChatContext)
     const router = useRouter();
@@ -224,7 +187,7 @@ const NavItem = ({ id,path,icon, children, colorMode, ...rest }) => {
 };
 
 
-const MobileNav = ({ onOpen, ...rest }) => {
+export const MobileNav = ({ onOpen, ...rest }) => {
     const { colorMode, toggleColorMode } = useColorMode();
 
   return (

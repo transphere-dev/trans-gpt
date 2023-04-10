@@ -32,7 +32,7 @@ export default function RootLayout({children}) {
           <AuthContextWrapper>
           <ChatContextWrapper>
           <ChakraProvider>
-            <Sidebar>{children}</Sidebar>
+            {children}
             </ChakraProvider>
           </ChatContextWrapper>
           </AuthContextWrapper>
