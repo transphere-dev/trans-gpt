@@ -3,7 +3,7 @@
 
 import { CacheProvider } from '@chakra-ui/next-js'
 import { ChakraProvider } from '@chakra-ui/react'
-import AuthContextWrapper from './components/AuthContextWrapper'
+import AuthContextWrapper, { AuthProvider } from './components/AuthContextWrapper'
 import ChatContextWrapper from './components/ChatContextWrapper'
 import Sidebar from './components/Sidebar'
 import './globals.css'
@@ -29,13 +29,13 @@ export default function RootLayout({children}) {
       <title>TransGPT | Your assistant AI language model</title>
       <body>
         <CacheProvider>
-          <AuthContextWrapper>
+          <AuthProvider>
           <ChatContextWrapper>
           <ChakraProvider>
             {children}
             </ChakraProvider>
           </ChatContextWrapper>
-          </AuthContextWrapper>
+          </AuthProvider>
         </CacheProvider>
       </body>
     </html>

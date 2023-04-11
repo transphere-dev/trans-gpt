@@ -14,10 +14,24 @@ import {
     useColorModeValue,
   } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
+import { loginUser } from '../lib/requests';
+import {  useAuth } from './AuthContextWrapper';
   
   export default function Login() {
     const router = useRouter();
+    const {login} = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading,setLoading] = useState(false);
 
+    const userLogin = () => {
+      if(email  && password){
+        setLoading(true)
+
+      login( email, password )
+      }
+    }
     return (
       <Stack  bgColor={'#27272F'}  minH={'100vh'} direction={{ base: 'column', md: 'row' }}>
         
@@ -42,11 +56,11 @@ import { useRouter } from 'next/navigation';
           <Stack spacing={4} w={'full'} maxW={'md'}>
             <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="email">
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input onInput={(e) => setEmail(e.target.value)} type="email" />
             </FormControl>
             <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input  onInput={(e) => setPassword(e.target.value)} type="password" />
             </FormControl>
 
             <Stack spacing={6}>
@@ -57,7 +71,11 @@ import { useRouter } from 'next/navigation';
                 <Checkbox>Remember me</Checkbox>
                 <Text cursor={'pointer'} onClick={() => router.push('/forgotPassword')} >Forgot password?</Text>
               </Stack>
-              <Button  _hover={{background: '#27272F'}} color={'#fff'} bg={'#F79229'} variant={'solid'}>
+              <Button 
+                       isLoading={loading}
+                       loadingText={"Logging in..."}
+                        onClick={userLogin}
+              _hover={{background: '#27272F'}} color={'#fff'} bg={'#F79229'} variant={'solid'}>
                 Login
               </Button>
               <Text cursor={'pointer'} onClick={() => router.push('/signup')} align={'center'} >Don&apos;t have an account? Sign up</Text>

@@ -1,13 +1,51 @@
-import AuthContext from "../contexts/AuthContext.js";
-import { useState, useEffect, useContext, useMemo } from "react";
+// AuthContext.js
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { getUser, loginUser } from '../lib/requests';
 
-function AuthContextWrapper({ children }) {
-  const [user,setUser] = useState({userId:1});
+const AuthContext = createContext({});
 
-  const values = {
-    user
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const initUser = async () => {
+      const token = Cookies.get('authToken');
+      if (token) {
+        const userData = await getUser(token);
+        if (userData) {
+          setUser(userData);
+        }
+      }
+    };
+    initUser();
+  }, []);
+
+  const login = async (email, password) => {
+    const data = await loginUser(email, password);
+    if (data) {
+      // Set the authToken cookie and update the user state
+      Cookies.set('authToken', data.token);
+      setUser(data.user);
+      } else {
+          console.log('User login failed');
+          
+        }
+      
+    
   };
-  return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
-}
 
-export default AuthContextWrapper;
+  const logout = () => {
+    // Remove the authToken cookie and clear the user state
+    Cookies.remove('authToken');
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);

@@ -1,15 +1,15 @@
 import ChatContext from "../contexts/ChatContext.js";
-import { useState, useContext } from "react";
-import AuthContext from "../contexts/AuthContext.js";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { SSE } from "sse.js";
+import { useAuth } from "./AuthContextWrapper.js";
 
 const url = "https://api.openai.com/v1";
 const endpoint = "/chat/completions";
 const apiKey = "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";
 
 function ChatContextWrapper({ children }) {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [chatList, setChatList] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState("");
