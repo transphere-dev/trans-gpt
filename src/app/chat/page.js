@@ -14,6 +14,7 @@ import { useContext, useEffect } from "react";
 import ChatBox from "../components/ChatBox";
 import NewChat from "../components/NewChat";
 import ChatContext from "../contexts/ChatContext";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Page() {

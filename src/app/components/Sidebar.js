@@ -38,6 +38,7 @@ import {
   FiSun,
   FiMessageCircle,
   FiPlus,
+  FiLogOut,
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
@@ -45,6 +46,7 @@ import ChatContext from '../contexts/ChatContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { usePathname } from "next/navigation";
+import { useAuth } from './AuthContextWrapper';
 
 
 
@@ -61,6 +63,7 @@ export const SidebarContent = ({ onClose, ...rest }) => {
     const {chatList,setChatList,setChatMessages} = useContext(ChatContext)
     const router = useRouter();
     const pathname = usePathname();
+    const {logout} = useAuth();
 
     // Add new chat to the chat list
 
@@ -134,8 +137,11 @@ export const SidebarContent = ({ onClose, ...rest }) => {
       ))}
       </Box>
        <Box p={'4'}>
-       <Button mb={0} mt={'auto'} variant={'outline'} borderWidth={2} w={'100%'} leftIcon={colorMode === 'light' ? <FiMoon /> : <FiSun />} onClick={toggleColorMode}>
+       <Button mb={7} mt={'auto'} variant={'outline'} borderWidth={2} w={'100%'} leftIcon={colorMode === 'light' ? <FiMoon /> : <FiSun />} onClick={toggleColorMode}>
                 {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
+              </Button>
+       <Button  leftIcon={ <FiLogOut />} variant={'ghost'}  w={'100%'}  onClick={logout}>
+                Logout
               </Button>
        </Box>
     </Box>
@@ -187,7 +193,7 @@ const NavItem = ({ id,path,icon, children, colorMode, ...rest }) => {
 };
 
 
-export const MobileNav = ({ onOpen, ...rest }) => {
+export const MobileNav = ({ onOpen, user, ...rest }) => {
     const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -218,13 +224,15 @@ export const MobileNav = ({ onOpen, ...rest }) => {
       </Text>
 
       <HStack spacing={{ base: '0', md: '6' }}>
-        {/* <IconButton
+        <IconButton
           size="lg"
           variant="ghost"
           aria-label="open menu"
           icon={<FiBell />}
         />
-        <Flex alignItems={'center'}>
+        <Flex
+            color={ colorMode === 'light' ? '#343541': '#D1D5DB'}
+        alignItems={'center'}>
           <Menu>
             <MenuButton
               py={2}
@@ -242,9 +250,9 @@ export const MobileNav = ({ onOpen, ...rest }) => {
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2">
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{user?.username}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    {user?.email}
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
@@ -257,12 +265,9 @@ export const MobileNav = ({ onOpen, ...rest }) => {
               borderColor={useColorModeValue('gray.200', 'gray.700')}>
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
-              <MenuItem>Billing</MenuItem>
-              <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
             </MenuList>
           </Menu>
-        </Flex> */}
+        </Flex>
       </HStack>
     </Flex>
   );

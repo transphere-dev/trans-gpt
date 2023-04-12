@@ -15,34 +15,32 @@ import {
 } from "@chakra-ui/react";
 import { Updock } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../components/AuthContextWrapper";
 import { registerUser } from "../lib/requests";
 
 export default function Signup() {
+  const {signup,error,loading,setError} = useAuth();
+  const [emailSent, setEmailSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading,setLoading] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
 
-    const signup = () => {
-      setLoading(true)
 
-      registerUser( `U-${Date.now()}` , email, password , confirmPassword).then(
-        (success) => {
-          if (success) {
-            console.log("User registered successfully");
-            router.push("/chat")
-          } else {
-            console.log("User registration failed");
-            
-          }
-        }
-      )
-      .finally(() => {
-        setLoading(false)
-      })
+    return () => {
+      setError(null)
+    };
+  }, []);
+
+    const register = async () => {
+      const result = await signup( `U-${Date.now()}` , email, password , confirmPassword)
+      if (result) {
+        setEmailSent(true);
+      }
+      
     }
   return (
     <Stack
@@ -81,7 +79,14 @@ export default function Signup() {
         justify={"center"}
       >
         <Heading pb={["5%", "5%", "5%", "11%", "11%"]}>Sign up now</Heading>
+        <Text fontWeight={"500"} color={'red'}>{error}</Text>
+        
+        {emailSent &&
+         <Text>
+               Registration successful! Please check your email for a verification link.
 
+          </Text>
+          }
         <Stack spacing={4} w={"full"} maxW={"md"}>
           <FormControl
             _hover={{ border: "#F79229" }}
@@ -119,11 +124,11 @@ export default function Signup() {
             <Button
             isLoading={loading}
             loadingText={"Signing Up..."}
-              onClick={signup}
+              onClick={register}
               _hover={{ background: "#27272F" }}
               color={"#fff"}
-              bg={"#F79229"}
-              variant={"solid"}
+              bg={error ? 'red' : '#F79229'}
+                            variant={"solid"}
             >
               Sign up
             </Button>

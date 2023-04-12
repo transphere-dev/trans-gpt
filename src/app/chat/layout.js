@@ -2,9 +2,11 @@
 import { MobileNav, SidebarContent } from '@/app/components/Sidebar';
 import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import React, { useContext } from 'react'
+import { useAuth } from '../components/AuthContextWrapper';
 
 export default function Sidebar({children}) {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const {user} = useAuth();
   
   
   
@@ -28,7 +30,7 @@ export default function Sidebar({children}) {
           </DrawerContent>
         </Drawer>
         {/* mobilenav */}
-        <MobileNav onOpen={onOpen} />
+        <MobileNav onOpen={onOpen} user={user} />
         <Box ml={{ base: 0, md: 60 ,lg: 300}} >
           {children}
          

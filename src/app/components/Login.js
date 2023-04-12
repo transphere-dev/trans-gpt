@@ -14,22 +14,39 @@ import {
     useColorModeValue,
   } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useContext, useState } from 'react';
-import { loginUser } from '../lib/requests';
+import { useContext, useEffect, useState } from 'react';
 import {  useAuth } from './AuthContextWrapper';
   
   export default function Login() {
     const router = useRouter();
-    const {login} = useAuth();
+    const {login,error,setError} = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading,setLoading] = useState(false);
 
-    const userLogin = () => {
+
+    useEffect(() => {
+
+
+      return () => {
+        setError(null)
+      };
+    }, []);
+
+    const userLogin = async  () => {
       if(email  && password){
         setLoading(true)
 
-      login( email, password )
+        try {
+          await login(email, password)
+          // ... handle successful login
+
+        } catch (error) {
+          // ... handle login error
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
       }
     }
     return (
@@ -52,6 +69,7 @@ import {  useAuth } from './AuthContextWrapper';
         </Flex>
         <Flex color={'#27272F'} bgColor={'#fff'} p={'12%'} flexDirection={'column'} flex={1} align={'center'} justify={'center'}>
         <Heading pb={['5%','5%','5%','11%','11%']}>Log in</Heading>
+        <Text fontWeight={"500"} color={'red'}>{error}</Text>
 
           <Stack spacing={4} w={'full'} maxW={'md'}>
             <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="email">
@@ -75,7 +93,7 @@ import {  useAuth } from './AuthContextWrapper';
                        isLoading={loading}
                        loadingText={"Logging in..."}
                         onClick={userLogin}
-              _hover={{background: '#27272F'}} color={'#fff'} bg={'#F79229'} variant={'solid'}>
+              _hover={{background: '#27272F'}} color={'#fff'} bg={error ? 'red' : '#F79229'} variant={'solid'}>
                 Login
               </Button>
               <Text cursor={'pointer'} onClick={() => router.push('/signup')} align={'center'} >Don&apos;t have an account? Sign up</Text>

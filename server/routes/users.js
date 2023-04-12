@@ -6,6 +6,7 @@ const authMiddleware = require('../authMiddleware');
 const { getUserById } = require('../models/users');
 const jwt = require('jsonwebtoken');
 const { getUserByEmail, checkPassword } = require('../db');
+const { sendVerificationEmail } = require('../lib/lib');
 const SECRET_KEY = 'your-secret-key'; // Replace this with your actual secret key
 
 
@@ -13,7 +14,7 @@ router.use('/me', authMiddleware);
 
 router.get('/me', async (req, res) => {
   // req.userId now contains the authenticated user's ID
-  console.log(req)
+
   const user = await getUserById(req.id);
 
   if (user) {
@@ -51,6 +52,16 @@ router.post('/register', async (req, res) => {
       'INSERT INTO users (username, email, password_hash, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING id, username, email, created_at',
       [username, email, hashedPassword]
     );
+      // Generate an email verification token
+  const emailVerificationToken = jwt.sign(
+    { email },
+    process.env.EMAIL_VERIFICATION_SECRET,
+    { expiresIn: '24h' }
+  );
+
+  // Send a verification email to the user
+  await sendVerificationEmail(email, emailVerificationToken);
+
 
     // Return the newly created user
     res.status(201).json(newUser.rows[0]);
@@ -69,7 +80,7 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Invalid email or password' });
   }
 
-  const passwordIsValid = await checkPassword(password, user.password);
+  const passwordIsValid = await checkPassword(password, user.password_hash);
   if (!passwordIsValid) {
     return res.status(400).json({ error: 'Invalid password' });
   }
