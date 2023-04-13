@@ -35,7 +35,7 @@ async function checkPassword(plaintextPassword, hashedPassword) {
 
 async function verifyEmail(email) {
   // Update the user's email_verified field in the database
-  const query = `UPDATE users SET emailVerified = true WHERE email = $1`;
+  const query = `UPDATE users SET emailverified = true WHERE email = $1`;
   await pool.query(query, [email]);
 }
 

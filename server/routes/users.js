@@ -95,4 +95,46 @@ router.post('/login', async (req, res) => {
   res.json({ token, user });
 });
 
+router.get('/verify/:token', async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const decoded = jwt.verify(token, process.env.EMAIL_VERIFICATION_SECRET);
+  
+    const email = decoded.email;
+    console.log(email);
+    // Update the user's email verification status in the database
+    await db.verifyEmail(email);
+
+    res.send('Email successfully verified');
+  } catch (error) {
+    console.log(error);
+    res.status(400).send('Invalid or expired email verification token');
+  }
+});
+
+// server.js or routes.js
+router.post('/resend-verification', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await getUserByEmail(email);
+    if (user && !user.emailverified) {
+      const token = jwt.sign(
+        { email },
+        process.env.EMAIL_VERIFICATION_SECRET,
+        { expiresIn: '24h' }
+      );
+      await sendVerificationEmail(user.email, token);
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(400);
+    }
+  } catch (error) {
+    console.error('Error resending verification email:', error);
+    res.sendStatus(500);
+  }
+});
+
+
 module.exports = router;

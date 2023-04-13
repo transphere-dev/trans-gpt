@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { getUser, loginUser, registerUser } from "../lib/requests";
 import { usePathname, useRouter } from "next/navigation";
 import Loading from "./Loading";
+import EmailVerify from "./EmailVerify";
 
 const AuthContext = createContext({});
 
@@ -25,16 +26,19 @@ export const AuthProvider = ({ children }) => {
         if (userData) {
           setUser(userData);
           setAuthLoading(false);
-          router.push("/chat");
+          if(userData.emailverified){
+            router.push("/chat");
+          }
         } else {
-          if (path != "/login" || path != "/signup") {
+          const pathname = path.split('/')[1]
+          if (pathname != "login" || path != "signup" || path != "verify") {
             setAuthLoading(false);
             router.push("/login");
           }
         }
       } else {
         setAuthLoading(false);
-        router.push("/login");
+        // router.push("/login");
       }
     };
     initUser();
@@ -42,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login");
+      // router.push("/login");
     }
 
     return () => {
@@ -91,9 +95,34 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const resendVerificationEmail = async (email) => {
+    try {
+      setError(null)
+      const response = await fetch('/api/users/resend-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+  
+      if (response.ok) {
+        // Show a success message
+      } else {
+        // Show an error message
+        setError("Error resending verification email")
+      }
+    } catch (error) {
+      console.error('Error resending verification email:', error);
+      setError(error.message)
+      // Show an error message
+    }
+  };
+  
   return (
-    <AuthContext.Provider value={{ user, login, logout, error, signup, loading ,setError }}>
-      {!authLoading ? children : <Loading />}
+    <AuthContext.Provider value={{ user, login, logout, error, signup, loading ,setError,resendVerificationEmail }}>
+      {user && user.emailverified  === false && !authLoading && path.split('/')[1] !='verify' ? <EmailVerify email={user.email} onResendVerification={resendVerificationEmail} /> : !authLoading ? children : <Loading />}
+
     </AuthContext.Provider>
   );
 };

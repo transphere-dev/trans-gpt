@@ -53,7 +53,7 @@ function ChatContextWrapper({ children }) {
       chatId: Date.now(),
       content: message,
       model: model,
-      senderId: user.userId,
+      senderId: user.id,
       name: message.substring(0, 50),
       chatRoomId: chatRoomId,
       role: "user",

@@ -118,8 +118,7 @@ export default function Signup() {
               align={"start"}
               justify={"space-between"}
             >
-              <Checkbox>Remember me</Checkbox>
-              <Text>Forgot password?</Text>
+
             </Stack>
             <Button
             isLoading={loading}

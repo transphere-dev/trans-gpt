@@ -1,5 +1,6 @@
 "use client"
-import { MobileNav, SidebarContent } from '@/app/components/Sidebar';
+import { SidebarContent } from '@/app/components/Sidebar';
+import { NavBar } from '../components/NavBar';
 import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import React, { useContext } from 'react'
 import { useAuth } from '../components/AuthContextWrapper';
@@ -29,8 +30,8 @@ export default function Sidebar({children}) {
             <SidebarContent onClose={onClose} />
           </DrawerContent>
         </Drawer>
-        {/* mobilenav */}
-        <MobileNav onOpen={onOpen} user={user} />
+
+        <NavBar onOpen={onOpen} user={user} />
         <Box ml={{ base: 0, md: 60 ,lg: 300}} >
           {children}
          

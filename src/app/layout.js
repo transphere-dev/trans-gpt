@@ -2,13 +2,15 @@
 'use client'
 
 import { CacheProvider } from '@chakra-ui/next-js'
-import { ChakraProvider } from '@chakra-ui/react'
-import AuthContextWrapper, { AuthProvider } from './components/AuthContextWrapper'
+import { Box, ChakraProvider, useDisclosure } from '@chakra-ui/react'
+import AuthContextWrapper, { AuthProvider, useAuth } from './components/AuthContextWrapper'
 import ChatContextWrapper from './components/ChatContextWrapper'
 import Sidebar from './components/Sidebar'
 import './globals.css'
 import NProgress from 'nprogress';
 import Router from 'next/router';
+import { NavBar } from './components/NavBar'
+import { usePathname } from 'next/navigation'
 // import '../../node_modules/nprogress/nprogress.css';
 
 
@@ -23,6 +25,9 @@ import Router from 'next/router';
 // });
 
 export default function RootLayout({children}) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const path = usePathname();
+  const {user} = useAuth();
   return (
     <html lang='en'>
       <head />
@@ -32,7 +37,15 @@ export default function RootLayout({children}) {
           <AuthProvider>
           <ChatContextWrapper>
           <ChakraProvider>
-            {children}
+         <Box h={'100%'} position={'relative'}>
+{/* {path === '/signup' || path === '/login' || path === '/forgotPassword' ?
+<></>
+:
+<NavBar onOpen={onOpen}/>
+
+} */}
+{children}
+         </Box>
             </ChakraProvider>
           </ChatContextWrapper>
           </AuthProvider>

@@ -1,13 +1,19 @@
+"use client"
+import { useAuth } from '@/app/components/AuthContextWrapper';
+import { Box, Button, Center, Heading, Image, Text , useColorModeValue } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 function VerifyEmail({params}) {
   const [verificationStatus, setVerificationStatus] = useState('');
+  const router = useRouter();
+  const {logout} = useAuth();
 
   useEffect(() => {
     const verifyEmail = async () => {
       const token = params.token;
       try {
-        const response = await fetch(`http://localhost:8080/api/verify/${token}`);
+        const response = await fetch(`http://localhost:8080/api/users/verify/${token}`);
         if (response.ok) {
           setVerificationStatus('success');
         } else {
@@ -19,22 +25,55 @@ function VerifyEmail({params}) {
     };
 
     verifyEmail();
-  }, [token]);
+  }, []);
 
   return (
-    <div>
+    <Center p={'4%'} flexDirection={'column'} bg={useColorModeValue('white', 'gray.900')} h={'100%'} >
       {verificationStatus === 'success' && (
-        <div className="success-message">
+
+        <>
+                <Heading className="success-message">
           Email successfully verified! You can now <a href="/login">log in</a>.
-        </div>
+        </Heading>
+
+        </>
       )}
       {verificationStatus === 'error' && (
-        <div className="error-message">
-          Email verification failed. The verification link may be invalid or expired. Please try
-          registering again or contact support for assistance.
-        </div>
+        <>
+        <Heading className="error-message">
+          Email verification failed. 
+        </Heading>
+        <Text mt={'2%'} align={'center'}>The verification link may be invalid or expired. Log into your account to verify your email.</Text>
+
+        </>
       )}
-    </div>
+        <Button
+                mt={'2%'}
+            onClick={() =>{logout(); router.push("/login")}}
+            _hover={{ background: "#fff" , color: '#000' }}
+            color={"#fff"}
+            bg={"#F79229"}
+            variant={"solid"}
+          >
+            Login
+          </Button>
+                          <Image 
+                    position={'fixed'}
+                    left={-50}
+                    bottom={-35}
+          display={['none','none','flex','flex','flex']}
+            alt={'Login Image'}
+            h={'40%'}
+            src={
+              '/images/signup.svg'
+            }
+          />
+                    <Image
+                     position={'fixed'}
+                     right={-50}
+                     bottom={-0} 
+                    src={"/images/home.svg"} alt={"TransGPT Onboarding"} />
+    </Center>
   );
 }
 
