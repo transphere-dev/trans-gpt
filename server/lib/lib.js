@@ -23,6 +23,37 @@ async function sendVerificationEmail(email, token) {
     console.log('Error sending email:', error);
   }
 }
+
+const sendResetPasswordEmail = async (email, token) => {
+  try {
+    const resetLink = `http://localhost:3000/reset-password/${token}`;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: 'Password Reset',
+      text: `To reset your password, please click the following link: ${resetLink}`,
+      html: `<p>To reset your password, please click the following link: <a href="${resetLink}">${resetLink}</a></p>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Password reset email sent to', email);
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+  }
+};
+
+function verifyPasswordResetToken(token) {
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY, { subject: 'password-reset' });
+    return decoded.id;
+  } catch (error) {
+    console.error('Error verifying password reset token:', error);
+    throw new Error('Invalid or expired token');
+  }
+}
+
+
 module.exports = {
-    sendVerificationEmail
+    sendVerificationEmail ,sendResetPasswordEmail,verifyPasswordResetToken
   };

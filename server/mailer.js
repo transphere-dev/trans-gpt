@@ -6,8 +6,8 @@ const transporter = nodemailer.createTransport({
   port: 587, // Replace with your email service's SMTP port
   secure: false, // Set to true for port 465, false for other ports
   auth: {
-    user: "john.oula@transphere.com", // Your email service's username
-    pass: "Qc,Ew67dk", // Your email service's password
+    user: "noreply@transphere.com", // Your email service's username
+    pass: "dA3,wM62dn", // Your email service's password
   },
   tls: {
     rejectUnauthorized: false,

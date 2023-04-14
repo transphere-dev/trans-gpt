@@ -6,9 +6,10 @@ const authMiddleware = require('../authMiddleware');
 const { getUserById } = require('../models/users');
 const jwt = require('jsonwebtoken');
 const { getUserByEmail, checkPassword } = require('../db');
-const { sendVerificationEmail } = require('../lib/lib');
+const { sendVerificationEmail , sendResetPasswordEmail, verifyPasswordResetToken} = require('../lib/lib');
 const SECRET_KEY = 'your-secret-key'; // Replace this with your actual secret key
-
+// Generate a password reset token
+const crypto = require('crypto');
 
 router.use('/me', authMiddleware);
 
@@ -135,6 +136,58 @@ router.post('/resend-verification', async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+// server.js or routes.js
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await getUserByEmail(email);
+    if (user) {
+      const token = jwt.sign(
+        { email },
+        process.env.SECRET_KEY,
+        { expiresIn: '24h' })
+      
+      
+      await sendResetPasswordEmail(user.email, token);
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(400);
+    }
+  } catch (error) {
+    console.error('Error handling forgot password request:', error);
+    res.sendStatus(500);
+  }
+});
+
+router.post('/reset-password', async (req, res) => {
+  const { token, password } = req.body;
+
+  try {
+    // 1. Verify the token and get the user's ID
+    const userId = await verifyPasswordResetToken(token);
+
+    // 2. Check if the user exists
+    const user = await getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // 3. Hash the new password
+    const newPasswordHash = await bcrypt.hash(password, 10);
+
+    // 4. Update the user's password in the database
+    await updateUserPassword(userId, newPasswordHash);
+
+    // 5. Send a success response
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).json({ msg :  error.message });
+  }
+});
+
 
 
 module.exports = router;

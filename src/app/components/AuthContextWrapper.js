@@ -45,8 +45,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      // router.push("/login");
+    if (!user && path.split('/')[1] != 'verify' && path.split('/')[1] != 'ResetPassword' && path.split('/')[1] != 'signup' && path.split('/')[1] != 'forgotPassword') {
+      router.push("/login");
     }
 
     return () => {

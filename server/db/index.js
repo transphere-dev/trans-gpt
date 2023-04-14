@@ -39,6 +39,21 @@ async function verifyEmail(email) {
   await pool.query(query, [email]);
 }
 
+async function updateUserPassword(userId, newPasswordHash) {
+  try {
+    const { rowCount } = await pool.query(
+      'UPDATE users SET password = $1 WHERE id = $2',
+      [newPasswordHash, userId]
+    );
+
+    if (rowCount === 0) {
+      throw new Error('User not found');
+    }
+  } catch (error) {
+    console.error('Error updating user password:', error);
+    throw error;
+  }
+}
 module.exports = {
-  query: (text, params) => pool.query(text, params),getUserByEmail,checkPassword,verifyEmail
+  query: (text, params) => pool.query(text, params),getUserByEmail,checkPassword,verifyEmail,updateUserPassword
 };
