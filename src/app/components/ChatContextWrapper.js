@@ -130,22 +130,23 @@ function ChatContextWrapper({ children }) {
         }
       } else {
              // Check if Chat ID exists
-      // if (idExists(msg.chatRoomId, chatList)) {
-      //   console.log("chatroom Id exists");
+      if (idExists(chatRoomId, chatList)) {
+        console.log("chatroom Id exists");
 
-      // } else {
+      } else {
+        saveChatList()
 
-      //   // Update Chat List
-      //   setChatList((prevChatList) => {
+        // Update Chat List
+        setChatList((prevChatList) => {
 
-      //     // Save ChatList to Localstorage
-      //     const temp = [msg,...prevChatList];
+          // Save ChatList to Localstorage
+          const temp = [promptObj,...prevChatList];
 
-      //     localStorage.setItem("chatList", JSON.stringify(temp));
+          localStorage.setItem("chatList", JSON.stringify(temp));
 
-      //     return [ msg,...prevChatList];
-      //   })
-      // }
+          return [ promptObj,...prevChatList];
+        })
+      }
           
         source.close();
         setStreaming(false);

@@ -4,15 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "lint": "next lint",
+    "build": "next build && next export",
     "start": "next start",
-    "lint": "next lint"
+    "electron-dev": "concurrently \"cross-env BROWSER=none npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-build": "npm run build && electron-builder",
+    "release": "npm run electron-build -- -p always"
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.1.0",
     "@chakra-ui/react": "^2.5.3",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "concurrently": "^8.0.1",
+  
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "framer-motion": "^5.6.0",
@@ -24,6 +29,38 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
     "react-loader-spinner": "^5.3.4",
-    "sse.js": "^0.6.1"
+    "sse.js": "^0.6.1",
+    "wait-on": "^7.0.1"
+  },
+  "devDependencies": {
+    "electron": "^24.1.1",
+    "electron-builder": "^23.6.0"
+  },
+  "build": {
+    "appId": "com.yourdomain.yourapp",
+    "productName": "TransGPT",
+    "directories": {
+      "buildResources": "resources",
+      "output": "dist"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "electron.js"
+    ],
+    "extraResources": [
+      "build"
+    ],
+    "asar": true,
+    "asarUnpack": "**\\*.{node,dll}",
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }

@@ -14,9 +14,9 @@ import {
     useColorModeValue,
   } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import  React ,{ useState } from 'react';
   
-  export default function ForgotPassword() {
+  export default function Page() {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');

@@ -11,7 +11,7 @@ const EmailVerify = ({ email, onResendVerification }) => {
     <Center color={textColor} bgColor={useColorModeValue('white','gray.900')} flexDirection={'column'} h={'100%'}>
       <Heading mb={'2%'}>Your email is not verified</Heading>
       <Text align={'center'}>
-        We noticed that your email address ({email}) has not been verified yet.<br/> Please check your
+        We noticed that your email address (<strong>{email}</strong>) has not been verified yet.<br/> Please check your
         inbox for a verification email. If you didn&apos;t receive the email or need a new one, click the
         button below.
       </Text>

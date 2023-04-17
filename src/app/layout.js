@@ -34,9 +34,10 @@ export default function RootLayout({children}) {
       <title>TransGPT | Your assistant AI language model</title>
       <body>
         <CacheProvider>
+        <ChakraProvider>
           <AuthProvider>
           <ChatContextWrapper>
-          <ChakraProvider>
+          
          <Box h={'100%'} position={'relative'}>
 {/* {path === '/signup' || path === '/login' || path === '/forgotPassword' ?
 <></>
@@ -46,9 +47,10 @@ export default function RootLayout({children}) {
 } */}
 {children}
          </Box>
-            </ChakraProvider>
+            
           </ChatContextWrapper>
           </AuthProvider>
+          </ChakraProvider>
         </CacheProvider>
       </body>
     </html>

@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../components/AuthContextWrapper";
 import { registerUser } from "../lib/requests";
 
-export default function Signup() {
+export default function Page() {
   const {signup,error,loading,setError} = useAuth();
   const [emailSent, setEmailSent] = useState(false);
   const [email, setEmail] = useState("");

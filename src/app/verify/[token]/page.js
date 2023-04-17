@@ -4,7 +4,7 @@ import { Box, Button, Center, Heading, Image, Text , useColorModeValue } from '@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-function VerifyEmail({params}) {
+function Page({params}) {
   const [verificationStatus, setVerificationStatus] = useState('');
   const router = useRouter();
   const {logout} = useAuth();
@@ -77,4 +77,4 @@ function VerifyEmail({params}) {
   );
 }
 
-export default VerifyEmail;
+export default Page;

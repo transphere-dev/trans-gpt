@@ -47,7 +47,8 @@ export const NavBar = ({ onOpen, ...rest }) => {
   const { colorMode } = useColorMode();
   const {user}  =useAuth()
   const router = useRouter();
-
+  const bgColor =useColorModeValue("white", "gray.900");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
   return (
     <Flex
 
@@ -115,8 +116,8 @@ export const NavBar = ({ onOpen, ...rest }) => {
                 </HStack>
               </MenuButton>
               <MenuList
-                bg={useColorModeValue("white", "gray.900")}
-                borderColor={useColorModeValue("gray.200", "gray.700")}
+                bg={bgColor}
+                borderColor={borderColor}
               >
                 <MenuItem>Profile</MenuItem>
                 <MenuItem>Settings</MenuItem>

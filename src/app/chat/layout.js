@@ -5,7 +5,7 @@ import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from '@c
 import React, { useContext } from 'react'
 import { useAuth } from '../components/AuthContextWrapper';
 
-export default function Sidebar({children}) {
+export default function Layout({children}) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {user} = useAuth();
   
@@ -27,7 +27,7 @@ export default function Sidebar({children}) {
           onOverlayClick={onClose}
           size="full">
           <DrawerContent>
-            <SidebarContent onClose={onClose} />
+            <SidebarContent onClose={onClose} userId={user}/>
           </DrawerContent>
         </Drawer>
 
