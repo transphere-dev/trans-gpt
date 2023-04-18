@@ -148,9 +148,9 @@ export const SidebarContent = ({ onClose, ...rest }) => {
         {!loading && chatList?.map((link) => (
           <NavItem
             path={pathname}
-            id={link.chat_room_id}
+            id={link.id}
             colorMode={colorMode}
-            key={link.chat_room_id}
+            key={link.id}
             icon={FiMessageCircle}
           >
             {link.title}

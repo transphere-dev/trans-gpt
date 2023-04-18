@@ -58,11 +58,11 @@ async function updateUserPassword(userId, newPasswordHash) {
   }
 }
 
-async function createChatSession(user_id,created_at,chatRoomId,title) {
+async function createChatSession(user_id,created_at,id,title) {
   try {
     const { rows } = await pool.query(
-      "INSERT INTO chat_sessions (user_id, title,created_at,chat_room_id,updated_at,last_active_at) VALUES ($1,$2,$3,$4,NOW(),NOW()) RETURNING *",
-      [user_id,title,created_at,chatRoomId]
+      "INSERT INTO chat_sessions (user_id, title,created_at,id,updated_at,last_active_at) VALUES ($1,$2,$3,$4,NOW(),NOW()) RETURNING *",
+      [user_id,title,created_at,id]
     );
     return rows[0];
   } catch (error) {
@@ -72,13 +72,13 @@ async function createChatSession(user_id,created_at,chatRoomId,title) {
 }
 
 async function saveChatMessage(chat_message_data) {
-  const { chatRoomId, content, senderId } = chat_message_data;
+  const { id, content, senderId , sender ,model,role} = chat_message_data;
   const created_at = new Date();
   try {
 
   const { rows }  = await pool.query(
-    'INSERT INTO chat_messages (chat_session_id, content, sender_id, created_at) VALUES ($1, $2, $3, $4) RETURNING *',
-    [chatRoomId, content, senderId, created_at]
+    'INSERT INTO chat_messages (chat_session_id, content, sender, sender_id, created_at, model, role) VALUES ($1, $2, $3, $4 , $5 , $6 , $7) RETURNING *',
+    [id, content, sender , senderId, created_at, model , role]
   );
 
   return rows[0];
@@ -95,7 +95,7 @@ async function getChatSessions(userId) {
 
 
 async function getChatMessages(sessionId, userId) {
-  const sessionResult = await pool.query('SELECT * FROM chat_sessions WHERE chat_room_id = $1 AND user_id = $2', [sessionId, userId]);
+  const sessionResult = await pool.query('SELECT * FROM chat_sessions WHERE id = $1 AND user_id = $2', [sessionId, userId]);
 
   if (sessionResult.rowCount === 0) {
     throw new Error('Chat session not found or not authorized');

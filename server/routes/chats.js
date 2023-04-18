@@ -6,10 +6,10 @@ const router = express.Router();
 const { createChatSession, saveChatMessage } = require('../db');
 
 router.post('/chat-session', async (req, res) => {
-    const { user_id , created_at, chatRoomId ,title } = req.body;
+    const { user_id , created_at, id ,title } = req.body;
   
     try {
-      const newChatSession = await createChatSession(user_id,created_at, chatRoomId,title);
+      const newChatSession = await createChatSession(user_id,created_at, id,title);
       res.status(201).json(newChatSession);
     } catch (error) {
       console.error('Error creating chat session:', error);
