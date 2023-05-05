@@ -1,7 +1,7 @@
 const { Pool } = require("pg");
 const connectionString =
   process.env.DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5432/transgpt-db";
+  "postgres://postgres:postgres@192.168.4.62:5432/transgpt-db";
 const bcrypt = require("bcrypt");
 
 const pool = new Pool({ connectionString });
@@ -72,16 +72,21 @@ async function createChatSession(user_id,created_at,id,title) {
 }
 
 async function saveChatMessage(chat_message_data) {
-  const { id, content, senderId , sender ,model,role} = chat_message_data;
+  // const { id, content, senderId , sender ,model,role} = chat_message_data;
   const created_at = new Date();
+
+
+  
   try {
 
-  const { rows }  = await pool.query(
-    'INSERT INTO chat_messages (chat_session_id, content, sender, sender_id, created_at, model, role) VALUES ($1, $2, $3, $4 , $5 , $6 , $7) RETURNING *',
-    [id, content, sender , senderId, created_at, model , role]
-  );
+    for (let index = 0; index < chat_message_data.length; index++) {
 
-  return rows[0];
+      await pool.query(
+        'INSERT INTO chat_messages (chat_session_id, content, sender, sender_id, created_at, model, role) VALUES ($1, $2, $3, $4 , $5 , $6 , $7) RETURNING *',
+        [chat_message_data[index].id, chat_message_data[index].content, chat_message_data[index].sender , chat_message_data[index].senderId, created_at, chat_message_data[index].model , chat_message_data[index].role]
+      );
+    }
+    return 'Success'
 } catch (error) {
   console.error("Error creating chat session:", error);
   throw error;

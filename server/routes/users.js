@@ -11,6 +11,8 @@ const SECRET_KEY = 'your-secret-key'; // Replace this with your actual secret ke
 // Generate a password reset token
 const crypto = require('crypto');
 
+const EMAIL_VERIFICATION_SECRET = "yugetfu5e6865r85erd85dar8a"
+
 router.use('/me', authMiddleware);
 
 router.get('/me', async (req, res) => {
@@ -56,7 +58,7 @@ router.post('/register', async (req, res) => {
       // Generate an email verification token
   const emailVerificationToken = jwt.sign(
     { email },
-    process.env.EMAIL_VERIFICATION_SECRET,
+    EMAIL_VERIFICATION_SECRET ,
     { expiresIn: '24h' }
   );
 
@@ -100,10 +102,9 @@ router.get('/verify/:token', async (req, res) => {
   const { token } = req.params;
 
   try {
-    const decoded = jwt.verify(token, process.env.EMAIL_VERIFICATION_SECRET);
+    const decoded = jwt.verify(token, EMAIL_VERIFICATION_SECRET );
   
     const email = decoded.email;
-    console.log(email);
     // Update the user's email verification status in the database
     await db.verifyEmail(email);
 
@@ -121,15 +122,15 @@ router.post('/resend-verification', async (req, res) => {
   try {
     const user = await getUserByEmail(email);
     if (user && !user.emailverified) {
-      const token = jwt.sign(
+      const token = jwt.sign( 
         { email },
-        process.env.EMAIL_VERIFICATION_SECRET,
+       EMAIL_VERIFICATION_SECRET ,
         { expiresIn: '24h' }
       );
       await sendVerificationEmail(user.email, token);
       res.sendStatus(200);
     } else {
-      res.sendStatus(400);
+      res.sendStatus(500);
     }
   } catch (error) {
     console.error('Error resending verification email:', error);
@@ -146,7 +147,7 @@ router.post('/forgot-password', async (req, res) => {
     if (user) {
       const token = jwt.sign(
         { email },
-        process.env.SECRET_KEY,
+        process.env.SECRET_KEY || 'ewew',
         { expiresIn: '24h' })
       
       

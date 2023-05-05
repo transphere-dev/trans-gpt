@@ -13,7 +13,7 @@ function Page({params}) {
     const verifyEmail = async () => {
       const token = params.token;
       try {
-        const response = await fetch(`http://localhost:8080/api/users/verify/${token}`);
+        const response = await fetch(`http://192.168.4.62:8080/api/users/verify/${token}`);
         if (response.ok) {
           setVerificationStatus('success');
         } else {

@@ -80,7 +80,8 @@ export const AuthProvider = ({ children }) => {
         // Set the authToken cookie and update the user state
         setError(null);
         setLoading(false)
-        router.push("/verify");
+
+        router.push(`/verify-email?email=${email}`);
       } else {
         setLoading(false)
 
@@ -98,7 +99,7 @@ export const AuthProvider = ({ children }) => {
   const resendVerificationEmail = async (email) => {
     try {
       setError(null)
-      const response = await fetch('/api/users/resend-verification', {
+      const response = await fetch('http://192.168.4.62:8080/api/users/resend-verification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

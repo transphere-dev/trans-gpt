@@ -2,7 +2,7 @@
 import { Center, Skeleton, Stack } from '@chakra-ui/react'
 import React from 'react'
 
-export default function loading() {
+export default function Loading() {
     let arr = [1,2,3,4,5,6]
   return (
 <Stack>

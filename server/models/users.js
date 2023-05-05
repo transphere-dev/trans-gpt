@@ -1,6 +1,6 @@
 // path/to/userModel.js
 const { Pool } = require('pg');
-const connectionString = process.env.DATABASE_URL || "postgres://postgres:postgres@localhost:5432/transgpt-db";
+const connectionString = process.env.DATABASE_URL || "postgres://postgres:postgres@192.168.4.62:5432/transgpt-db";
 const pool = new Pool({ connectionString });
 
 async function getUserById(userId) {

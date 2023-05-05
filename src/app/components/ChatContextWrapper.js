@@ -38,7 +38,7 @@ function ChatContextWrapper({ children }) {
   // Save chat Messages
   async function saveChatMessage(chat_message_data) {
     const response = await fetch(
-      "http://localhost:8080/api/chats/chat-msg",
+      "http://192.168.4.62:8080/api/chats/chat-msg",
       {
         method: "POST",
         headers: {
@@ -59,7 +59,7 @@ function ChatContextWrapper({ children }) {
   // Save chat sessions
   async function saveChatSession(chatSession) {
     const response = await fetch(
-      "http://localhost:8080/api/chats/chat-session",
+      "http://192.168.4.62:8080/api/chats/chat-session",
       {
         method: "POST",
         headers: {
@@ -104,7 +104,7 @@ function ChatContextWrapper({ children }) {
       role: each?.role,
       content: each.content,
     }));
-    console.log(filteredChatMessages);
+    // console.log(filteredChatMessages);
 
     // Create request body
     const payload = {
@@ -140,6 +140,7 @@ function ChatContextWrapper({ children }) {
     });
     let tempText = ''
     source.addEventListener("message", (e) => {
+
       if (e.data != "[DONE]") {
         let payload = JSON.parse(e.data);
         
@@ -151,17 +152,18 @@ function ChatContextWrapper({ children }) {
             payload.id = chatRoomId;
             payload.title = text.substring(0, 40);
           }
-
+          
+          // Stream-like part
           setChatMessages((prevResult) => {
             let foundObject = prevResult.find((obj) => obj?.id === payload?.id) || {};
 
             if (foundObject && foundObject.id) {
+              tempText = foundObject.choices[0].delta.content ;
               foundObject.choices[0].delta.content += text;
-              tempText += text;
-
               return [...prevResult, foundObject].filter((obj, index, self) => {
                 return index === self.findIndex((t) => t.id === obj.id);
               });
+
             } else {
               return [...prevResult, payload];
             }
@@ -170,41 +172,56 @@ function ChatContextWrapper({ children }) {
       } else {
         source.close();
         setStreaming(false);
+
+
+        const respObj = {
+          id: chatRoomId,
+          content: tempText,
+          model: payload.model,
+          senderId: 0,
+          sender: "ai",
+          title: message.substring(0, 50),
+          chatRoomId: chatRoomId,
+          role: "assistant",
+        };
+        const chats = [ promptObj,respObj]
+        console.log(chats);
         // Check if Chat ID exists
         // Create one if not
         if (idExists(chatRoomId, chatList)) {
           console.log("chatroom Id exists");
-        } else {
+          saveChatMessage(chats)
+        } else { 
           const data = {
             user_id: user.id,
             created_at: getCurrentDateTime(),
             id: chatRoomId,
             title: promptObj.content.substring(0, 20),
           };
-          saveChatSession(data);
 
-          // Update Chat List
-          setChatList((prevChatList) => {
-            return [promptObj, ...prevChatList];
-          });
-        }
 
-        // Save prompt
-        console.log(chatMessages);
+          
+              
+         saveChatSession(data)
+         .then(() =>{ 
+           console.log('Session created');
+        
+                  // Update Chat List
+                  setChatList((prevChatList) => {
+                    return [promptObj, ...prevChatList];
+                  });
+                              // Create response object
+    
+          saveChatMessage(chats)
+          .then(() =>{ 
+            console.log('msg saved');
+        
+         })
+          .catch((err) => console.log(err.message))
+        })
+         .catch((err) => console.log(err.message))
+      }
 
-            // Create response object
-    const respObj = {
-      id: chatRoomId,
-      content: tempText,
-      model: payload.model,
-      senderId: 0,
-      sender: "ai",
-      title: message.substring(0, 50),
-      chatRoomId: chatRoomId,
-      role: "assistant",
-    };
-
-        saveChatMessage(respObj)
       }
     });
 

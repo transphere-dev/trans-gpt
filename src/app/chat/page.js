@@ -1,6 +1,5 @@
 "use client";
 
-import { Inter } from "next/font/google";
 import styles from "../page.module.css";
 import onboarding from "../../../public/images/home.svg";
 import logo from "../../../public/images/transgpt-dark.svg";
@@ -15,14 +14,12 @@ import ChatBox from "../components/ChatBox";
 import NewChat from "../components/NewChat";
 import ChatContext from "../contexts/ChatContext";
 
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Page() {
   const pathname = usePathname();
   const { chatMessages , setChatMessages } = useContext(ChatContext);
 
   useEffect(() => {
-    console.log(pathname); // Log the current URL path
 
 
     return () => {

@@ -61,7 +61,7 @@ export const SidebarContent = ({ onClose, ...rest }) => {
   const [loading,setLoading] = useState(true);
   
   async function fetchChatSessions() {
-    const response = await fetch(`http://localhost:8080/api/chats/sessions/${user.id}`);
+    const response = await fetch(`http://192.168.4.62:8080/api/chats/sessions/${user.id}`);
 
     if (!response.ok) {
       setLoading(false)
@@ -196,7 +196,6 @@ const NavItem = ({ id, path, icon, children, colorMode, ...rest }) => {
   const bgColor = useColorModeValue("#F7F7F8", "#444654");
 
   const pathId = path.split("/")[2];
-  console.log(pathId);
 
   return (
     <Box

@@ -1,20 +1,7 @@
 "use client";
 
-import { Inter } from "next/font/google";
-import styles from "../../page.module.css";
-import onboarding from "../../../../public/images/home.svg";
-import logo from "../../../../public/images/transgpt-dark.svg";
-import { Image } from "@chakra-ui/next-js";
-import {
-  Box,
-  Center,
-  Flex,
-  Heading,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import HomeCard from "../../components/HomeCard";
-import { RiTranslate2, RiSearch2Line } from "react-icons/ri";
+
+import { Box, Center, Flex, Text } from "@chakra-ui/react";
 import ChatInput from "../../components/ChatInput";
 import { usePathname } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -22,7 +9,6 @@ import ChatBox from "../../components/ChatBox";
 import NewChat from "../../components/NewChat";
 import ChatContext from "../../contexts/ChatContext";
 import { useAuth } from "@/app/components/AuthContextWrapper";
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Page({ params }) {
   const pathname = usePathname();
@@ -33,7 +19,7 @@ export default function Page({ params }) {
 
   // Fetch chat messages for a specific chat session
   async function fetchChatMessages(sessionId) {
-    const response = await fetch(`http://localhost:8080/api/chats/sessions/${sessionId}/messages/${user.id}`);
+    const response = await fetch(`http://192.168.4.62:8080/api/chats/sessions/${sessionId}/messages/${user.id}`);
 
     if (!response.ok) {
       throw new Error(`Error fetching chat messages: ${response.statusText}`);
@@ -44,11 +30,9 @@ export default function Page({ params }) {
   }
 
   useEffect(() => {
-    console.log(pathname); // Log the current URL path
 
     fetchChatMessages(params.chat)
     .then(data =>{
-      console.log(data);
       
       setChatMessages(data)
       setLoading(false);

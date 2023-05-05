@@ -16,7 +16,7 @@ import {
 import { useRouter } from 'next/navigation';
 import  React ,{ useState } from 'react';
   
-  export default function Page() {
+  export default function ForgotPassword() {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -27,7 +27,7 @@ import  React ,{ useState } from 'react';
       try {
         setSuccess('');
         setError('');
-        const response = await fetch('http://localhost:8080/api/users/forgot-password', {
+        const response = await fetch('http://192.168.4.62:8080/api/users/forgot-password', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

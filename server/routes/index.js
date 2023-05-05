@@ -8,7 +8,9 @@ const router = express.Router();
 // Example: router.use('/users', userRoutes);
 const userRoutes = require('./users');
 const chatRoutes = require('./chats');
+const buildRoutes = require('./build');
 
 router.use('/users', userRoutes);
 router.use('/chats', chatRoutes);
+router.use('/app', buildRoutes);
 module.exports = router;
