@@ -160,8 +160,9 @@ function ChatContextWrapper({ children }) {
 
             if (foundObject && foundObject.id) {
               tempText = foundObject.choices[0].delta.content ;
-
+              if(text == '\n' || text == ':') foundObject.choices[0].delta.content +='<br/>'
               foundObject.choices[0].delta.content += text;
+              
               foundObject.sender = 'ai'
               
               

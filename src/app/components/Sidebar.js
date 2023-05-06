@@ -40,6 +40,7 @@ import {
   FiMessageCircle,
   FiPlus,
   FiLogOut,
+  FiUpload,
 } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { ReactText } from "react";
@@ -145,8 +146,10 @@ export const SidebarContent = ({ onClose, ...rest }) => {
           New Chat
         </Button>
 
+
         {!loading && chatList?.map((link) => (
           <NavItem
+          
             path={pathname}
             id={link.id}
             colorMode={colorMode}
@@ -202,8 +205,10 @@ const NavItem = ({ id, path, icon, children, colorMode, ...rest }) => {
       onClick={() => router.push(`/chat/${id}`)}
       style={{ textDecoration: "none" }}
       _focus={{ boxShadow: "none" }}
+      
     >
       <Flex
+      
         isTruncated
         noOfLines={1}
         mt={"0.7em"}

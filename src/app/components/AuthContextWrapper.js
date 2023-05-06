@@ -26,9 +26,9 @@ export const AuthProvider = ({ children }) => {
         if (userData) {
           setUser(userData);
           setAuthLoading(false);
-          if(userData.emailverified){
-            router.push("/chat");
-          }
+          // if(userData.emailverified){
+          //   router.push("/chat");
+          // }
         } else {
           const pathname = path.split('/')[1]
           if (pathname != "login" || path != "signup" || path != "verify") {
@@ -45,9 +45,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (!user && path.split('/')[1] != 'verify' && path.split('/')[1] != 'ResetPassword' && path.split('/')[1] != 'signup' && path.split('/')[1] != 'forgotPassword') {
-      router.push("/login");
-    }
+    // if (!user && path.split('/')[1] != 'verify' && path.split('/')[1] != 'ResetPassword' && path.split('/')[1] != 'signup' && path.split('/')[1] != 'forgotPassword') {
+    //   router.push("/login");
+    // }
 
     return () => {
       null;
