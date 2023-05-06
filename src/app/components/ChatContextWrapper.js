@@ -213,7 +213,7 @@ function ChatContextWrapper({ children }) {
         
                   // Update Chat List
                   setChatList((prevChatList) => {
-                    return [promptObj, ...prevChatList];
+                    return [data, ...prevChatList];
                   });
                               // Create response object
     
