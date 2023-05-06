@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Center, Heading, Text ,useColorModeValue} from '@chakra-ui/react';
 import { useAuth } from '../components/AuthContextWrapper';
 import { useSearchParams } from 'next/navigation';
@@ -9,7 +9,15 @@ const Page = () => {
     const {resendVerificationEmail} = useAuth();
     const searchParams = useSearchParams();
     const email = searchParams.get('email');
+    const [loading,setLoading] = useState(false)
 
+    const resendEmail = async () => {
+      setLoading(true)
+      await resendVerificationEmail(email)
+
+      setLoading(false)
+       
+    }
 
   return (
     <Center color={textColor} bgColor={useColorModeValue('white','gray.900')} flexDirection={'column'} h={'100%'}>
@@ -18,7 +26,7 @@ const Page = () => {
         <br/> Please check your inbox for a verification email. If you didn&apos;t receive the email or need a new one, click the
         button below.
       </Text>
-      <Button mt={'2%'} onClick={() => resendVerificationEmail(email)}>Resend Verification Email</Button>
+      <Button isLoading={loading} mt={'2%'} onClick={resendEmail}>Resend Verification Email</Button>
 
     </Center>
   );
