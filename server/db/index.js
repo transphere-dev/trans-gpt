@@ -83,7 +83,7 @@ async function saveChatMessage(chat_message_data) {
 
       await pool.query(
         'INSERT INTO chat_messages (chat_session_id, content, sender, sender_id, created_at, model, role) VALUES ($1, $2, $3, $4 , $5 , $6 , $7) RETURNING *',
-        [chat_message_data[index].id, chat_message_data[index].content, chat_message_data[index].sender , chat_message_data[index].senderId, created_at, chat_message_data[index].model , chat_message_data[index].role]
+        [chat_message_data[index].chatRoomId, chat_message_data[index].content, chat_message_data[index].sender , chat_message_data[index].senderId, created_at, chat_message_data[index].model , chat_message_data[index].role]
       );
     }
     return 'Success'
@@ -100,7 +100,7 @@ async function getChatSessions(userId) {
 
 
 async function getChatMessages(sessionId, userId) {
-  const sessionResult = await pool.query('SELECT * FROM chat_sessions WHERE id = $1 AND user_id = $2', [sessionId, userId]);
+  const sessionResult = await pool.query('SELECT * FROM chat_sessions WHERE id = $1 AND user_id = $2 ', [sessionId, userId]);
 
   if (sessionResult.rowCount === 0) {
     throw new Error('Chat session not found or not authorized');

@@ -19,7 +19,8 @@ export default function ChatBox({ chat,result }) {
 <Box  color={textColor} w={"100%"}>
       <Center bg={ chat?.sender === 'user' ? userBgColor : botBgColor } p={"2%"} justifyContent={"left"}>
         <Avatar bg={'#F79229'} size={"sm"} src={chat?.sender === 'ai' ? '/images/logo-circle.jpg' : null} />
-        <Text fontWeight={500} ml={"3%"}>{chat?.content || chat?.choices[0].delta.content}</Text>
+        {chat?.sender === 'ai' && <Text fontWeight={500} ml={"3%"}>{chat?.content || chat?.choices[0].delta.content}</Text>}
+        {chat?.sender === 'user' && <Text fontWeight={500} ml={"3%"}>{chat?.content }</Text>}
         {/* { streaming && <BlinkingCursor />} */}
       </Center>
     </Box>

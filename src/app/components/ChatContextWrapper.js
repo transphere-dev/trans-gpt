@@ -85,7 +85,7 @@ function ChatContextWrapper({ children }) {
 
     // Create prompt object
     const promptObj = {
-      id: chatRoomId,
+      id: Date.now().toString(),
       content: message,
       model: model,
       senderId: user.id,
@@ -155,11 +155,16 @@ function ChatContextWrapper({ children }) {
           
           // Stream-like part
           setChatMessages((prevResult) => {
+
             let foundObject = prevResult.find((obj) => obj?.id === payload?.id) || {};
 
             if (foundObject && foundObject.id) {
               tempText = foundObject.choices[0].delta.content ;
+
               foundObject.choices[0].delta.content += text;
+              foundObject.sender = 'ai'
+              
+              
               return [...prevResult, foundObject].filter((obj, index, self) => {
                 return index === self.findIndex((t) => t.id === obj.id);
               });
@@ -175,7 +180,7 @@ function ChatContextWrapper({ children }) {
 
 
         const respObj = {
-          id: chatRoomId,
+          id: Date.now().toString(),
           content: tempText,
           model: payload.model,
           senderId: 0,
