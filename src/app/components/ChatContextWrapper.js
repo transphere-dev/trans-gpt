@@ -14,6 +14,7 @@ function ChatContextWrapper({ children }) {
   const [chatList, setChatList] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [messageHistory,setMessageHistory] = useState([]);
   const [newChat, setNewChat] = useState(true);
   const [model, setModel] = useState("gpt-3.5-turbo");
   const [streaming, setStreaming] = useState(false);
@@ -27,12 +28,6 @@ function ChatContextWrapper({ children }) {
 
   // Save Message to LocalStorage
 
-  const saveMessage = (chatRoomId, msg) => {
-    // Get Chatroom from localstorage
-    const chatMessages = localStorage.getItem("chatRooms");
-
-    chatMessages[chatRoomId]?.messages.push(msg);
-  };
 
 
   // Save chat Messages
@@ -98,18 +93,20 @@ function ChatContextWrapper({ children }) {
     // Add chat messages to UI
 
     setChatMessages((prevChatMessages) => [...prevChatMessages, promptObj]);
-
     // Filter chatmessages
-    const filteredChatMessages = chatMessages.map((each) => ({
-      role: each?.role,
-      content: each.content,
-    }));
-    // console.log(filteredChatMessages);
+    const filteredChatMessages = chatMessages.map((each) => {
+      return {
+        role: each?.role,
+        content: each.content || each?.choices[0].delta.content,
+      }
+    }
+     );
 
+     
     // Create request body
     const payload = {
       model: model,
-      messages: [{ role: "system", content: message }],
+      messages: [...filteredChatMessages,{ role: "user", content: message }],
 
       stream: true,
     };
@@ -124,7 +121,9 @@ function ChatContextWrapper({ children }) {
         })
 
       })
-      .catch(() => {});
+      .catch((e) => {
+        console.log(e.messsage);
+      });
   };
 
   // OPENAI API request
@@ -160,10 +159,11 @@ function ChatContextWrapper({ children }) {
 
             if (foundObject && foundObject.id) {
               tempText = foundObject.choices[0].delta.content ;
-              if(text == '\n' || text == ':') foundObject.choices[0].delta.content +='<br/>'
+              // if(text == '\n' || text == ':') foundObject.choices[0].delta.content +='<br/>'
               foundObject.choices[0].delta.content += text;
               
               foundObject.sender = 'ai'
+              foundObject.role = 'assistant'
               
               
               return [...prevResult, foundObject].filter((obj, index, self) => {
@@ -191,7 +191,9 @@ function ChatContextWrapper({ children }) {
           role: "assistant",
         };
         const chats = [ promptObj,respObj]
-        console.log(chats);
+
+        
+
         // Check if Chat ID exists
         // Create one if not
         if (idExists(chatRoomId, chatList)) {
@@ -236,8 +238,14 @@ function ChatContextWrapper({ children }) {
         // setIsLoading(false);
       }
     });
-
+// Add an event listener for the 'error' event
+source.addEventListener('error', function(event) {
+  // Handle connection errors
+  console.log('Error connecting to the server:', event.data);
+  setStreaming(false)
+});
     source.stream();
+
   }
 
   const values = {

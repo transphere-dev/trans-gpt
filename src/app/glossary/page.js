@@ -1,6 +1,6 @@
 "use client"
 import { Box, Button, FormControl, FormLabel, Input, Text, useDisclosure } from '@chakra-ui/react'
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import {
     Table,
     Thead,
@@ -24,6 +24,7 @@ import { FiUpload } from 'react-icons/fi'
 export default function Page() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const fileInput = useRef();
+    const [name,setName] = useState();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,7 +33,7 @@ export default function Page() {
         formData.append('file', file);
     
         try {
-          const response = await fetch('http://192.168.4.62:8080/glossaries/upload', {
+          const response = await fetch('http://localhost:8080/glossaries/upload', {
             method: 'POST',
             body: formData,
           });
@@ -101,14 +102,14 @@ export default function Page() {
           <ModalHeader>Create glossary</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-          {/* <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="name">
+          <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="name">
               <FormLabel>Name</FormLabel>
-              <Input  onInput={(e) => setPassword(e.target.value)} type="text" />
+              <Input  onInput={(e) => setName(e.target.value)} type="text" />
             </FormControl>
           <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="industry">
-              <FormLabel>Industry</FormLabel>
-              <Input  onInput={(e) => setPassword(e.target.value)} type="text" />
-            </FormControl> */}
+              <FormLabel>Language</FormLabel>
+              <Input  onInput={(e) => setLanguage(e.target.value)} type="text" />
+            </FormControl>
             <input type="file" ref={fileInput} accept=".xlsx,.xls" required />
 
             <Button
