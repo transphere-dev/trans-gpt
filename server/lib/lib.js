@@ -52,8 +52,34 @@ function verifyPasswordResetToken(token) {
     throw new Error('Invalid or expired token');
   }
 }
+function matchSourceTargetTerms(sourceTerms, targetTerms) {
+
+  for (const sourceTerm of sourceTerms) {
+    const sourceTermId = sourceTerm.id;
+    const matchingTargetTerms = targetTerms.filter(targetTerm =>{
+      
+      if(targetTerm.source_term_id === sourceTermId) {
+            // if (matchingTargetTerms.length > 0) {
+    //   result[sourceTermId] = matchingTargetTerms;
+    // }
+        sourceTerm.target = [{
+          term:targetTerm.term,
+          language: targetTerm.language,
+          created_at: targetTerm.created_at,
+          updated_at: targetTerm.updated_at,
+        }]
+      }
+    });
+    
+    // if (matchingTargetTerms.length > 0) {
+    //   result[sourceTermId] = matchingTargetTerms;
+    // }
+  }
+
+  return sourceTerms;
+}
 
 
 module.exports = {
-    sendVerificationEmail ,sendResetPasswordEmail,verifyPasswordResetToken
+    sendVerificationEmail ,sendResetPasswordEmail,verifyPasswordResetToken,matchSourceTargetTerms
   };

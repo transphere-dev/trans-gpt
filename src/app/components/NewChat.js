@@ -50,6 +50,7 @@ export default function NewChat() {
             icon={<RiTranslate2 fontSize={20} />}
             title={"Translations"}
             description={"Use TransGPT to translate to any language"}
+            path={'translate'}
           />
           <HomeCard
             icon={<RiSearch2Line fontSize={20} />}

@@ -1,8 +1,9 @@
 const { Pool } = require("pg");
 const connectionString =
-  process.env.DATABASE_URL ||
-  "postgres://postgres:postgres@192.168.4.62:5432/transgpt-db";
+  // process.env.DATABASE_URL ||
+  "postgres://postgres:postgres@localhost:5432/transgpt-db";
 const bcrypt = require("bcrypt");
+const { matchSourceTargetTerms } = require("../lib/lib");
 
 const pool = new Pool({ connectionString });
 
@@ -70,13 +71,37 @@ async function createChatSession(user_id,created_at,id,title) {
     throw error;
   }
 }
+async function createGlossary(user_id, name,language,created_at,terms) {
+  try {
+    const {rows} = await pool.query('INSERT INTO glossaries (user_id, name,language,created_at,updated_at) VALUES ($1,$2,$3,$4,NOW())  RETURNING *', [user_id, name,language,created_at]);
+
+    const gloassary = rows[0]
+
+    let termList = []
+
+        // Save the glossaries to the database
+        for (const term of terms) {
+          const { Source,Target } = term;
+          const {rows} = await pool.query('INSERT INTO source_terms (glossary_id,term,created_at,updated_at) VALUES ($1,$2,$3,NOW() )  RETURNING *', [gloassary.id,Source,created_at]);
+          await pool.query('INSERT INTO target_terms (source_term_id,term,language,created_at,updated_at) VALUES ($1,$2,$3,$4,NOW() )  RETURNING *', [rows[0].id,Target,language,created_at]);
+          // console.log(rows[0]);
+          // termList.append(rows[0])
+        }
+
+       
+
+        return rows[0];
+  } catch (error) {
+    console.error("Error creating glossary:", error);
+    throw error;
+  }
+}
+
 
 async function saveChatMessage(chat_message_data) {
   // const { id, content, senderId , sender ,model,role} = chat_message_data;
   const created_at = new Date();
 
-
-  
   try {
 
     for (let index = 0; index < chat_message_data.length; index++) {
@@ -94,8 +119,38 @@ async function saveChatMessage(chat_message_data) {
 }
 
 async function getChatSessions(userId) {
+
   const result = await pool.query('SELECT * FROM chat_sessions WHERE user_id = $1 ORDER BY created_at DESC', [userId]);
   return result.rows;
+}
+async function getGlossary(userId) {
+
+  const query = 'SELECT * FROM glossaries WHERE user_id = $1';
+  const result = await pool.query(query, [userId]);
+  
+  return result.rows;
+}
+
+async function getTerms(userId,glossary_id) {
+
+  let tempTargetList = []
+  const result = await pool.query('SELECT * FROM glossaries WHERE id=$1 AND user_id = $2', [glossary_id,userId]);
+  
+  const query = 'SELECT * FROM source_terms WHERE glossary_id=$1';
+  const {rows} = await pool.query(query, [result.rows[0].id]);
+
+  
+  for (const term of rows) {
+    const target_terms = await pool.query('SELECT * FROM target_terms WHERE source_term_id=$1', [term.id]);
+
+    
+    tempTargetList.push(target_terms.rows[0])
+  }  
+  const source_terms = rows
+  const source_target_terms = matchSourceTargetTerms(source_terms,tempTargetList)
+  
+  
+  return source_target_terms;
 }
 
 
@@ -121,4 +176,7 @@ module.exports = {
   getChatMessages,
   updateUserPassword,
   createChatSession,
+  createGlossary,
+  getGlossary,
+  getTerms
 };

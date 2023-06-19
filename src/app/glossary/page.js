@@ -1,6 +1,6 @@
 "use client"
-import { Box, Button, FormControl, FormLabel, Input, Text, useDisclosure } from '@chakra-ui/react'
-import React, { useRef, useState } from 'react'
+import { Box, Button, FormControl, FormLabel, Input, Text, useColorMode, useDisclosure } from '@chakra-ui/react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     Table,
     Thead,
@@ -20,16 +20,26 @@ import {
     ModalCloseButton,
   } from '@chakra-ui/react'
 import { FiUpload } from 'react-icons/fi'
+import { useAuth } from '../components/AuthContextWrapper'
+import { useRouter } from 'next/navigation'
 
 export default function Page() {
+
     const { isOpen, onOpen, onClose } = useDisclosure();
     const fileInput = useRef();
     const [name,setName] = useState();
+    const [language,setLanguage] = useState();
+    const {user} = useAuth();
+    const [glossaries,setGlossaries] = useState([]);
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const file = fileInput.current.files[0];
         const formData = new FormData();
+        formData.append('user_id', user.id);
+        formData.append('language', language);
+        formData.append('name', name);
         formData.append('file', file);
     
         try {
@@ -49,7 +59,27 @@ export default function Page() {
         }
       };
 
-
+      useEffect(() => {
+        fetch(`http://localhost:8080/glossaries/${user?.id}`).then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Failed to fetch glossaries');
+    }
+  })
+  .then(data => {
+    // Process the fetched glossaries
+    setGlossaries(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+      
+        return () => {
+          null
+        }
+      }, [])
+      
   return (
     <Box p={'3%'}>
                 <Button
@@ -82,15 +112,23 @@ export default function Page() {
       </Tr>
     </Thead>
     <Tbody>
-      <Tr>
-        <Td>爆红娱乐圈</Td>
-        <Td>zh-CN</Td>
-        <Td >Entertainment</Td>
-        <Td></Td>
-        <Td></Td>
-        <Td>Terms</Td>
-        <Td>Active</Td>
-      </Tr>
+        {
+          glossaries?.map((each,i) =>{
+
+            return(
+              <>
+              <Tr cursor={'pointer'} onClick={() => router.push(`/glossary/terms/${each.id}`)}>
+              <Td>{each.name}</Td>
+              <Td>{each.language}</Td>
+              <Td>{each.language}</Td>
+              <Td>{each.created_at}</Td>
+              <Td>{each.updated_at}</Td>
+              </Tr>
+              </>
+            )
+          })
+        }
+
     </Tbody>
 
   </Table>

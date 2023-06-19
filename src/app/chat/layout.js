@@ -1,9 +1,10 @@
 "use client"
-import { SidebarContent } from '@/app/components/Sidebar';
+import { SidebarContent } from '../components/Sidebar';
 import { NavBar } from '../components/NavBar';
 import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import React, { useContext } from 'react'
 import { useAuth } from '../components/AuthContextWrapper';
+import ChatList from '../components/ChatList';
 
 export default function Layout({children}) {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -17,6 +18,7 @@ export default function Layout({children}) {
         <SidebarContent
           onClose={() => onClose}
           display={{ base: 'none', md: 'block' }}
+          module={<ChatList />}
         />
         <Drawer
           autoFocus={false}
@@ -27,7 +29,7 @@ export default function Layout({children}) {
           onOverlayClick={onClose}
           size="full">
           <DrawerContent>
-            <SidebarContent onClose={onClose} userId={user}/>
+            <SidebarContent onClose={onClose} userId={user} module={<ChatList />}/>
           </DrawerContent>
         </Drawer>
 
