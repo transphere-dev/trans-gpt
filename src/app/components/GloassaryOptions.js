@@ -40,6 +40,10 @@ export default function GloassaryOptions() {
        }
     }, [glossary,terms]);
 
+    const selectGlossary = (e) => {
+      setGlossary(e.target.innerText); 
+      fetchTerms(e.target.value)
+    }
     
     useEffect(() => {
       if(glossaryMap) {
@@ -54,7 +58,7 @@ export default function GloassaryOptions() {
   };
   return (
         <>
-        <Select mt={'5%'} mb={'7%'} onChange={ e =>{ setGlossary(e.target.innerText); fetchTerms(e.target.value)}} placeholder='Select Glossary'>
+        <Select mt={'5%'} mb={'7%'} onChange={ e =>{ selectGlossary(e)}} placeholder='Select Glossary'>
             {
                 glossaries?.map((each,i) => {
                     return(

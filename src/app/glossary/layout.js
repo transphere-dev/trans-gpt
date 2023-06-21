@@ -1,5 +1,5 @@
 "use client"
-import { SidebarContent } from '@/app/components/Sidebar';
+import { SidebarContent } from '../components/Sidebar';
 import { NavBar } from '../components/NavBar';
 import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import React, { useContext } from 'react'

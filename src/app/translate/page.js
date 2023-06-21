@@ -1,15 +1,31 @@
 "use client"
 
-import { Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useColorMode } from '@chakra-ui/react';
-import React, { useState } from 'react'
+import { Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useColorMode, useEventListener } from '@chakra-ui/react';
+import React, { useEffect, useRef, useState } from 'react'
 import TranslationBox from '../components/TranslationBox'
+import DragFile from '../components/DragFile'
 import { read, utils } from 'xlsx';
 
 export default function Page() {
     const { colorMode } = useColorMode();
     const [text,setText] = useState();
     const [fileData, setFileData] = useState(null);
+    const [activeRowIndex, setActiveRowIndex] = useState(0);
+    const tableRef = useRef();
+  
+    const handleKeyDown = (event) => {
+      if (event.key === "ArrowUp") {
+        setActiveRowIndex((prevIndex) => Math.max(0, prevIndex - 1));
+      } else if (event.key === "ArrowDown") {
+        const numRows = tableRef.current.rows.length;
+        setActiveRowIndex((prevIndex) => Math.min(prevIndex + 1, numRows - 1));
+      }
+    };
+  
+    useEventListener("keydown", handleKeyDown);
+  
 
+  
   const handleFileDrop = (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
@@ -36,14 +52,17 @@ export default function Page() {
     };
     reader.readAsArrayBuffer(file);
   };
+  
 
   return (
-    <Flex  color={colorMode === "light" ? "#343541" : "#D1D5DB"} 
+    <Flex h={'100%'}  color={colorMode === "light" ? "#343541" : "#D1D5DB"} 
     onDrop={handleFileDrop}
-    onDragOver={(event) => event.preventDefault()}
+    onDragOver={(event) => {event.preventDefault(); event.target.style.backgroundColor = '#ffffff20'}}
+    
     >
-    <TableContainer whiteSpace={'break-spaces'} h={'100%'}  w={'100%'}  borderRadius={10}>
-  <Table mt={'2%'} variant='simple'>
+     { !fileData ? <DragFile />
+   : <TableContainer whiteSpace={'break-spaces'} h={'100%'}  w={'100%'}  borderRadius={10}>
+  <Table mt={'2%'} variant='simple' ref={tableRef}>
     <Thead >
       <Tr >
         <Th>Source</Th>
@@ -54,11 +73,11 @@ export default function Page() {
     </Thead>
     <Tbody w={50}>
         {
-          fileData?.slice(0,16).map((each,i) =>{
+          fileData?.slice(0,30).map((each,i) =>{
 
             return(
               
-              each?.source && <TranslationBox source={each?.source} target={each?.target} key={i}/>
+              each?.source && <TranslationBox index={i} activeRowIndex={activeRowIndex} source={each?.source} target={each?.target} key={i}/>
             )
           })
         }
@@ -66,6 +85,7 @@ export default function Page() {
     </Tbody>
 
   </Table>
-</TableContainer>    </Flex>
+</TableContainer> }  
+ </Flex>
   )
 }

@@ -57,8 +57,8 @@ function matchGlossaryTerms(sentence, glossary) {
   const matchedTerms = [];
 
   glossary.map((term) => {
-    const regex = new RegExp(`\\b${term.term}\\b`, 'i');
-    console.log(regex.test(sentence));
+    const regex = new RegExp(`${term.term}`, 'i');
+
     if (regex.test(sentence)) {
       matchedTerms.push(`${term.term}: ${term.target[0].term}`);
     }

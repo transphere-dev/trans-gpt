@@ -1,5 +1,6 @@
-import { Button, Editable, EditableInput, EditablePreview, Flex, Td, Tr } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import { Button, Editable, EditableInput, EditablePreview, Flex, Td, Tr, useOutsideClick } from '@chakra-ui/react'
+import React, { useEffect, useRef, useState } from 'react'
+import { RiTranslate, RiTranslate2 } from 'react-icons/ri';
 import { TailSpin } from 'react-loader-spinner';
 import { generateTranslationPrompt } from '../lib/misc';
 import { useGlossary } from './GlossaryProvider';
@@ -8,7 +9,7 @@ import { useTranslation } from './TranslationProvider';
 
 
 
-export default function TranslationBox({source,target}) {
+export default function TranslationBox({source,target,activeRowIndex,index }) {
   
   const {terms,highlight} = useGlossary();
   const [highlightGlossary,setHighlightGlossaryTerms] = useState();
@@ -16,7 +17,8 @@ export default function TranslationBox({source,target}) {
   const {sendTranslationRequest} = useTranslation();
   const [translation,setTranslation] = useState("");
   const [loading,setLoading] = useState(false);
-  
+  const editableDivRefs = useRef([]);
+
   useEffect(() => {
     if(terms.length > 0) {
       setHighlightGlossaryTerms(highlightGlossaryTerms(source, terms))
@@ -24,6 +26,14 @@ export default function TranslationBox({source,target}) {
        
  }, [terms]);
  
+ useEffect(() => {
+  const timer = setTimeout(() => {
+    editableDivRefs.current[activeRowIndex]?.focus();
+  }, 0);
+
+  return () => clearTimeout(timer);
+}, [activeRowIndex]);
+
  const translate = async (text) => {
   setTranslation("");
   setLoading(true);
@@ -70,20 +80,39 @@ export default function TranslationBox({source,target}) {
   });
   return highlightedSentence;
 };
+
+const handleClickOutside = () => {
+  // The click is outside the desired element
+  // Add your desired logic here
+  setClicked(!clicked)
+};
+
+const ref = useRef();
+
+useOutsideClick({
+  ref,
+  handler: clicked && handleClickOutside,
+});
+
   return (
-    <Tr>
-      <Td w={'50%'} onClick={() => setClicked(!clicked)}>
+    <Tr ref={ref}>
+      <Td 
+      bg={index === activeRowIndex && "orange.300" } color={index === activeRowIndex && "#000" } 
        
-        {         highlight && terms.length > 0 ? <div contentEditable dangerouslySetInnerHTML={{ __html:  highlightGlossary}} />
+      onFocus={() => console.info('i')} 
+       w={'50%'} onClick={() => setClicked(!clicked)}>
+       
+        {         
+        highlight && terms.length > 0 ? <div contentEditable dangerouslySetInnerHTML={{ __html:  highlightGlossary}} />
         :
-        <Editable  className="string-div" defaultValue={source}>
+        <Editable ref={(element) => (editableDivRefs.current[index] = element)} className="string-div" defaultValue={source}>
         <EditablePreview />
         <EditableInput />
 
       </Editable>
 }
 
-{clicked && <Button onClick={() => translate(source)} mt="2%">Translate</Button>}
+{clicked && <Button leftIcon={<RiTranslate2 />} size={'sm'} onClick={() => translate(source)} mt="2%">Translate</Button>}
       </Td>
       <Td w={'50%'} >
     {loading &&  <TailSpin
