@@ -9,6 +9,7 @@
 /coverage
 
 /server/node_modules
+/server/uploads
 # next.js
 /.next/
 /out/
