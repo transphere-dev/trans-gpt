@@ -16,7 +16,7 @@ export const GlossaryProvider = ({children}) => {
 
 
     useEffect(() => {
-        fetch(`http://localhost:8080/glossaries/${user?.id}`).then(response => {
+        fetch(`http://192.168.4.62:8080/glossaries/${user?.id}`).then(response => {
     if (response.ok) {
     
         return response.json();
@@ -40,7 +40,7 @@ export const GlossaryProvider = ({children}) => {
 
 
    const fetchTerms = async (glossary_id) => {
-    await fetch(`http://localhost:8080/glossaries/${user?.id}/glossary/${glossary_id}`).then(response => {
+    await fetch(`http://192.168.4.62:8080/glossaries/${user?.id}/glossary/${glossary_id}`).then(response => {
       if (response.ok) {
         return response.json();
       } else {

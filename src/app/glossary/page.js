@@ -1,5 +1,6 @@
 "use client"
-import { Box, Button, FormControl, FormLabel, Input, Text, useColorMode, useDisclosure } from '@chakra-ui/react'
+import ISO6391 from 'iso-639-1';
+import { Box, Button, FormControl, FormLabel, Input, Text, useColorMode, useDisclosure ,Select, useColorModeValue} from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import {
     Table,
@@ -18,49 +19,111 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
+    useToast
   } from '@chakra-ui/react'
 import { FiUpload } from 'react-icons/fi'
 import { useAuth } from '../components/AuthContextWrapper'
 import { useRouter } from 'next/navigation'
+import { read, utils } from 'xlsx';
+
 
 export default function Page() {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const fileInput = useRef();
     const [name,setName] = useState();
-    const [language,setLanguage] = useState();
+    const [language,setLanguage] = useState()
+    const [valid,setValid] = useState(false);
+    const [loading,setLoading] = useState(false);
     const {user} = useAuth();
     const [glossaries,setGlossaries] = useState([]);
+    const [langs,setLangs] = useState([]);
     const router = useRouter();
+    const toast = useToast()
 
+      
+  const isFileValid = async (event) => {
+    const file = fileInput.current.files[0];
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const workbook = read(new Uint8Array(e.target.result), { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const data = utils.sheet_to_json(worksheet, { header: 1 });
+      // Extract data from "source" and "target" headers
+      const headers = data[0];
+      const sourceIndex =  headers.indexOf('Source');
+      const translationIndex = headers.indexOf('Target');
+
+
+      if (sourceIndex !== -1 && translationIndex !== -1)  setValid(true)
+      else {
+        // toast.close(id);
+        // if (!toast.isActive(id)) {
+        toast({
+          // id,
+          title: "Required headers not found!",
+          duration: 7000,
+          status: "warning",
+          description: 'Ensure the glossary file has Source and Target column headers'
+        });
+        console.log('Required headers not found');
+        setValid(false)
+      }
+    };
+    reader.readAsArrayBuffer(file);
+    return valid
+  };
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        const file = fileInput.current.files[0];
-        const formData = new FormData();
-        formData.append('user_id', user.id);
-        formData.append('language', language);
-        formData.append('name', name);
-        formData.append('file', file);
-    
-        try {
-          const response = await fetch('http://localhost:8080/glossaries/upload', {
-            method: 'POST',
-            body: formData,
-          });
-    
-          if (response.ok) {
-            alert('Glossaries uploaded successfully!');
-          } else {
-            alert('Error uploading glossaries');
-          }
-        } catch (error) {
-          console.error('Error uploading glossaries:', error);
-          alert('Error uploading glossaries');
-        }
-      };
 
-      useEffect(() => {
-        fetch(`http://localhost:8080/glossaries/${user?.id}`).then(response => {
+      e.preventDefault();
+    
+          setLoading(true)
+
+          const file = fileInput.current.files[0];
+          const formData = new FormData();
+          formData.append('user_id', user.id);
+          formData.append('language', language);
+          formData.append('name', name);
+          formData.append('file', file);
+      
+          try {
+            const response = await fetch('http://192.168.4.62:8080/glossaries/upload', {
+              method: 'POST',
+              body: formData,
+            });
+            const data = await response.json()
+
+            toast({
+              // id,
+              title: data?.message || "Uploaded successfully",
+              duration: 7000,
+              status: data?.success ? "success" : "warning",
+              description: data?.success && !data?.success &&  'Ensure the glossary file has Source and Target column headers'
+
+            })
+            data?.id && setGlossaries(prev => setGlossaries([...prev,data]))
+            setLoading(false)
+          } catch (error) {
+            setLoading(false)
+            console.error('Error uploading glossaries:', error);
+
+            toast({
+              // id,
+              title: "Required headers not found!",
+              duration: 7000,
+              status: "warning",
+              description: 'Ensure the glossary file has Source and Target column headers'
+            })
+          }
+        
+       
+      }
+
+  useEffect(() => {
+      setLangs(ISO6391.getAllCodes())
+
+        fetch(`http://192.168.4.62:8080/glossaries/${user?.id}`).then(response => {
     if (response.ok) {
       return response.json();
     } else {
@@ -81,19 +144,21 @@ export default function Page() {
       }, [])
       
   return (
-    <Box p={'3%'}>
+    <Box color={useColorModeValue("#444654", "#fff")}  p={'3%'}>
                 <Button
                 mr={0}
                 ml={'auto'}
           color={"#F79229"}
           borderColor={"#F79229"}
-          mb={0}
+          mb={'2%'}
           mt={"auto"}
           variant={"outline"}
           borderWidth={2}
           w={"fit-content"}
           leftIcon={<FiUpload />}
           onClick={onOpen}
+          isLoading={loading}
+          loadingText={'Uploading...'}
         >
           Upload glossary
         </Button>
@@ -120,9 +185,10 @@ export default function Page() {
               <Tr cursor={'pointer'} onClick={() => router.push(`/glossary/terms/${each.id}`)}>
               <Td>{each.name}</Td>
               <Td>{each.language}</Td>
-              <Td>{each.language}</Td>
+              <Td> - </Td>
               <Td>{each.created_at}</Td>
               <Td>{each.updated_at}</Td>
+              <Td> - </Td>
               </Tr>
               </>
             )
@@ -134,9 +200,9 @@ export default function Page() {
   </Table>
 </TableContainer>
 
-<Modal isCentered isOpen={isOpen} onClose={onClose}>
+<Modal  isCentered isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent >
+        <ModalContent color={useColorModeValue("#444654", "#fff")} >
           <ModalHeader>Create glossary</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -144,9 +210,19 @@ export default function Page() {
               <FormLabel>Name</FormLabel>
               <Input  onInput={(e) => setName(e.target.value)} type="text" />
             </FormControl>
-          <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="industry">
+          <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="language">
               <FormLabel>Language</FormLabel>
-              <Input  onInput={(e) => setLanguage(e.target.value)} type="text" />
+              <Select mt={'5%'} mb={'7%'} onChange={ (e) => setLanguage(e.target.value)} placeholder='Select Glossary'>
+            {
+                langs?.map((each,i) => {
+                    return(
+                        <option key={i} value={each}>{each}</option>
+
+                    )
+                })
+            }
+
+    </Select>
             </FormControl>
             <input type="file" ref={fileInput} accept=".xlsx,.xls" required />
 
@@ -160,7 +236,9 @@ export default function Page() {
           w={"fit-content"}
           leftIcon={<FiUpload />}
           onClick={handleSubmit}
-        >
+          isLoading={loading}
+          loadingText={'Uploading...'}
+          >
           Upload glossary
         </Button>
           </ModalBody>

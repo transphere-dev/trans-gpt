@@ -42,7 +42,7 @@ export default function Page() {
         formData.append('file', file);
     
         try {
-          const response = await fetch('http://localhost:8080/glossaries/upload', {
+          const response = await fetch('http://192.168.4.62:8080/glossaries/upload', {
             method: 'POST',
             body: formData,
           });
@@ -59,7 +59,7 @@ export default function Page() {
       };
 
       useEffect(() => {
-        fetch(`http://localhost:8080/glossaries/${user.id}`).then(response => {
+        fetch(`http://192.168.4.62:8080/glossaries/${user.id}`).then(response => {
     if (response.ok) {
       return response.json();
     } else {

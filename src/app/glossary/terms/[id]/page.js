@@ -30,7 +30,7 @@ export default function Page({params}) {
 
 
       useEffect(() => {
-        fetch(`http://localhost:8080/glossaries/${user?.id}/glossary/${glossary_id}`).then(response => {
+        fetch(`http://192.168.4.62:8080/glossaries/${user?.id}/glossary/${glossary_id}`).then(response => {
     if (response.ok) {
       return response.json();
     } else {
@@ -52,7 +52,7 @@ export default function Page({params}) {
       
   return (
     <Box color={colorMode === "light" ? "#343541" : "#D1D5DB"} p={'3%'}>
-                <Button
+                {/* <Button
                 mr={0}
                 ml={'auto'}
           color={"#F79229"}
@@ -67,7 +67,7 @@ export default function Page({params}) {
         >
           Upload glossary
         </Button>
-    <Text>Manage all your terms here!</Text>
+    <Text>Manage all your terms here!</Text> */}
     <TableContainer  borderRadius={10}>
   <Table  mt={'2%'} variant='striped'>
     <Thead >

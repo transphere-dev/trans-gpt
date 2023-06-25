@@ -22,6 +22,7 @@
     "eslint-config-next": "13.2.4",
     "eventsource-parser": "^1.0.0",
     "framer-motion": "^5.6.0",
+    "iso-639-1": "^2.1.15",
     "js-cookie": "^3.0.1",
     "next": "13.2.4",
     "node-cmd": "^5.0.0",

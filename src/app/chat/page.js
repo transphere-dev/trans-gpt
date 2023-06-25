@@ -78,7 +78,7 @@ export default function Page() {
           
           {pathname != "/chat" &&<ChatInput />}
           <Text mt={3} fontSize={"xs"} align={"center"} color={"#ACACBE"}>
-          TransGPT April 10 Version. This a pre-release for testing and evaluation purposes.
+          TransGPT June 25 Version. This a pre-release for testing and evaluation purposes.
         </Text>
         </Box>
        

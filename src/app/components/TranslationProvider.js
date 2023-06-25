@@ -21,10 +21,11 @@ export const TranslationProvider = ({children}) => {
   const [glossaries,setTranslations] = useState([]);
   const [translation,setTranslation] = useState(null);
   const [highlight,setHighlight] = useState(false);
+  const [fileData, setFileData] = useState(null)
 
 
     useEffect(() => {
-        fetch(`http://localhost:8080/glossaries/${user?.id}`).then(response => {
+        fetch(`http://192.168.4.62:8080/glossaries/${user?.id}`).then(response => {
     if (response.ok) {
     
         return response.json();
@@ -87,7 +88,7 @@ export const TranslationProvider = ({children}) => {
 
 
    const fetchTerms = async (translation_id) => {
-    await fetch(`http://localhost:8080/glossaries/${user?.id}/translation/${translation_id}`).then(response => {
+    await fetch(`http://192.168.4.62:8080/glossaries/${user?.id}/translation/${translation_id}`).then(response => {
       if (response.ok) {
         return response.json();
       } else {
@@ -104,7 +105,7 @@ export const TranslationProvider = ({children}) => {
   }
 
   return (
-    <TranslationContext.Provider value={{sendTranslationRequest}}>
+    <TranslationContext.Provider value={{sendTranslationRequest,fileData, setFileData}}>
       {children}
 
     </TranslationContext.Provider>

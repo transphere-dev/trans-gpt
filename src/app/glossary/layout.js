@@ -5,6 +5,7 @@ import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from '@c
 import React, { useContext } from 'react'
 import { useAuth } from '../components/AuthContextWrapper';
 import ChatList from '../components/ChatList';
+import Modules from "../components/Modules"
 
 export default function Layout({children}) {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -18,7 +19,7 @@ export default function Layout({children}) {
         <SidebarContent
           onClose={() => onClose}
           display={{ base: 'none', md: 'block' }}
-          module={<ChatList />}
+          module={<Modules />}
         />
         <Drawer
           autoFocus={false}

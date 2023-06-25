@@ -1,5 +1,5 @@
 "use client"
-import { useAuth } from '@/app/components/AuthContextWrapper';
+import { useAuth } from '../../components/AuthContextWrapper';
 import { Box, Button, Center, Heading, Image, Text , useColorModeValue } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';

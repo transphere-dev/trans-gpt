@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import ChatBox from "../../components/ChatBox";
 import NewChat from "../../components/NewChat";
 import ChatContext from "../../contexts/ChatContext";
-import { useAuth } from "@/app/components/AuthContextWrapper";
+import { useAuth } from "../../components/AuthContextWrapper";
 
 export default function Page({ params }) {
   const pathname = usePathname();

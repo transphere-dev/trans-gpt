@@ -1,18 +1,20 @@
 "use client"
 
-import { Flex, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useColorMode, useEventListener } from '@chakra-ui/react';
+import { Flex, Table, Button, TableContainer,useColorModeValue , Tbody, Td, Th, Thead, Tr, useColorMode, useEventListener , useToast} from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react'
 import TranslationBox from '../components/TranslationBox'
 import DragFile from '../components/DragFile'
 import { read, utils } from 'xlsx';
+import { useTranslation } from '../components/TranslationProvider';
 
 export default function Page() {
     const { colorMode } = useColorMode();
     const [text,setText] = useState();
-    const [fileData, setFileData] = useState(null);
+    const {fileData, setFileData} = useTranslation();
     const [activeRowIndex, setActiveRowIndex] = useState(0);
     const tableRef = useRef();
-  
+    const toast = useToast();
+
     const handleKeyDown = (event) => {
       if (event.key === "ArrowUp") {
         setActiveRowIndex((prevIndex) => Math.max(0, prevIndex - 1));
@@ -47,6 +49,15 @@ export default function Page() {
 
         setFileData(extractedData);
       } else {
+        // toast.close(id);
+        // if (!toast.isActive(id)) {
+        toast({
+          // id,
+          title: "Required headers not found!",
+          duration: 5000,
+          status: "warning",
+          description: 'Ensure the glossary file has 正文 and Target column headers'
+        });
         console.log('Required headers not found');
       }
     };
@@ -61,8 +72,8 @@ export default function Page() {
     
     >
      { !fileData ? <DragFile />
-   : <TableContainer whiteSpace={'break-spaces'} h={'100%'}  w={'100%'}  borderRadius={10}>
-  <Table mt={'2%'} variant='simple' ref={tableRef}>
+   : <TableContainer  whiteSpace={'break-spaces'} h={'100%'}  w={'100%'}  borderRadius={10}>
+  <Table mt={'2%'} variant='striped' ref={tableRef}>
     <Thead >
       <Tr >
         <Th>Source</Th>

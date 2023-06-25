@@ -1,11 +1,15 @@
-import { Select, Switch, Text } from '@chakra-ui/react'
+import { Select, Switch, Text , Button} from '@chakra-ui/react'
+import { useRouter } from 'next/navigation';
+import { Router } from 'next/router';
 import React, { useEffect, useState } from 'react'
 import { highlightGlossaryTerms } from '../lib/misc';
 import { useGlossary } from './GlossaryProvider';
+import { useTranslation } from './TranslationProvider';
 
 export default function GloassaryOptions() {
     const {glossaries,fetchTerms,terms,glossary,setGlossary,setHighlight,highlight} = useGlossary()
-
+    const {fileData, setFileData} = useTranslation();
+    const router = useRouter()
     const [glossaryMap, setGlossaryMap] = useState(null);
 
     // useEffect(() => {
@@ -19,7 +23,7 @@ export default function GloassaryOptions() {
     // }, [highlight])
 
     useEffect(() => {
-       if(terms.length > 0) {
+       if(terms && terms.length > 0) {
 
         const buildGlossaryMap = () => {
           const map = new Map();
@@ -77,6 +81,8 @@ export default function GloassaryOptions() {
                isChecked={highlight}
                onChange={(e) => setHighlight(!highlight)}
              />
+              <Button onClick={() => router.push('/glossary')} mt={'5%'} w={'100%'}>Upload Glossary</Button>
+             {fileData && <Button onClick={() => setFileData(null)} mt={'5%'} w={'100%'}>Remove translations</Button>}
         </>
   )
 }

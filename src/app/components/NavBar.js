@@ -119,8 +119,8 @@ export const NavBar = ({ onOpen, ...rest }) => {
                 bg={bgColor}
                 borderColor={borderColor}
               >
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>Settings</MenuItem>
+                {/* <MenuItem>Profile</MenuItem> */}
+                {/* <MenuItem>Settings</MenuItem> */}
               </MenuList>
             </Menu>
           </Flex>

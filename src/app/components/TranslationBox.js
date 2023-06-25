@@ -126,11 +126,11 @@ useOutsideClick({
             wrapperClass="loader"
             visible
           />}
-        <Editable defaultValue={ translation }>
+        {/* <Editable defaultValue={ translation }>
           <EditablePreview  />
           <EditableInput />
-        </Editable>
-        <div>{translation}</div>
+        </Editable> */}
+        <div>{translation ? translation : target}</div>
       </Td>
     </Tr>
   );
