@@ -1,4 +1,4 @@
-import { Button, Editable, EditableInput, EditablePreview, Flex, Td, Tr, useOutsideClick } from '@chakra-ui/react'
+import { Button, Editable, EditableInput, EditablePreview, Flex, Td, Tr , useToast, useOutsideClick } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { RiTranslate, RiTranslate2 } from 'react-icons/ri';
 import { TailSpin } from 'react-loader-spinner';
@@ -18,6 +18,7 @@ export default function TranslationBox({source,target,activeRowIndex,index }) {
   const [translation,setTranslation] = useState("");
   const [loading,setLoading] = useState(false);
   const editableDivRefs = useRef([]);
+  const toast = useToast()
 
   useEffect(() => {
     if(terms.length > 0) {
@@ -47,13 +48,17 @@ export default function TranslationBox({source,target,activeRowIndex,index }) {
       prompt:  generateTranslationPrompt([text],terms)
     }),
   });
+  console.log(response.status)
 
   if (!response.ok) {
+    setLoading(false);
     throw new Error(response.statusText);
+    
   }
 
   const data = response.body;
   if (!data) {
+    console.log(data);
     return;
   }
   const reader = data.getReader();
@@ -65,7 +70,16 @@ export default function TranslationBox({source,target,activeRowIndex,index }) {
     isDone = done;
     const chunkValue = decoder.decode(value);
 
-    setTranslation((prev) => prev + chunkValue);
+    
+    chunkValue !== '[object Response]' ? setTranslation((prev) => prev + chunkValue)
+     : 
+     toast({
+      // id,
+      title: "Too many translation requests",
+      duration: 7000,
+      status: "warning",
+      description: 'Please wait for less than 60 seconds before you translate the next string'
+    })
   }
 
   setLoading(false);

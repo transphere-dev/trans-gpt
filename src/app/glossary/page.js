@@ -162,7 +162,7 @@ export default function Page() {
         >
           Upload glossary
         </Button>
-    <Text>Manage all your glossaries here!</Text>
+    <Text>Ensure the glossary file has Source and Target column headers</Text>
     <TableContainer  borderRadius={10}>
   <Table mt={'2%'} variant='simple'>
     <Thead >

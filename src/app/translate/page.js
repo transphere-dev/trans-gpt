@@ -38,8 +38,9 @@ export default function Page() {
       const data = utils.sheet_to_json(worksheet, { header: 1 });
       // Extract data from "source" and "target" headers
       const headers = data[0];
-      const sourceIndex =  headers.indexOf('正文');
-      const translationIndex = headers.indexOf('Target');
+      const sourceIndex =  headers.indexOf('正文') === -1 ?  headers.indexOf('Source') : headers.indexOf('正文') ;
+      const translationIndex = headers.indexOf('目标') === -1 ?  headers.indexOf('Target') : headers.indexOf('目标');
+      console.info(sourceIndex)
 
       if (sourceIndex !== -1 && translationIndex !== -1) {
         const extractedData = data.slice(1).map((row) => ({
@@ -56,7 +57,7 @@ export default function Page() {
           title: "Required headers not found!",
           duration: 5000,
           status: "warning",
-          description: 'Ensure the glossary file has 正文 and Target column headers'
+          description: 'Ensure the glossary file has Source or 正文 and Target or 目标 column headers'
         });
         console.log('Required headers not found');
       }

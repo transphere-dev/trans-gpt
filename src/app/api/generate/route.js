@@ -21,6 +21,9 @@ export const config = {
   
     const stream = await OpenAIStream(payload);
 
-    return new Response(stream);
+    const res = new Response(stream)
+    console.info(`API - ${res.status}`)
+
+    return res;
   };
 

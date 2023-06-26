@@ -5,7 +5,7 @@ import { OpenAIStream } from "../lib/OpenAIStream";
 import { useAuth } from "./AuthContextWrapper";
 import { useGlossary } from "./GlossaryProvider";
 
-const apiKey = "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";
+const apiKey = "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";
 
 export const config = {
   runtime: "edge",

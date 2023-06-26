@@ -8,7 +8,7 @@ export default function DragFile() {
 <Box align={'center'}>
 <FiFilePlus size={100} />
 <Text mt={'10%'}>Drag and drop an  <strong>.xlsx</strong> file </Text>
-<Text mt={'3%'}>Glossary file should have  <strong>正文</strong> and <strong>Target</strong> columns </Text>
+<Text mt={'3%'}>Translation file should have  <strong>Source or 正文</strong> and <strong>Target or 目标</strong> headers </Text>
 
     </Box>     
     </Center>
