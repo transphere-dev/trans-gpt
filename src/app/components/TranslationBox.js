@@ -11,7 +11,7 @@ import { useTranslation } from './TranslationProvider';
 
 export default function TranslationBox({source,target,activeRowIndex,index }) {
   
-  const {terms,highlight} = useGlossary();
+  const {terms,highlight,systemPrompt} = useGlossary();
   const [highlightGlossary,setHighlightGlossaryTerms] = useState();
   const [clicked,setClicked] = useState(false);
   const {sendTranslationRequest} = useTranslation();
@@ -45,7 +45,7 @@ export default function TranslationBox({source,target,activeRowIndex,index }) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      prompt:  generateTranslationPrompt([text],terms)
+      prompt:  generateTranslationPrompt(systemPrompt,[text],terms)
     }),
   });
   console.log(response.status)
@@ -109,7 +109,7 @@ useOutsideClick({
 });
 
   return (
-    <Tr ref={ref}>
+    <Tr className='table-row' ref={ref}>
       <Td 
       bg={index === activeRowIndex && "orange.300" } color={index === activeRowIndex && "#000" } 
        

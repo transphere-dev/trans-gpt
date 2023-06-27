@@ -206,13 +206,14 @@ export default function Page() {
           <ModalHeader>Create glossary</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-          <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="name">
+        <form onSubmit={handleSubmit}>
+        <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="name">
               <FormLabel>Name</FormLabel>
-              <Input  onInput={(e) => setName(e.target.value)} type="text" />
+              <Input required onInput={(e) => setName(e.target.value)} type="text" />
             </FormControl>
           <FormControl _hover={{border: '#F79229'}} border={'#27272F'} id="language">
               <FormLabel>Language</FormLabel>
-              <Select mt={'5%'} mb={'7%'} onChange={ (e) => setLanguage(e.target.value)} placeholder='Select Glossary'>
+              <Select required mt={'5%'} mb={'7%'} onChange={ (e) => setLanguage(e.target.value)} placeholder='Select Language'>
             {
                 langs?.map((each,i) => {
                     return(
@@ -235,12 +236,14 @@ export default function Page() {
           borderWidth={2}
           w={"fit-content"}
           leftIcon={<FiUpload />}
-          onClick={handleSubmit}
+
           isLoading={loading}
           loadingText={'Uploading...'}
+          type="submit"
           >
           Upload glossary
         </Button>
+        </form>
           </ModalBody>
 
           <ModalFooter>

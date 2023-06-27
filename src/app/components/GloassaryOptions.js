@@ -5,12 +5,19 @@ import React, { useEffect, useState } from 'react'
 import { highlightGlossaryTerms } from '../lib/misc';
 import { useGlossary } from './GlossaryProvider';
 import { useTranslation } from './TranslationProvider';
+import ExportButton from '../components/ExportButton'
 
 export default function GloassaryOptions() {
-    const {glossaries,fetchTerms,terms,glossary,setGlossary,setHighlight,highlight} = useGlossary()
+    const {glossaries,fetchTerms,terms,glossary,setGlossary,setHighlight,highlight,onOpen,onClose} = useGlossary()
     const {fileData, setFileData} = useTranslation();
     const router = useRouter()
     const [glossaryMap, setGlossaryMap] = useState(null);
+    const data = [
+      { name: 'John', age: 30, city: 'New York' },
+      { name: 'Jane', age: 25, city: 'San Francisco' },
+      { name: 'Bob', age: 35, city: 'Chicago' },
+    ];
+  
 
     // useEffect(() => {
     //   if(highlight){
@@ -49,13 +56,13 @@ export default function GloassaryOptions() {
       fetchTerms(e.target.value)
     }
     
-    useEffect(() => {
-      if(glossaryMap) {
-        const t = lookupGlossaryTerm(terms[10].term)
-       
+  //   useEffect(() => {
+  //     if(glossaryMap) {
+  //       const t = lookupGlossaryTerm(terms[0].term)
+  //      console.log(t);
 
-      }
-   }, [glossaryMap]);
+  //     }
+  //  }, [glossaryMap]);
 
    const lookupGlossaryTerm = (term) => {
     return glossaryMap.get(term) || [];
@@ -81,7 +88,9 @@ export default function GloassaryOptions() {
                isChecked={highlight}
                onChange={(e) => setHighlight(!highlight)}
              />
-              <Button onClick={() => router.push('/glossary')} mt={'5%'} w={'100%'}>Upload Glossary</Button>
+             <Button onClick={() => router.push('/glossary')} mt={'5%'} w={'100%'}>Upload Glossary</Button>
+              <Button onClick={onOpen} mt={'5%'} w={'100%'}>Prompt</Button>
+              <ExportButton fileName="Translations" />
              {fileData && <Button onClick={() => setFileData(null)} mt={'5%'} w={'100%'}>Remove translations</Button>}
         </>
   )

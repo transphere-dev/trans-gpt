@@ -48,6 +48,7 @@ export default function Page() {
           target: row[translationIndex],
         }));
 
+        
         setFileData(extractedData);
       } else {
         // toast.close(id);

@@ -16,7 +16,7 @@ const TranslationContext = createContext({});
 export const TranslationProvider = ({children}) => {
   const {user} = useAuth();
   const [error, setError] = useState("");
-  const {terms, setTerms} = useGlossary();
+  const {terms, setTerms,systemPrompt} = useGlossary();
   const [loading, setLoading] = useState(false);
   const [glossaries,setTranslations] = useState([]);
   const [translation,setTranslation] = useState(null);
@@ -49,7 +49,7 @@ export const TranslationProvider = ({children}) => {
   async function sendTranslationRequest(text) {
     try {
       const requestBody = {
-        messages: generateTranslationPrompt([text],terms),
+        messages: generateTranslationPrompt(systemPrompt,[text],terms),
         // max_tokens: 100,
         temperature: 0.7,
         n: 1,
