@@ -18,9 +18,18 @@ import {
   FormLabel,
   Button,
   Flex,
-  FormHelperText
+  FormHelperText,
+    Slider,
+    SliderTrack,
+    SliderFilledTrack,
+    SliderThumb,
+    SliderMark,
+    Box,
+    Tooltip,
 } from '@chakra-ui/react'
 import { FiRefreshCcw, FiSave } from "react-icons/fi";
+import { useGPT } from "./GptProvider";
+import { RiInformationLine } from "react-icons/ri";
 const GlossaryContext = createContext({});
 
 const defaultSystemPrompt = `You are a veteran translator.\nYou will be provided with short sentences to translate.\nYou have these requirements:=
@@ -43,6 +52,7 @@ const otherMsg = `5. Fictionalize any new character names into English ones. If 
 
 export const GlossaryProvider = ({children}) => {
   const {user} = useAuth();
+  const {temperature,setTemperature} = useGPT();
   const [error, setError] = useState("");
   const [terms, setTerms] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -110,8 +120,33 @@ export const GlossaryProvider = ({children}) => {
 
               <Textarea size={'sm'} h={'70%'} value={systemPrompt}  onInput={(e) => setSystemPrompt(e.target.value)} defaultValue={systemPrompt} type="text" />
             </FormControl>
- 
-     
+<Flex alignItems={'center'} justifyItems={'center'}>
+<Text mr={'3%'}>Temperature</Text>
+ <Tooltip size={'sm'}  label='Use sampling temperature between 0 and 2.
+  Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.' fontSize='md'>
+  <span><RiInformationLine /></span>
+</Tooltip>
+</Flex>
+
+            <Slider step={0.1} min={0} max={2} defaultValue={temperature} aria-label='slider-ex-6' onChange={(val) => setTemperature(val)}>
+            <SliderMark
+          value={temperature}
+          textAlign='center'
+          bg='#F79229'
+          color='white'
+          mt='-10'
+          ml='-5'
+          w='12'
+          borderRadius={'7%'}
+        >
+          {temperature}
+        </SliderMark>
+        <SliderTrack bg={'#F7922920'}>
+        <SliderFilledTrack bg={'#F79229'}/>
+        </SliderTrack>
+        <SliderThumb />
+</Slider>
+
             <Flex justifyContent={'space-between'}>
         
         <Button

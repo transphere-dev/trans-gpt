@@ -4,13 +4,14 @@ import { RiTranslate, RiTranslate2 } from 'react-icons/ri';
 import { TailSpin } from 'react-loader-spinner';
 import { generateTranslationPrompt } from '../lib/misc';
 import { useGlossary } from './GlossaryProvider';
+import { useGPT } from './GptProvider';
 import { useTranslation } from './TranslationProvider';
 
 
 
 
 export default function TranslationBox({source,target,activeRowIndex,index }) {
-  
+  const {temperature,setTemperature} = useGPT();
   const {terms,highlight,systemPrompt} = useGlossary();
   const [highlightGlossary,setHighlightGlossaryTerms] = useState();
   const [clicked,setClicked] = useState(false);
@@ -38,15 +39,24 @@ export default function TranslationBox({source,target,activeRowIndex,index }) {
  const translate = async (text) => {
   setTranslation("");
   setLoading(true);
+
+  const payload = {
+    messages: generateTranslationPrompt(systemPrompt,[text],terms),
+    // max_tokens: 100,
+    temperature: temperature,
+    n: 1,
+    // stop: '\nGlossary',
+    model: "gpt-3.5-turbo",
+    stream:true
+  };
   
   const response = await fetch("/api/generate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      prompt:  generateTranslationPrompt(systemPrompt,[text],terms)
-    }),
+
+    body: JSON.stringify(payload),
   });
   console.log(response.status)
 

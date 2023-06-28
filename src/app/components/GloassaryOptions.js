@@ -1,6 +1,5 @@
 import { Select, Switch, Text , Button} from '@chakra-ui/react'
 import { useRouter } from 'next/navigation';
-import { Router } from 'next/router';
 import React, { useEffect, useState } from 'react'
 import { highlightGlossaryTerms } from '../lib/misc';
 import { useGlossary } from './GlossaryProvider';
@@ -12,11 +11,6 @@ export default function GloassaryOptions() {
     const {fileData, setFileData} = useTranslation();
     const router = useRouter()
     const [glossaryMap, setGlossaryMap] = useState(null);
-    const data = [
-      { name: 'John', age: 30, city: 'New York' },
-      { name: 'Jane', age: 25, city: 'San Francisco' },
-      { name: 'Bob', age: 35, city: 'Chicago' },
-    ];
   
 
     // useEffect(() => {

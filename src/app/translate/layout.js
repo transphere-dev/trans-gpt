@@ -8,6 +8,7 @@ import ChatList from '../components/ChatList';
 import GloassaryOptions from '../components/GloassaryOptions';
 import { GlossaryProvider } from '../components/GlossaryProvider';
 import { TranslationProvider } from '../components/TranslationProvider';
+import { GptProvider } from '../components/GptProvider';
 
 export default function Layout({children}) {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -17,7 +18,8 @@ export default function Layout({children}) {
   
     
     return (
-      <GlossaryProvider>
+   <GptProvider>
+       <GlossaryProvider>
         <TranslationProvider>
               <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
         <SidebarContent
@@ -49,6 +51,7 @@ export default function Layout({children}) {
       </Box>
       </TranslationProvider>
       </GlossaryProvider>
+   </GptProvider>
 
     );
   }
