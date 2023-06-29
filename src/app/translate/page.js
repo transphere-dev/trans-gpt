@@ -14,6 +14,7 @@ export default function Page() {
     const [activeRowIndex, setActiveRowIndex] = useState(0);
     const tableRef = useRef();
     const toast = useToast();
+    const scheme = useColorMode()
 
     const handleKeyDown = (event) => {
       if (event.key === "ArrowUp") {
@@ -75,7 +76,7 @@ export default function Page() {
     >
      { !fileData ? <DragFile />
    : <TableContainer  whiteSpace={'break-spaces'} h={'100%'}  w={'100%'}  borderRadius={10}>
-  <Table mt={'2%'} variant='striped' ref={tableRef}>
+  <Table colorScheme={scheme.colorMode === "light" ? "facebook" : null } mt={'2%'} variant='striped' ref={tableRef}>
     <Thead >
       <Tr >
         <Th>Source</Th>
@@ -90,7 +91,7 @@ export default function Page() {
 
             return(
               
-              each?.source && <TranslationBox index={i} activeRowIndex={activeRowIndex} source={each?.source} target={each?.target} key={i}/>
+              each?.source && <TranslationBox scheme={scheme} index={i} activeRowIndex={activeRowIndex} source={each?.source} target={each?.target} key={i}/>
             )
           })
         }
