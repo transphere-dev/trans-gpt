@@ -40,15 +40,6 @@ export default function TranslationBox({source,target,activeRowIndex,index }) {
   setTranslation("");
   setLoading(true);
 
-  const payload = {
-    messages: generateTranslationPrompt(systemPrompt,[text],terms),
-    // max_tokens: 100,
-    temperature: temperature,
-    n: 1,
-    // stop: '\nGlossary',
-    model: "gpt-3.5-turbo",
-    stream:true
-  };
   
   const response = await fetch("/api/generate", {
     method: "POST",
@@ -56,7 +47,12 @@ export default function TranslationBox({source,target,activeRowIndex,index }) {
       "Content-Type": "application/json",
     },
 
-    body: JSON.stringify(payload),
+    body: JSON.stringify(
+      {
+        prompt:  generateTranslationPrompt(systemPrompt,[text],terms),
+        temperature:temperature
+      }
+    ),
   });
   console.log(response.status)
 
@@ -100,7 +96,7 @@ export default function TranslationBox({source,target,activeRowIndex,index }) {
   glossary.forEach((item) => {
     const term = item.term;
     const regex = new RegExp(`\\b${term}\\b`, 'gi');
-    highlightedSentence = highlightedSentence.replace(term, `<strong><span id="${term.id}" class="highlight">${term}</span></strong>`);
+    highlightedSentence = highlightedSentence.replace(term, `<strong><span id="${item.id}" class="highlight">${term}</span></strong>`);
   });
   return highlightedSentence;
 };
@@ -154,7 +150,10 @@ useOutsideClick({
           <EditablePreview  />
           <EditableInput />
         </Editable> */}
-        <div>{translation ? translation : target}</div>
+        {/* TODO: target streaming problem */}
+        <div>{ translation ? translation : 
+        loading ? translation : target
+        }</div> 
       </Td>
     </Tr>
   );
