@@ -34,7 +34,7 @@ export function generateTranslationPrompt(systemMsg,sentences, glossary) {
   Sentence:
 ${formattedSentences.join("\n")}
 Glossary:
-${formattedGlossary.length > 0 ? formattedGlossary.join("\n") : "No glossary terms provided. Translate without a glossary"}
+${glossaryTerm.length > 0 ? glossaryTerm.join("\n") : "No glossary terms provided. Translate without a glossary"}
 `;
 //  const systemMsg = `You are a veteran translator. You will be provided with short sentences to translate.  You have 3 requirements:=
 //  1. Translate the text into the required language.
@@ -42,7 +42,7 @@ ${formattedGlossary.length > 0 ? formattedGlossary.join("\n") : "No glossary ter
 //  3-Aside from the translation, do not provide any other output. 
 //  4-Do not use quotes, unless if they are part of the provided text`
 
-  return [{role: "system", content:systemMsg},{ role: "assistant", content: prompt }];
+  return [{role: "system", content:systemMsg},{ role: "user", content: prompt }];
 }
 
 function matchGlossaryTerms(sentence, glossary) {

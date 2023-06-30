@@ -38,6 +38,7 @@ export default function TranslationBox({
   const [toggleContent, setToggleContent] = useState(false);
   const [termInfo, setTermInfo] = useState({});
   const [loading, setLoading] = useState(false);
+  const [translationHistory,setTranslationHistory] = useState([])
   const editableDivRefs = useRef([]);
   const toast = useToast();
   const { isOpen, onToggle } = useDisclosure();
@@ -67,6 +68,7 @@ export default function TranslationBox({
     setTranslation("");
     setTranslated(false);
     setLoading(true);
+    console.log([...generateTranslationPrompt(systemPrompt, [text], terms),...translationHistory])
 
     const response = await fetch("/api/generate", {
       method: "POST",
@@ -79,8 +81,8 @@ export default function TranslationBox({
         temperature: temperature,
       }),
     });
-    console.log(response.status);
 
+    
     if (!response.ok) {
       setLoading(false);
       throw new Error(response.statusText);
@@ -94,12 +96,16 @@ export default function TranslationBox({
     const reader = data.getReader();
     const decoder = new TextDecoder();
     let isDone = false;
+    let completeResp='';
 
     while (!isDone) {
       const { value, done } = await reader.read();
       isDone = done;
       const chunkValue = decoder.decode(value);
 
+      completeResp += chunkValue
+
+      
       chunkValue !== "[object Response]"
         ? setTranslation((prev) => prev + chunkValue)
         : toast({
@@ -110,10 +116,17 @@ export default function TranslationBox({
             description:
               "Please wait for less than 60 seconds before you translate the next string",
           });
+
+          if(isDone){
+            console.log({role:"assistant",content:completeResp});
+            setTranslationHistory(prevHistory => setTranslationHistory([...prevHistory,{role:"assistant",content:completeResp},generateTranslationPrompt(systemPrompt, [text], terms)[1]]))
+          }
+    
     }
 
     setLoading(false);
     setTranslated(true);
+
   };
 
   const highlightGlossaryTerms = (text, glossary) => {
