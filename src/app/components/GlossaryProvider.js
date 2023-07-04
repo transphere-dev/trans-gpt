@@ -32,7 +32,7 @@ import { useGPT } from "./GptProvider";
 import { RiInformationLine } from "react-icons/ri";
 const GlossaryContext = createContext({});
 
-const defaultSystemPrompt = `You are a veteran translator.\nYou will be provided with short sentences to translate.\nYou have these requirements:=
+const defaultSystemPrompt = `You are a veteran translator.\nYou will be provided with short sentences to translate.\nYou have these requirements:
 1. Translate the short sentences into English.
 2. Use the glossary only if glossary terms are provided, for reference and ensure you replace any matching glossary terms in the sentences with matching translations. 
 3. Aside from the translation, do not provide any other output. 
