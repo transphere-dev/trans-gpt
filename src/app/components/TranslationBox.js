@@ -135,16 +135,16 @@ export default function TranslationBox({
               "Please wait for less than 60 seconds before you translate the next string",
           });
 
-      if (isDone) {
+      // if (isDone) {
 
-        setTranslationHistory((prevHistory) =>
-          setTranslationHistory([
-            ...prevHistory,
-            { role: "assistant", content: completeResp },
-            generateTranslationPrompt(systemPrompt, [text], terms)[1],
-          ])
-        );
-      }
+      //   setTranslationHistory((prevHistory) =>
+      //     setTranslationHistory([
+      //       ...prevHistory,
+      //       { role: "assistant", content: completeResp },
+      //       generateTranslationPrompt(systemPrompt, [text], terms)[1],
+      //     ])
+      //   );
+      // }
     }
 
     setLoading(false);
