@@ -50,11 +50,13 @@ export default function NewChat() {
             icon={<RiTranslate2 fontSize={20} />}
             title={"Translations"}
             description={"Use TransGPT to translate to any language"}
+            path={'translate'}
           />
           <HomeCard
             icon={<RiSearch2Line fontSize={20} />}
-            title={"Explanations"}
-            description={"Use TransGPT to explain concepts"}
+            title={"Glossary"}
+            description={"Use TransGPT with your own glossaries"}
+            path={'glossary'}
           />
         </Flex>
         <Center justify={'left'} color={textColor} flexDirection={'column'}>

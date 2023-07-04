@@ -4,24 +4,68 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "lint": "next lint",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "electron-dev": "concurrently \"cross-env BROWSER=none npm run dev\" \"wait-on http://192.168.4.62:3000 && electron .\"",
+    "electron-build": "npm run build && electron-builder",
+    "release": "npm run electron-build -- -p always"
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.1.0",
     "@chakra-ui/react": "^2.5.3",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "concurrently": "^8.0.1",
+    "dotenv": "^16.3.1",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
+    "eventsource-parser": "^1.0.0",
     "framer-motion": "^5.6.0",
+    "iso-639-1": "^2.1.15",
+    "js-cookie": "^3.0.1",
     "next": "13.2.4",
+    "node-cmd": "^5.0.0",
+    "nodemailer": "^6.9.1",
     "nprogress": "^0.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
     "react-loader-spinner": "^5.3.4",
-    "sse.js": "^0.6.1"
+    "sse.js": "^0.6.1",
+    "wait-on": "^7.0.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/react": "18.2.12",
+    "electron": "^24.1.1",
+    "electron-builder": "^23.6.0"
+  },
+  "build": {
+    "appId": "com.yourdomain.yourapp",
+    "productName": "TransGPT",
+    "directories": {
+      "buildResources": "resources",
+      "output": "dist"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "electron.js"
+    ],
+    "extraResources": [
+      "build"
+    ],
+    "asar": true,
+    "asarUnpack": "**\\*.{node,dll}",
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }

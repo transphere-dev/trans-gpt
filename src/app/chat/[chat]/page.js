@@ -1,34 +1,54 @@
 "use client";
 
-import { Inter } from "next/font/google";
-import styles from "../../page.module.css";
-import onboarding from "../../../../public/images/home.svg";
-import logo from "../../../../public/images/transgpt-dark.svg";
-import { Image } from "@chakra-ui/next-js";
-import { Box, Center, Flex, Heading, Text, useColorModeValue } from "@chakra-ui/react";
-import HomeCard from "../../components/HomeCard";
-import { RiTranslate2, RiSearch2Line } from "react-icons/ri";
+
+import { Box, Center, Flex, Text } from "@chakra-ui/react";
 import ChatInput from "../../components/ChatInput";
 import { usePathname } from "next/navigation";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import ChatBox from "../../components/ChatBox";
 import NewChat from "../../components/NewChat";
 import ChatContext from "../../contexts/ChatContext";
-const inter = Inter({ subsets: ["latin"] });
+import { useAuth } from "../../components/AuthContextWrapper";
 
-export default function Page({params}) {
+export default function Page({ params }) {
   const pathname = usePathname();
-  const { chatMessages ,result, setChatMessages ,chatRoomId } = useContext(ChatContext);
+  const {user} = useAuth();
+  const [loading,setLoading] = useState(true);
+
+  const { chatMessages, result, setChatMessages, chatRoomId } =  useContext(ChatContext);
+
+  // Fetch chat messages for a specific chat session
+  async function fetchChatMessages(sessionId) {
+    const response = await fetch(`http://192.168.4.62:8080/api/chats/sessions/${sessionId}/messages/${user.id}`);
+
+    if (!response.ok) {
+      throw new Error(`Error fetching chat messages: ${response.statusText}`);
+    }
+
+    const chatMessages = await response.json();
+    return chatMessages;
+  }
 
   useEffect(() => {
-    console.log(pathname); // Log the current URL path
+
+    fetchChatMessages(params.chat)
+    .then(data =>{
+      
+      setChatMessages(data)
+      setLoading(false);
+
+    })
+    .catch(err => {
+      setLoading(false);
+
+      console.log(err.message);
+    })
 
 
     return () => {
       setChatMessages([]);
-        };
-  }, []);  
-  
+    };
+  }, []);
 
 
   return (
@@ -48,7 +68,7 @@ export default function Page({params}) {
             {chatMessages?.map((each) => {
               return (
                 <>
-                  <ChatBox key={each.id} chat={each}  />
+                  <ChatBox key={each.id} chat={each} />
                 </>
               );
             })}
@@ -66,19 +86,16 @@ export default function Page({params}) {
         right={"30%"}
       >
         <Box
-     
           // bg={useColorModeValue("#fff", "#2D2D36")}
           w={"100%"}
           p={10}
-          
         >
-          
-          <ChatInput  />
+          <ChatInput />
           <Text mt={3} fontSize={"xs"} align={"center"} color={"#ACACBE"}>
-          TransGPT March 29 Version. This a pre-release for testing and evaluation purposes.
-        </Text>
+            TransGPT March 29 Version. This a pre-release for testing and
+            evaluation purposes.
+          </Text>
         </Box>
-       
       </Flex>
     </Flex>
   );
