@@ -27,21 +27,26 @@ export default function TranslationBox({
   activeRowIndex,
   index,
   scheme,
+  translateAll,
+  allTranslation
 }) {
   const { temperature, setTemperature } = useGPT();
   const { terms, highlight, systemPrompt } = useGlossary();
   const [highlightGlossary, setHighlightGlossaryTerms] = useState();
   const [clicked, setClicked] = useState(false);
-  const { sendTranslationRequest } = useTranslation();
+  const { sendTranslationRequest,setTimer } = useTranslation();
   const [translation, setTranslation] = useState("");
   const [translated, setTranslated] = useState(false);
   const [toggleContent, setToggleContent] = useState(false);
   const [termInfo, setTermInfo] = useState({});
   const [loading, setLoading] = useState(false);
-  const [translationHistory,setTranslationHistory] = useState([])
+  const [translationHistory, setTranslationHistory] = useState([]);
   const editableDivRefs = useRef([]);
   const toast = useToast();
   const { isOpen, onToggle } = useDisclosure();
+
+
+  
 
   useEffect(() => {
     if (terms.length > 0) {
@@ -64,11 +69,27 @@ export default function TranslationBox({
     return () => clearTimeout(timer);
   }, [activeRowIndex]);
 
+  useEffect(() => {
+    if(allTranslation) {
+      
+    translate(source)
+
+    translateAll(false)
+    }
+  
+    return () => {
+      null
+    }
+  }, [allTranslation])
+  
   const translate = async (text) => {
     setTranslation("");
     setTranslated(false);
     setLoading(true);
-    console.log([...generateTranslationPrompt(systemPrompt, [text], terms),...translationHistory])
+    // console.log([
+    //   ...generateTranslationPrompt(systemPrompt, [text], terms),
+    //   ...translationHistory,
+    // ]);
 
     const response = await fetch("/api/generate", {
       method: "POST",
@@ -82,7 +103,6 @@ export default function TranslationBox({
       }),
     });
 
-    
     if (!response.ok) {
       setLoading(false);
       throw new Error(response.statusText);
@@ -90,22 +110,20 @@ export default function TranslationBox({
 
     const data = response.body;
     if (!data) {
-      console.log(data);
       return;
     }
     const reader = data.getReader();
     const decoder = new TextDecoder();
     let isDone = false;
-    let completeResp='';
+    let completeResp = "";
 
     while (!isDone) {
       const { value, done } = await reader.read();
       isDone = done;
       const chunkValue = decoder.decode(value);
 
-      completeResp += chunkValue
+      completeResp += chunkValue;
 
-      
       chunkValue !== "[object Response]"
         ? setTranslation((prev) => prev + chunkValue)
         : toast({
@@ -117,16 +135,20 @@ export default function TranslationBox({
               "Please wait for less than 60 seconds before you translate the next string",
           });
 
-          if(isDone){
-            console.log({role:"assistant",content:completeResp});
-            setTranslationHistory(prevHistory => setTranslationHistory([...prevHistory,{role:"assistant",content:completeResp},generateTranslationPrompt(systemPrompt, [text], terms)[1]]))
-          }
-    
+      if (isDone) {
+
+        setTranslationHistory((prevHistory) =>
+          setTranslationHistory([
+            ...prevHistory,
+            { role: "assistant", content: completeResp },
+            generateTranslationPrompt(systemPrompt, [text], terms)[1],
+          ])
+        );
+      }
     }
 
     setLoading(false);
     setTranslated(true);
-
   };
 
   const highlightGlossaryTerms = (text, glossary) => {
@@ -143,7 +165,6 @@ export default function TranslationBox({
     return highlightedSentence;
   };
 
-
   const handleClickOutside = () => {
     // The click is outside the desired element
     // Add your desired logic here
@@ -151,10 +172,9 @@ export default function TranslationBox({
     setToggleContent(false);
   };
   const clickOnHighlightedTerm = (e) => {
-    setClicked(true)
+    setClicked(true);
     const source = e.target.innerText;
     const target = e.target.getAttribute("target");
-    console.log(isOpen);
 
     if (highlight && source && target) {
       // const source = e.target.getAttribute("source");
@@ -168,7 +188,6 @@ export default function TranslationBox({
       };
       setToggleContent(true);
       setTermInfo(termObj);
-      console.log(termObj);
     }
   };
   const ref = useRef();
@@ -179,8 +198,8 @@ export default function TranslationBox({
   });
 
   return (
-    <Tr className="table-row" ref={ref}>
-      <Td
+    <Tr  className="table-row" ref={ref}>
+      <Td 
         bg={index === activeRowIndex && "orange.300"}
         color={index === activeRowIndex && "#000"}
         onFocus={() => console.info("i")}
@@ -189,6 +208,8 @@ export default function TranslationBox({
       >
         {highlight && terms.length > 0 ? (
           <div
+          sourceId={index}
+          className="source"
             style={{ padding: "2% 0px" }}
             onClick={clickOnHighlightedTerm}
             contentEditable
@@ -196,8 +217,9 @@ export default function TranslationBox({
           />
         ) : (
           <Editable
+          sourceId={index}
             ref={(element) => (editableDivRefs.current[index] = element)}
-            className="string-div"
+            className="source"
             defaultValue={source}
           >
             <EditablePreview />
@@ -250,7 +272,7 @@ export default function TranslationBox({
           <EditableInput />
         </Editable> */}
         {/* TODO: target streaming problem */}
-        <div>{translation ? translation : loading ? translation : target}</div>
+        <div>{translation}</div>
       </Td>
     </Tr>
   );

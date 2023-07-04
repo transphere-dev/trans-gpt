@@ -5,7 +5,7 @@ import { OpenAIStream } from "../lib/OpenAIStream";
 import { useAuth } from "./AuthContextWrapper";
 import { useGlossary } from "./GlossaryProvider";
 
-const apiKey = "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";
+const apiKey = "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";
 
 export const config = {
   runtime: "edge",
@@ -22,6 +22,7 @@ export const TranslationProvider = ({children}) => {
   const [translation,setTranslation] = useState(null);
   const [highlight,setHighlight] = useState(false);
   const [fileData, setFileData] = useState(null)
+  const [timeTaken, setTimeTaken] = useState(0)
 
 
     useEffect(() => {
@@ -105,7 +106,7 @@ export const TranslationProvider = ({children}) => {
   }
 
   return (
-    <TranslationContext.Provider value={{sendTranslationRequest,fileData, setFileData}}>
+    <TranslationContext.Provider value={{sendTranslationRequest,fileData, setFileData,timeTaken, setTimeTaken}}>
       {children}
 
     </TranslationContext.Provider>

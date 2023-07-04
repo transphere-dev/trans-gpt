@@ -7,7 +7,7 @@ import { getCurrentDateTime } from "../lib/requests.js";
 
 const url = "https://api.openai.com/v1";
 const endpoint = "/chat/completions";
-const apiKey = "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";
+const apiKey = "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";
 
 function ChatContextWrapper({ children }) {
   const { user } = useAuth();
