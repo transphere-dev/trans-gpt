@@ -194,6 +194,7 @@ export default function Page() {
                 leftIcon={<RiTranslate2 />}
                 onClick={handleTranslateAll}
                 size={"sm"}
+                colorScheme={'orange'}
               >
                 Translate all
               </Button>
