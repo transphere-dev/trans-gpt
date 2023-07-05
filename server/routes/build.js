@@ -1,20 +1,50 @@
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-var cmd = require("node-cmd")
+var cmd = require("node-cmd");
 
-
-router.get('/build', async (req, res) => {
-
+router.get("/build", async (req, res) => {
   try {
-    cmd.run('git pull')
-    cmd.run('cmd ../.. && npm run build && pm2 reload ecosystem.config.js');
 
+    console.log("\x1b[32m--- Updating transgpt --- \x1b[0m");
+    const gitPull = cmd.runSync("git pull");
+    console.log(` 
+    Git pull Err ${gitPull.err}
+    
+    Git pull Data ${gitPull.data}
+`);
 
+    console.log("\x1b[32m--- Updating packages --- \x1b[0m");
+    const install = cmd.runSync("npm i");
 
-    res.send('Building app in proccess!');
+    console.log(`
+    install Err ${install.err}
+
+    install Data ${install.data}
+`);
+
+    console.log("\x1b[32m--- Building transgpt --- \x1b[0m");
+
+    const build = cmd.runSync("cd .. && npm i && npm run build");
+
+    console.log(` 
+   build Err ${build.err}
+   
+   build Data ${build.data}
+`);
+
+    console.log("\x1b[32m--- Reloading pm2 --- \x1b[0m");
+
+    const pm2 = cmd.runSync("pm2 reload ecosystem.config.js && pm2 save");
+
+    console.log(`   
+pm2 Err ${pm2.err}
+
+pm2 Data ${pm2.data}
+`);
+
+    res.status(200).send("Building app in progress!");
   } catch (error) {
-    res.status(400).send('Invalid or expired email verification token');
+    res.status(400).send("App build encountered an error!");
   }
 });
 
