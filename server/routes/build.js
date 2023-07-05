@@ -14,7 +14,7 @@ router.get("/build", async (req, res) => {
 `);
 
     console.log("\x1b[32m--- Updating packages --- \x1b[0m");
-    const install = cmd.runSync("npm i");
+    const install = cmd.runSync("npm i && cd server && npm i");
 
     console.log(`
     install Err ${install.err}
@@ -24,7 +24,7 @@ router.get("/build", async (req, res) => {
 
     console.log("\x1b[32m--- Building transgpt --- \x1b[0m");
 
-    const build = cmd.runSync("cd .. && npm i && npm run build");
+    const build = cmd.runSync("cd .. && npm run build");
 
     console.log(` 
    build Err ${build.err}
