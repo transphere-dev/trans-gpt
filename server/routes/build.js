@@ -42,7 +42,7 @@ pm2 Err ${pm2.err}
 pm2 Data ${pm2.data}
 `);
 
-    res.status(200).send("Building app in progress!");
+    res.status(200).json({message:"Building app in progress!"});
   } catch (error) {
     res.status(400).send("App build encountered an error!");
   }

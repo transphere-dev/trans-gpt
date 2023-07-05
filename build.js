@@ -1,9 +1,10 @@
+const fetch = require("node-fetch");
 
 try {
     const resp = fetch('http://192.168.4.62:8080/api/app/build')
     resp.then(data => data.json())
-    .then(data => console.log(data))
-    .catch(e => console.log(e.message))
+    .then(data => console.log(data.message))
+    .catch(e => console.log(`\x1b[31m${e.message} \x1b[0m`))
   
     
 } catch (error) {
