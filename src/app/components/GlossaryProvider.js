@@ -58,6 +58,8 @@ export const GlossaryProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [glossaries, setGlossaries] = useState([]);
   const [glossary, setGlossary] = useState(null);
+  const [models, setModels] = useState([]);
+  const [model, setModel] = useState(null);
   const [highlight, setHighlight] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState(defaultSystemPrompt);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -74,6 +76,36 @@ export const GlossaryProvider = ({ children }) => {
       .then((data) => {
         // Process the fetched glossaries
         setGlossaries(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    return () => {
+      null;
+    };
+  }, []);
+
+  useEffect(() => {
+    fetch(`https://api.openai.com/v1/models`,{
+      headers: {
+        "Content-Type": "application/json",
+        "access-control-allow-origin": "*",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY || "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"}`,
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to fetch models");
+        }
+      })
+      .then((data) => {
+        // Process the fetched glossaries
+        setModels(data.data);
+        
+
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -118,6 +150,8 @@ export const GlossaryProvider = ({ children }) => {
         onclose,
         systemPrompt,
         setSystemPrompt,
+        models, setModels,
+        model, setModel
       }}
     >
       {children}

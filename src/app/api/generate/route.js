@@ -7,7 +7,7 @@ export const config = {
 
 
   export async function POST(req) {
-  const { prompt ,temperature } = (await req.json())
+  const { prompt ,temperature , model} = (await req.json())
 
   const payload = {
     messages: prompt,
@@ -15,7 +15,7 @@ export const config = {
     temperature: temperature,
     n: 1,
     // stop: '\nGlossary',
-    model: "gpt-3.5-turbo",
+    model: model,
     stream:true
   };
   

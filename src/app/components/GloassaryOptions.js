@@ -1,4 +1,4 @@
-import { Select, Switch, Text , Button} from '@chakra-ui/react'
+import { Select, Switch, Text , Button, Circle, Flex, Center} from '@chakra-ui/react'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { highlightGlossaryTerms } from '../lib/misc';
@@ -7,7 +7,7 @@ import { useTranslation } from './TranslationProvider';
 import ExportButton from '../components/ExportButton'
 
 export default function GloassaryOptions() {
-    const {glossaries,fetchTerms,terms,glossary,setGlossary,setHighlight,highlight,onOpen,onClose} = useGlossary()
+    const {glossaries,fetchTerms,terms,glossary,setGlossary,setHighlight,highlight,onOpen,setModel,models,model} = useGlossary()
     const {fileData, setFileData} = useTranslation();
     const router = useRouter()
     const [glossaryMap, setGlossaryMap] = useState(null);
@@ -63,7 +63,27 @@ export default function GloassaryOptions() {
   };
   return (
         <>
-        <Select mt={'5%'} mb={'7%'} onChange={ e =>{ selectGlossary(e)}} placeholder='Select Glossary'>
+        {/* <Flex mt={'12%'} alignItems={'center'}>
+        <Circle p={1} bg={'none'} border={'solid gray'} color={'gray'} borderWidth={2}  w={'5'} h={'5'}>
+          <Center>
+          <Text fontSize={11}>1</Text>
+          </Center>
+        </Circle>
+        <Text fontSize={14} ml={'2%'}>Select the GPT model</Text>
+
+        </Flex> */}
+        <Select mt={'5%'} mb={'7%'} onChange={ e =>{ setModel(e.target.value)}} placeholder='GPT model'>
+            {
+                models?.map((each,i) => {
+                    return(
+                        <option key={i} value={each?.id}>{each?.id}</option>
+
+                    )
+                })
+            }
+
+    </Select>
+    <Select mt={'5%'} mb={'7%'} onChange={ e =>{ selectGlossary(e)}} placeholder='Select Glossary'>
             {
                 glossaries?.map((each,i) => {
                     return(

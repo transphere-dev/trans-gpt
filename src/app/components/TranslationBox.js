@@ -37,7 +37,7 @@ export default function TranslationBox({
   allTranslation,
 }) {
   const { temperature, setTemperature } = useGPT();
-  const { terms, highlight, systemPrompt } = useGlossary();
+  const { terms, highlight, systemPrompt,model } = useGlossary();
   const [highlightGlossary, setHighlightGlossaryTerms] = useState();
   const [clicked, setClicked] = useState(false);
   const { sendTranslationRequest, setTimer } = useTranslation();
@@ -103,6 +103,7 @@ export default function TranslationBox({
       body: JSON.stringify({
         prompt: generateTranslationPrompt(systemPrompt, [text], terms),
         temperature: temperature,
+        model: model
       }),
     });
 
