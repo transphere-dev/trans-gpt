@@ -20,7 +20,7 @@ import TranslationBox from "../components/TranslationBox";
 import DragFile from "../components/DragFile";
 import { read, utils } from "xlsx";
 import { useTranslation } from "../components/TranslationProvider";
-import { RiTranslate2 } from "react-icons/ri";
+import { RiPieChartLine, RiTranslate2 } from "react-icons/ri";
 import { generateTranslationPrompt } from "../lib/misc";
 import { useGlossary } from "../components/GlossaryProvider";
 import { useGPT } from "../components/GptProvider";
@@ -189,7 +189,8 @@ export default function Page() {
           borderRadius={10}
         >
           {fileData && (
-            <Flex p={"2%"}>
+            <Flex w={'100%'}  p={"2%"}>
+             
               <Button
                 leftIcon={<RiTranslate2 />}
                 onClick={handleTranslateAll}
@@ -197,6 +198,16 @@ export default function Page() {
                 colorScheme={'orange'}
               >
                 Translate all
+              </Button>
+
+              <Button
+              ml={'2%'}
+                leftIcon={<RiPieChartLine />}
+                // onClick={handleTranslateAll}
+                size={"sm"}
+                colorScheme={'orange'}
+              >
+                Analysis
               </Button>
             </Flex>
           )}

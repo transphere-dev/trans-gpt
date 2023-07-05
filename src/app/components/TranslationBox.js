@@ -11,6 +11,12 @@ import {
   Text,
   useDisclosure,
   Collapse,
+  Slider,
+  SliderMark,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  Box,
 } from "@chakra-ui/react";
 import { set } from "nprogress";
 import React, { useEffect, useRef, useState } from "react";
@@ -28,25 +34,23 @@ export default function TranslationBox({
   index,
   scheme,
   translateAll,
-  allTranslation
+  allTranslation,
 }) {
   const { temperature, setTemperature } = useGPT();
   const { terms, highlight, systemPrompt } = useGlossary();
   const [highlightGlossary, setHighlightGlossaryTerms] = useState();
   const [clicked, setClicked] = useState(false);
-  const { sendTranslationRequest,setTimer } = useTranslation();
+  const { sendTranslationRequest, setTimer } = useTranslation();
   const [translation, setTranslation] = useState("");
   const [translated, setTranslated] = useState(false);
   const [toggleContent, setToggleContent] = useState(false);
   const [termInfo, setTermInfo] = useState({});
   const [loading, setLoading] = useState(false);
+  const [accuracy, setAccuracy] = useState(0);
   const [translationHistory, setTranslationHistory] = useState([]);
   const editableDivRefs = useRef([]);
   const toast = useToast();
   const { isOpen, onToggle } = useDisclosure();
-
-
-  
 
   useEffect(() => {
     if (terms.length > 0) {
@@ -70,18 +74,17 @@ export default function TranslationBox({
   }, [activeRowIndex]);
 
   useEffect(() => {
-    if(allTranslation) {
-      
-    translate(source)
+    if (allTranslation) {
+      translate(source);
 
-    translateAll(false)
+      translateAll(false);
     }
-  
+
     return () => {
-      null
-    }
-  }, [allTranslation])
-  
+      null;
+    };
+  }, [allTranslation]);
+
   const translate = async (text) => {
     setTranslation("");
     setTranslated(false);
@@ -198,8 +201,8 @@ export default function TranslationBox({
   });
 
   return (
-    <Tr  className="table-row" ref={ref}>
-      <Td 
+    <Tr className="table-row" ref={ref}>
+      <Td
         bg={index === activeRowIndex && "orange.300"}
         color={index === activeRowIndex && "#000"}
         onFocus={() => console.info("i")}
@@ -208,8 +211,8 @@ export default function TranslationBox({
       >
         {highlight && terms.length > 0 ? (
           <div
-          sourceId={index}
-          className="source"
+            sourceId={index}
+            className="source"
             style={{ padding: "2% 0px" }}
             onClick={clickOnHighlightedTerm}
             contentEditable
@@ -217,7 +220,7 @@ export default function TranslationBox({
           />
         ) : (
           <Editable
-          sourceId={index}
+            sourceId={index}
             ref={(element) => (editableDivRefs.current[index] = element)}
             className="source"
             defaultValue={source}
@@ -228,7 +231,10 @@ export default function TranslationBox({
         )}
 
         <Collapse in={clicked} animateOpacity>
+          
+          <Flex mt={'2%'} w={'100%'} alignItems={'center'}>
           <Button
+          w={'20%'}
             colorScheme={scheme.colorMode === "light" ? "orange" : null}
             leftIcon={<RiTranslate2 />}
             size={"sm"}
@@ -237,6 +243,30 @@ export default function TranslationBox({
           >
             {!translated ? "Translate" : "Retranslate"}
           </Button>
+          { translation && 
+          
+          <Box ml={'10%'} w={'80%'}>
+            <Text fontWeight={600} size={'sm'}>Accuracy: {accuracy}%</Text>
+            <Slider
+            step={1}
+            min={0}
+            max={100}
+            defaultValue={accuracy}
+            aria-label="slider-ex-6"
+            w={'30%'}
+            
+            onChange={(val) => setAccuracy(val)}
+          >
+      
+            <SliderTrack bg={"#F7922920"}>
+              <SliderFilledTrack bg={"#F79229"} />
+            </SliderTrack>
+            <SliderThumb />
+          </Slider>
+
+          </Box>
+          }
+          </Flex>
 
           {toggleContent && (
             <Flex mt={"3%"} flexDirection={"column"}>
@@ -272,7 +302,10 @@ export default function TranslationBox({
           <EditableInput />
         </Editable> */}
         {/* TODO: target streaming problem */}
-        <div>{translation}</div>
+        <Flex flexDirection={'column'}>
+          <div>{translation}</div>
+       
+        </Flex>
       </Td>
     </Tr>
   );

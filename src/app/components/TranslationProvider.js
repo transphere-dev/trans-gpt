@@ -23,6 +23,7 @@ export const TranslationProvider = ({children}) => {
   const [highlight,setHighlight] = useState(false);
   const [fileData, setFileData] = useState(null)
   const [timeTaken, setTimeTaken] = useState(0)
+  const [totalAccuracy, setTotalAccuracy] = useState(0)
 
 
     useEffect(() => {
@@ -106,7 +107,7 @@ export const TranslationProvider = ({children}) => {
   }
 
   return (
-    <TranslationContext.Provider value={{sendTranslationRequest,fileData, setFileData,timeTaken, setTimeTaken}}>
+    <TranslationContext.Provider value={{sendTranslationRequest,fileData, setFileData,timeTaken, setTimeTaken,totalAccuracy, setTotalAccuracy}}>
       {children}
 
     </TranslationContext.Provider>
