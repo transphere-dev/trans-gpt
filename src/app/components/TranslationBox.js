@@ -304,7 +304,7 @@ export default function TranslationBox({
         </Editable> */}
         {/* TODO: target streaming problem */}
         <Flex flexDirection={'column'}>
-          <div>{translation}</div>
+          <div className={translation ? `gpt-translation` : null}>{translation}</div>
        
         </Flex>
       </Td>

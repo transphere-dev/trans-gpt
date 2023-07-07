@@ -72,11 +72,11 @@ export default function GloassaryOptions() {
         <Text fontSize={14} ml={'2%'}>Select the GPT model</Text>
 
         </Flex> */}
-        <Select mt={'5%'} mb={'7%'} onChange={ e =>{ setModel(e.target.value)}} placeholder='GPT model'>
+        <Select mt={'5%'} mb={'7%'} onChange={ e =>{ setModel(e.target.value)}}    placeholder='GPT model'>
             {
                 models?.map((each,i) => {
                     return(
-                        <option key={i} value={each?.id}>{each?.id}</option>
+                        <option  key={i} value={each?.id}>{each?.id}</option>
 
                     )
                 })

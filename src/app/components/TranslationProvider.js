@@ -24,6 +24,8 @@ export const TranslationProvider = ({children}) => {
   const [fileData, setFileData] = useState(null)
   const [timeTaken, setTimeTaken] = useState(0)
   const [totalAccuracy, setTotalAccuracy] = useState(0)
+  const [totalTranslation, setTotalTranslation] = useState(0)
+  const [totalStrings, setTotalStrings] = useState(0)
 
 
     useEffect(() => {
@@ -107,7 +109,8 @@ export const TranslationProvider = ({children}) => {
   }
 
   return (
-    <TranslationContext.Provider value={{sendTranslationRequest,fileData, setFileData,timeTaken, setTimeTaken,totalAccuracy, setTotalAccuracy}}>
+    <TranslationContext.Provider value={{sendTranslationRequest,fileData, setFileData,timeTaken,
+      totalStrings, setTotalStrings, setTimeTaken,totalAccuracy, setTotalAccuracy,totalTranslation, setTotalTranslation}}>
       {children}
 
     </TranslationContext.Provider>

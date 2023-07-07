@@ -14,6 +14,14 @@ import {
   useColorMode,
   useEventListener,
   useToast,
+  useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import TranslationBox from "../components/TranslationBox";
@@ -24,6 +32,7 @@ import { RiPieChartLine, RiTranslate2 } from "react-icons/ri";
 import { generateTranslationPrompt } from "../lib/misc";
 import { useGlossary } from "../components/GlossaryProvider";
 import { useGPT } from "../components/GptProvider";
+import  Analysis  from "../components/Analysis";
 
 export default function Page() {
   const { colorMode } = useColorMode();
@@ -34,8 +43,11 @@ export default function Page() {
   const tableRef = useRef();
   const toast = useToast();
   const scheme = useColorMode();
+  const { totalAccuracy } = useTranslation();
   const { terms, highlight, systemPrompt } = useGlossary();
   const { temperature, setTemperature } = useGPT();
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const btnRef = React.useRef()
 
 
   const translateAll = async () => {
@@ -203,7 +215,7 @@ export default function Page() {
               <Button
               ml={'2%'}
                 leftIcon={<RiPieChartLine />}
-                // onClick={handleTranslateAll}
+                onClick={onOpen}
                 size={"sm"}
                 colorScheme={'orange'}
               >
@@ -224,7 +236,7 @@ export default function Page() {
               </Tr>
             </Thead>
             <Tbody w={50}>
-              {fileData?.slice(0, 21).map((each, i) => {
+              {fileData?.slice(0, 42).map((each, i) => {
                 return (
                   each?.source && (
                     <TranslationBox
@@ -245,6 +257,27 @@ export default function Page() {
           </Table>
         </TableContainer>
       )}
+      <Drawer
+        isOpen={isOpen}
+        placement='right'
+        onClose={onClose}
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>Analysis</DrawerHeader>
+
+          <DrawerBody>
+            <Analysis accuracy={totalAccuracy} />
+          </DrawerBody>
+
+          <DrawerFooter>
+
+
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </Flex>
   );
 }
