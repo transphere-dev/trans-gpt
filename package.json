@@ -38,6 +38,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/node": "20.3.3",
     "@types/react": "18.2.12",
     "electron": "^24.1.1",
     "electron-builder": "^23.6.0"
