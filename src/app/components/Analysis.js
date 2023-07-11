@@ -15,6 +15,8 @@ import {
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { useTranslation } from "./TranslationProvider";
+import { useGPT } from "./GptProvider";
+import { useGlossary } from "./GlossaryProvider";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -25,8 +27,12 @@ export default function Analysis({ accuracy }) {
     setTotalTranslation,
     totalTranslation,
     setTotalStrings,
-    totalStrings,
+    totalStrings
+    
   } = useTranslation();
+  const {model} = useGlossary()
+  const { temperature, setTemperature } = useGPT();
+
   const textColor = useColorModeValue("#333333", "#D1D5DB");
 
   const data = {
@@ -75,7 +81,7 @@ export default function Analysis({ accuracy }) {
           Translation accuracy
         </Text>
         <Stat mb={"20%"} alignItems={"center"} justifyContent={"center"}>
-          <StatNumber>
+          <StatNumber fontSize={18}>
             {totalAccuracy === 0 || totalAccuracy === NaN
               ? "0"
               : parseFloat(totalAccuracy).toFixed(1)}{" "}
@@ -86,7 +92,7 @@ export default function Analysis({ accuracy }) {
       <StatGroup>
         <Stat>
           <StatLabel>Total strings</StatLabel>
-          <StatNumber>{totalStrings}</StatNumber>
+          <StatNumber fontSize={18}>{totalStrings}</StatNumber>
           {/* <StatHelpText>
         <StatArrow type='increase' />
         23.36%
@@ -94,8 +100,26 @@ export default function Analysis({ accuracy }) {
         </Stat>
 
         <Stat>
-          <StatLabel>Translated strings</StatLabel>
-          <StatNumber>{totalTranslation}</StatNumber>
+          <StatLabel>Translated string(s)</StatLabel>
+          <StatNumber fontSize={18} >{totalTranslation}</StatNumber>
+          {/* <StatHelpText>
+        <StatArrow type='decrease' />
+        9.05%
+      </StatHelpText> */}
+        </Stat>
+      </StatGroup>      <StatGroup>
+        <Stat>
+          <StatLabel>Temperature</StatLabel>
+          <StatNumber fontSize={18}>{temperature}</StatNumber>
+          {/* <StatHelpText>
+        <StatArrow type='increase' />
+        23.36%
+      </StatHelpText> */}
+        </Stat>
+
+        <Stat>
+          <StatLabel>Model</StatLabel>
+          <StatNumber fontSize={18}>{model}</StatNumber>
           {/* <StatHelpText>
         <StatArrow type='decrease' />
         9.05%
