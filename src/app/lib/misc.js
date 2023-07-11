@@ -57,7 +57,7 @@ export function getTableData() {
   const data = [];
 
   for (let i = 0; i < tableRows.length; i++) {
-    const source = tableRows[i].children[0].innerText;
+    const source = tableRows[i].children[0].getElementsByClassName('source')[0].innerText;
     const target = tableRows[i].children[1].innerText;
 
     data.push({ source, target });
