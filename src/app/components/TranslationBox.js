@@ -17,10 +17,15 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Box,
+  ButtonGroup,
+  IconButton,
+  CheckboxIcon,
+  Input,
+  useEditableControls,
 } from "@chakra-ui/react";
 import { set } from "nprogress";
 import React, { useEffect, useRef, useState } from "react";
-import { RiTranslate, RiTranslate2 } from "react-icons/ri";
+import { RiCheckLine, RiCloseLine, RiEdit2Line, RiTranslate, RiTranslate2 } from "react-icons/ri";
 import { TailSpin } from "react-loader-spinner";
 import { generateTranslationPrompt } from "../lib/misc";
 import { useGlossary } from "./GlossaryProvider";
@@ -37,7 +42,7 @@ export default function TranslationBox({
   allTranslation,
 }) {
   const { temperature, setTemperature } = useGPT();
-  const { terms, highlight, systemPrompt,model } = useGlossary();
+  const { terms, highlight, systemPrompt, model } = useGlossary();
   const [highlightGlossary, setHighlightGlossaryTerms] = useState();
   const [clicked, setClicked] = useState(false);
   const { sendTranslationRequest, setTimer } = useTranslation();
@@ -51,6 +56,26 @@ export default function TranslationBox({
   const editableDivRefs = useRef([]);
   const toast = useToast();
   const { isOpen, onToggle } = useDisclosure();
+
+  function EditableControls() {
+    const {
+      isEditing,
+      getSubmitButtonProps,
+      getCancelButtonProps,
+      getEditButtonProps,
+    } = useEditableControls()
+
+    return isEditing ? (
+      <ButtonGroup justifyContent='center' size='sm'>
+        <IconButton icon={<RiCheckLine />} {...getSubmitButtonProps()} />
+        <IconButton icon={<RiCloseLine />} {...getCancelButtonProps()} />
+      </ButtonGroup>
+    ) : (
+      <Flex justifyContent='center'>
+        <IconButton size='sm' icon={<RiEdit2Line />} {...getEditButtonProps()} />
+      </Flex>
+    )
+  }
 
   useEffect(() => {
     if (terms.length > 0) {
@@ -85,7 +110,8 @@ export default function TranslationBox({
     };
   }, [allTranslation]);
 
-  const translate = async (text) => {
+  const translate = async (id) => {
+    const text = document.getElementById(id).innerText;
     setTranslation("");
     setTranslated(false);
     setLoading(true);
@@ -103,7 +129,7 @@ export default function TranslationBox({
       body: JSON.stringify({
         prompt: generateTranslationPrompt(systemPrompt, [text], terms),
         temperature: temperature,
-        model: model
+        model: model,
       }),
     });
 
@@ -221,6 +247,7 @@ export default function TranslationBox({
           />
         ) : (
           <Editable
+            id={index}
             sourceId={index}
             ref={(element) => (editableDivRefs.current[index] = element)}
             className="source"
@@ -232,41 +259,38 @@ export default function TranslationBox({
         )}
 
         <Collapse in={clicked} animateOpacity>
-          
-          <Flex mt={'2%'} w={'100%'} alignItems={'center'}>
-          <Button
-          w={'20%'}
-            colorScheme={scheme.colorMode === "light" ? "orange" : null}
-            leftIcon={<RiTranslate2 />}
-            size={"sm"}
-            onClick={() => translate(source)}
-            mt="2%"
-          >
-            {!translated ? "Translate" : "Retranslate"}
-          </Button>
-          { translation && 
-          
-          <Box ml={'10%'} w={'80%'}>
-            <Text fontWeight={600} size={'sm'}>Accuracy: {accuracy}%</Text>
-            <Slider
-            step={1}
-            min={0}
-            max={100}
-            defaultValue={accuracy}
-            aria-label="slider-ex-6"
-            w={'30%'}
-            
-            onChange={(val) => setAccuracy(val)}
-          >
-      
-            <SliderTrack bg={"#F7922920"}>
-              <SliderFilledTrack bg={"#F79229"} />
-            </SliderTrack>
-            <SliderThumb />
-          </Slider>
-
-          </Box>
-          }
+          <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
+            <Button
+              w={"20%"}
+              colorScheme={scheme.colorMode === "light" ? "orange" : null}
+              leftIcon={<RiTranslate2 />}
+              size={"sm"}
+              onClick={() => translate(index)}
+              mt="2%"
+            >
+              {!translated ? "Translate" : "Retranslate"}
+            </Button>
+            {translation && (
+              <Box ml={"10%"} w={"80%"}>
+                <Text fontWeight={600} size={"sm"}>
+                  Accuracy: {accuracy}%
+                </Text>
+                <Slider
+                  step={1}
+                  min={0}
+                  max={100}
+                  defaultValue={accuracy}
+                  aria-label="slider-ex-6"
+                  w={"30%"}
+                  onChange={(val) => setAccuracy(val)}
+                >
+                  <SliderTrack bg={"#F7922920"}>
+                    <SliderFilledTrack bg={"#F79229"} />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+              </Box>
+            )}
           </Flex>
 
           {toggleContent && (
@@ -298,14 +322,10 @@ export default function TranslationBox({
             visible
           />
         )}
-        {/* <Editable defaultValue={ translation }>
-          <EditablePreview  />
-          <EditableInput />
-        </Editable> */}
-        {/* TODO: target streaming problem */}
-        <Flex flexDirection={'column'}>
-          <div className={translation ? `gpt-translation` : null}>{translation}</div>
-       
+
+        <Flex flexDirection={"column"}>
+          <div contentEditable className={translation ? `gpt-translation` : null}>{translation}</div>
+          
         </Flex>
       </Td>
     </Tr>
