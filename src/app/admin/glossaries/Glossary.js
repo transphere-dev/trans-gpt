@@ -5,7 +5,7 @@ export const GlossaryList = () => {
     // const { authorId } = useParams();
     const { user } = useAuth()
     return (
-        <List resource={`glossaries/${user?.id || 39}`} >
+        <List resource={`api/glossaries/${user?.id || 39}`} >
             <Datagrid rowClick="edit">
                 <TextField source="id" />
                 <TextField source="name" />

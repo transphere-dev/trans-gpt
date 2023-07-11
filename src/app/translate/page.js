@@ -219,7 +219,7 @@ export default function Page() {
                 size={"sm"}
                 colorScheme={'orange'}
               >
-                Analysis
+                Analytics
               </Button>
             </Flex>
           )}
@@ -266,7 +266,7 @@ export default function Page() {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Analysis</DrawerHeader>
+          <DrawerHeader>Ananlytics</DrawerHeader>
 
           <DrawerBody>
             <Analysis accuracy={totalAccuracy} />
