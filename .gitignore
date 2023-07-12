@@ -7,9 +7,13 @@
 
 # testing
 /coverage
+<<<<<<< Updated upstream
 
 /server/node_modules
 /server/uploads
+=======
+/server/node_modules
+>>>>>>> Stashed changes
 # next.js
 /.next/
 /out/

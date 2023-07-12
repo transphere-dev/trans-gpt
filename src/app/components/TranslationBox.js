@@ -100,7 +100,7 @@ export default function TranslationBox({
 
   useEffect(() => {
     if (allTranslation) {
-      translate(source);
+      translate(index);
 
       translateAll(false);
     }
