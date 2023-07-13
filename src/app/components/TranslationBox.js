@@ -238,6 +238,7 @@ export default function TranslationBox({
       >
         {highlight && terms.length > 0 ? (
           <div
+            id={index}
             sourceId={index}
             className="source"
             style={{ padding: "2% 0px" }}
