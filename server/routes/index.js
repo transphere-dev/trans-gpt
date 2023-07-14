@@ -9,8 +9,10 @@ const router = express.Router();
 const userRoutes = require('./users');
 const chatRoutes = require('./chats');
 const buildRoutes = require('./build');
+const translateRoutes = require('./translate');
 
 router.use('/users', userRoutes);
 router.use('/chats', chatRoutes);
 router.use('/app', buildRoutes);
+router.use('/translate', translateRoutes);
 module.exports = router;
