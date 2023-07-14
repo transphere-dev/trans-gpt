@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { set } from "nprogress";
 import React, { useEffect, useRef, useState } from "react";
-import { RiCheckLine, RiCloseLine, RiEdit2Line, RiTranslate, RiTranslate2 } from "react-icons/ri";
+import { RiCheckLine, RiCloseLine, RiEdit2Line, RiGoogleFill, RiTranslate, RiTranslate2 } from "react-icons/ri";
 import { TailSpin } from "react-loader-spinner";
 import { generateTranslationPrompt } from "../lib/misc";
 import { useGlossary } from "./GlossaryProvider";
@@ -47,10 +47,14 @@ export default function TranslationBox({
   const [clicked, setClicked] = useState(false);
   const { sendTranslationRequest, setTimer } = useTranslation();
   const [translation, setTranslation] = useState("");
+  const [googleTranslation, setGoogleTranslation] = useState("");
+  const [deeplTranslation, setDeeplTranslation] = useState("");
   const [translated, setTranslated] = useState(false);
   const [toggleContent, setToggleContent] = useState(false);
   const [termInfo, setTermInfo] = useState({});
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [deeplLoading, setDeeplLoading] = useState(false);
   const [accuracy, setAccuracy] = useState(0);
   const [translationHistory, setTranslationHistory] = useState([]);
   const editableDivRefs = useRef([]);
@@ -180,7 +184,65 @@ export default function TranslationBox({
     setLoading(false);
     setTranslated(true);
   };
+  const googleTranslate = async (id) => {
+    const text = document.getElementById(id).innerText;
+    setGoogleTranslation("");
+    setTranslated(false);
+    setGoogleLoading(true);
+    // console.log([
+    //   ...generateTranslationPrompt(systemPrompt, [text], terms),
+    //   ...translationHistory,
+    // ]);
 
+    const response = await fetch("http://localhost:8080/api/translate/g", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        target: 'en',
+        source: text
+      }),
+    });
+
+    if (!response.ok) {
+      setLoading(false);
+      throw new Error(response.statusText);
+    }
+
+    response.json()
+    .then(data => console.log(data))
+    .catch(err => {
+      console.log(err.message);
+      setGoogleLoading(false);
+    })
+    
+    setGoogleLoading(false);
+    setTranslated(true);
+  };
+
+  const deeplTranslate = async (id) => {
+    const text = document.getElementById(id).innerText;
+    setDeeplTranslation("");
+    setTranslated(false);
+    setDeeplLoading(true);
+    const res = await fetch("http://192.168.4.62:8080/api/translate/d/", {
+      method: "POST",
+      mode: "cors",
+      
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: `&text=${text}&target_lang=${'en-US'}&source_lang=${'zh'}`
+    })
+
+    const translations = await res.json()
+    
+     setDeeplTranslation(JSON.parse(translations).translation)
+     setDeeplLoading(false)
+
+  };
   const highlightGlossaryTerms = (text, glossary) => {
     let highlightedSentence = text;
     glossary.forEach((item) => {
@@ -260,7 +322,7 @@ export default function TranslationBox({
         )}
 
         <Collapse in={clicked} animateOpacity>
-          <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
+        <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
             <Button
               w={"20%"}
               colorScheme={scheme.colorMode === "light" ? "orange" : null}
@@ -292,6 +354,77 @@ export default function TranslationBox({
                 </Slider>
               </Box>
             )}
+          </Flex>      
+              {/* <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
+            <Button
+              w={"20%"}
+              loadingText={'Translating'}
+              isLoading={googleLoading}
+              colorScheme={scheme.colorMode === "light" ? "orange" : null}
+              leftIcon={<RiGoogleFill />}
+              size={"sm"}
+              onClick={() => googleTranslate(index)}
+              mt="2%"
+            >
+              {!translated ? "Google" : "Retranslate"}
+            </Button>
+            {translation && (
+              <Box ml={"10%"} w={"80%"}>
+                <Text fontWeight={600} size={"sm"}>
+                  Accuracy: {accuracy}%
+                </Text>
+                <Slider
+                  step={1}
+                  min={0}
+                  max={100}
+                  defaultValue={accuracy}
+                  aria-label="slider-ex-6"
+                  w={"30%"}
+                  onChange={(val) => setAccuracy(val)}
+                >
+                  <SliderTrack bg={"#F7922920"}>
+                    <SliderFilledTrack bg={"#F79229"} />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+              </Box>
+            )}
+          </Flex> */}
+          <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
+            <Button
+              w={"20%"}
+              loadingText={'Translating'}
+              isLoading={deeplLoading}
+              colorScheme={scheme.colorMode === "light" ? "orange" : null}
+              leftIcon={<RiTranslate />}
+              size={"sm"}
+              onClick={() => deeplTranslate(index)}
+              mt="2%"
+            >
+              DeepL
+              {/* {!translated ? "DeepL" : "Retranslate"} */}
+            </Button>
+            {/* {translation && (
+              <Box ml={"10%"} w={"80%"}>
+                <Text fontWeight={600} size={"sm"}>
+                  Accuracy: {accuracy}%
+                </Text>
+                <Slider
+                  step={1}
+                  min={0}
+                  max={100}
+                  defaultValue={accuracy}
+                  aria-label="slider-ex-6"
+                  w={"30%"}
+                  onChange={(val) => setAccuracy(val)}
+                >
+                  <SliderTrack bg={"#F7922920"}>
+                    <SliderFilledTrack bg={"#F79229"} />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+              </Box>
+            )} */}
           </Flex>
 
           {toggleContent && (
@@ -325,9 +458,51 @@ export default function TranslationBox({
         )}
 
         <Flex flexDirection={"column"}>
-          <div contentEditable className={translation ? `gpt-translation` : null}>{translation}</div>
+          <div style={{marginBottom: translation && 17}} contentEditable className={translation ? `gpt-translation` : null}>{translation}</div>
           
         </Flex>
+     
+        <Collapse in={clicked} animateOpacity>
+        <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
+
+          </Flex>      
+              
+          {googleLoading && (
+          <TailSpin
+            height="15"
+            width="15"
+            color="#f3843f"
+            ariaLabel="tail-spin-loading"
+            radius="2"
+            wrapperStyle={{}}
+            wrapperClass="loader"
+            visible
+          />
+        )}
+
+        <Flex flexDirection={"column"}>
+          <div style={{marginBottom:deeplTranslation && 17}} contentEditable className={deeplTranslation ? `deepl-translation` : null}>{deeplTranslation}</div>
+          
+        </Flex>
+        {deeplLoading && (
+          <TailSpin
+            height="15"
+            width="15"
+            color="#f3843f"
+            ariaLabel="tail-spin-loading"
+            radius="2"
+            wrapperStyle={{}}
+            wrapperClass="loader"
+            visible
+          />
+        )}
+
+        <Flex flexDirection={"column"}>
+          <div style={{marginBottom:googleTranslation && 17}} contentEditable className={googleTranslation ? `google-translation` : null}>{googleTranslation}</div>
+          
+        </Flex>
+          
+        </Collapse>
       </Td>
     </Tr>
   );
