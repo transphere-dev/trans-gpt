@@ -4,10 +4,20 @@ from matplotlib import pyplot as plt
 import os
 import csv
 from PIL import Image
+from paddleocr import PaddleOCR,draw_ocr
 
+
+ocr = PaddleOCR(use_angle_cls=True, lang='ch')  
 # find all speech bubbles in the given comic page and return a list of cropped speech bubbles (with possible false positives)
 def findSpeechBubbles(imagePath, method, filename):
-
+    cropped_comic_dir = os.path.dirname(os.path.join(imagePath,'dialog'))
+    parent_dir = os.path.abspath(os.path.join(cropped_comic_dir, os.pardir)) # Change the current working directory to the parent directory 
+    croped_dir = os.path.join(parent_dir,'dialog')
+    fn = filename.split('.')[0]
+    try:
+        os.mkdir(os.path.join(croped_dir,fn))
+    except:
+        print("Could not create cropped photo directory")
     # read image
     image = cv2.imread(imagePath)
     # gray scale
@@ -30,6 +40,7 @@ def findSpeechBubbles(imagePath, method, filename):
     # get the list of cropped speech bubbles
 
     croppedImageList = []
+    textList = []
     id = 0
     for contour in contours:
 
@@ -45,9 +56,23 @@ def findSpeechBubbles(imagePath, method, filename):
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             croppedImage = image[y:y+h, x:x+w]
             croppedImageList.append(croppedImage)
-            cv2.imwrite(os.path.join('cropped', str(
-                id)+'-'+str(filename)), croppedImage)
+            path = os.path.join(croped_dir,fn, str(
+                id)+'-'+str(filename))
+            print(path)
+            # if not cv2.imwrite(path, croppedImage):
+            #      raise Exception("Could not write image")
+            # else:
+            cv2.imwrite(path, croppedImage)
+            result = ocr.ocr(path, cls=True)
+            txts = [line[1][0] for line in result[0]]
+            sentence = ''.join(txts).encode('gb18030').decode('gbk')
+            print(sentence)
+            textList.append(sentence)
+
 
             id += 1
-
+    print(textList)
+    f = open('xxxx.txt','w')
+    f.write(str(textList))
+    f.close()
     return croppedImageList
