@@ -67,10 +67,6 @@ def findSpeechBubbles(imagePath, method, filename):
             sentence = ''.join(txts)
 
             if sentence != "":
-                # image_data = cv2.imencode(".jpg", image)[1].tobytes()
-                # b64_img = base64.b64encode(image_data)
-                    
-                # print(image_data)
                 textList.append(dict({
                     "_id":id,
                     "source":sentence,
@@ -80,11 +76,6 @@ def findSpeechBubbles(imagePath, method, filename):
 
 
             id += 1
-    # print(textList)
-    # f = open('result.json','a')
-    # # f.write(str("\n".join(textList)))
-    # f.write(json.dumps({"data": textList}))
-    # f.close()
-    # return dict({"page-%s" % str(fn) :textList})
+
     return textList
 
