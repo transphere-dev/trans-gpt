@@ -6,7 +6,7 @@ async function sendVerificationEmail(email, token) {
   // Implement your email sending logic here
   // You can use nodemailer or any other email sending library
 
-  const verificationLink = `http://192.168.4.62:3000/verify/${token}`;
+  const verificationLink = `http://192.168.4.62:8080/verify/${token}`;
   // Send the verification link to the user's email
   const mailOptions = {
     from: process.env.EMAIL_FROM || "noreply@transphere.com", // The email address the verification email is sent from
@@ -26,7 +26,7 @@ async function sendVerificationEmail(email, token) {
 
 const sendResetPasswordEmail = async (email, token) => {
   try {
-    const resetLink = `http://192.168.4.62:3000/ResetPassword/${token}`;
+    const resetLink = `http://192.168.4.62:8080/ResetPassword/${token}`;
 
     const mailOptions = {
       from: process.env.EMAIL_FROM || 'noreply@transphere.com',

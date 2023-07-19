@@ -1,7 +1,18 @@
 from PIL import Image
 from paddleocr import PaddleOCR,draw_ocr
+import sys
+from lib import findSpeechBubbles
+import os
+import io
+
+
+
+
 
 class Extractor:
+    """
+    img_pa
+    """
     ocr = PaddleOCR(use_angle_cls=True, lang='ch')  # Initialized as a class attribute
 
     def __init__(self, img_path, lang) -> None:
@@ -12,6 +23,7 @@ class Extractor:
     def extractTextPaddle(self):
         txts = [line[1][0] for line in self.result[0]]
         sentence = ''.join(txts)
+        print(sentence)
         return sentence
 
     def drawRect(self):
@@ -23,6 +35,5 @@ class Extractor:
         im_show = draw_ocr(image, boxes)
         im_show = Image.fromarray(im_show)
         im_show.save('result.jpg')
-
 
 

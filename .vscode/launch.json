@@ -6,7 +6,7 @@
     "configurations": [
 
         {
-            "type": "msedge",
+            "type": "pwa-msedge",
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:3000",
