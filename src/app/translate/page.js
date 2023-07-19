@@ -167,7 +167,7 @@ export default function Page() {
         formData.append('file', file);
     
         try {
-          const response = await fetch('http://localhost:8080/api/extract', {
+          const response = await fetch('http://192.168.4.62:3000/api/extract', {
             method: 'POST',
             body: formData,
           });

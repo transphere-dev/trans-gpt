@@ -193,7 +193,7 @@ export default function TranslationBox({
     //   ...translationHistory,
     // ]);
 
-    const response = await fetch("http://localhost:8080/api/translate/g", {
+    const response = await fetch("http://192.168.4.62:3000/api/translate/g", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
