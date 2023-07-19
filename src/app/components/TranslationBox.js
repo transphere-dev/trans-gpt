@@ -12,6 +12,7 @@ import {
   useDisclosure,
   Collapse,
   Slider,
+  Image,
   SliderMark,
   SliderTrack,
   SliderFilledTrack,
@@ -28,6 +29,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { RiCheckLine, RiCloseLine, RiEdit2Line, RiGoogleFill, RiTranslate, RiTranslate2 } from "react-icons/ri";
 import { TailSpin } from "react-loader-spinner";
 import { generateTranslationPrompt } from "../lib/misc";
+import ComicDialog from "./comicDialog";
 import { useGlossary } from "./GlossaryProvider";
 import { useGPT } from "./GptProvider";
 import { useTranslation } from "./TranslationProvider";
@@ -40,6 +42,7 @@ export default function TranslationBox({
   scheme,
   translateAll,
   allTranslation,
+  imagePath
 }) {
   const { temperature, setTemperature } = useGPT();
   const { terms, highlight, systemPrompt, model } = useGlossary();
@@ -81,18 +84,14 @@ export default function TranslationBox({
     )
   }
 
+
+
   useEffect(() => {
     if (terms.length > 0) {
       setHighlightGlossaryTerms(highlightGlossaryTerms(source, terms));
     }
   }, [terms]);
 
-  //  useEffect(() => {
-  //    if(highlight) {
-  //     document.getElementById("term-1").addEventListener("click", function() { console.info(2)})
-  //   }
-
-  // }, [highlight]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -305,6 +304,7 @@ export default function TranslationBox({
             className="source"
             style={{ padding: "2% 0px" }}
             onClick={clickOnHighlightedTerm}
+            suppressContentEditableWarning
             contentEditable
             dangerouslySetInnerHTML={{ __html: highlightGlossary }}
           />
@@ -354,7 +354,7 @@ export default function TranslationBox({
                 </Slider>
               </Box>
             )}
-          </Flex>      
+                  </Flex>      
               {/* <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
             <Button
               w={"20%"}
@@ -441,6 +441,9 @@ export default function TranslationBox({
   <Text>{termInfo?.remarks}</Text> */}
             </Flex>
           )}
+
+{ clicked && <ComicDialog fallbackSrc='https://via.placeholder.com/150' imagePath={imagePath} />}
+
         </Collapse>
       </Td>
       <Td w={"50%"}>
@@ -458,7 +461,7 @@ export default function TranslationBox({
         )}
 
         <Flex flexDirection={"column"}>
-          <div style={{marginBottom: translation && 17}} contentEditable className={translation ? `gpt-translation` : null}>{translation}</div>
+          <div style={{marginBottom: translation && 17}} suppressContentEditableWarning contentEditable className={translation ? `gpt-translation` : null}>{translation}</div>
           
         </Flex>
      
@@ -481,7 +484,7 @@ export default function TranslationBox({
         )}
 
         <Flex flexDirection={"column"}>
-          <div style={{marginBottom:deeplTranslation && 17}} contentEditable className={deeplTranslation ? `deepl-translation` : null}>{deeplTranslation}</div>
+          <div style={{marginBottom:deeplTranslation && 17}} suppressContentEditableWarning contentEditable className={deeplTranslation ? `deepl-translation` : null}>{deeplTranslation}</div>
           
         </Flex>
         {deeplLoading && (
@@ -498,7 +501,7 @@ export default function TranslationBox({
         )}
 
         <Flex flexDirection={"column"}>
-          <div style={{marginBottom:googleTranslation && 17}} contentEditable className={googleTranslation ? `google-translation` : null}>{googleTranslation}</div>
+          <div style={{marginBottom:googleTranslation && 17}} suppressContentEditableWarning contentEditable className={googleTranslation ? `google-translation` : null}>{googleTranslation}</div>
           
         </Flex>
           

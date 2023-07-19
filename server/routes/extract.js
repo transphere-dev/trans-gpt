@@ -40,11 +40,13 @@ router.post('/', upload.single('file'), (req, res) => {
       const extract  = cmd.runSync(`python ../server/ocr/ocr.py --userId ${user_id} --cname ${name} --fname ${fileName}`)
       
       console.log(`
-      install Data ${extract.data}
+      Data ----> ${extract.data}
 
-      install Err ${extract.err}
+      Err ----> ${extract.err}
   `);
-      res.status(200).json({ message: 'Text extraction complete' });
+      const comic_texts = extract.data
+      console.log(comic_texts);
+      res.json({ data: comic_texts });
     } catch (err) {
       console.message('Extraction failed:', err);
       res.status(500).json({ message: 'Extraction failed' });

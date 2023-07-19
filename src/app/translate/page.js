@@ -172,7 +172,6 @@ export default function Page() {
             body: formData,
           });
           const data = await response.json()
-
           toast({
             // id,
             title: data?.message || "Uploaded successfully",
@@ -181,7 +180,11 @@ export default function Page() {
             description: data?.success && !data?.success &&  'Ensure the glossary file has Source and Target column headers'
 
           })
-          data?.id && setGlossaries(prev => setGlossaries([...prev,data]))
+
+          const comicData = JSON.parse(data.data)
+
+          data?.data && setFileData(comicData.comic)
+          setModelOpen(false)
           setLoading(false)
         } catch (error) {
           setLoading(false)
@@ -255,18 +258,18 @@ export default function Page() {
         event.target.style.backgroundColor = "#ffffff20";
       }}
     >
-      {!fileData ? (
-        <DragFile />
-      ) : (
+      
         <TableContainer
           whiteSpace={"break-spaces"}
           h={"100%"}
           w={"100%"}
           borderRadius={10}
         >
-          {fileData && (
+         
             <Flex w={"100%"} p={"2%"}>
-              <Button
+            {fileData && (   
+                 <>
+                 <Button
                 leftIcon={<RiTranslate2 />}
                 onClick={handleTranslateAll}
                 size={"sm"}
@@ -284,6 +287,8 @@ export default function Page() {
               >
                 Analytics
               </Button>
+                 </>
+               )}
               <Button
                 ml={"2%"}
                 leftIcon={<RiUpload2Fill />}
@@ -294,7 +299,9 @@ export default function Page() {
                 Upload Comic
               </Button>
             </Flex>
-          )}
+            {!fileData ? (
+        <DragFile />
+      ) : (
           <Table
             colorScheme={scheme.colorMode === "light" ? "facebook" : null}
             mt={"2%"}
@@ -308,7 +315,7 @@ export default function Page() {
               </Tr>
             </Thead>
             <Tbody w={50}>
-              {fileData?.slice(0, 42).map((each, i) => {
+              {fileData?.slice(0, 100).map((each, i) => {
                 return (
                   each?.source && (
                     <TranslationBox
@@ -317,6 +324,7 @@ export default function Page() {
                       activeRowIndex={activeRowIndex}
                       source={each?.source}
                       target={each?.target}
+                      imagePath={each?.image_path}
                       key={i}
                       allTranslation={allTranslation}
                       // translateAll={allTranslation}
@@ -327,8 +335,9 @@ export default function Page() {
               })}
             </Tbody>
           </Table>
+           )}
         </TableContainer>
-      )}
+     
 
 <Modal  isCentered isOpen={modalOpen} onClose={() => setModelOpen(false)}>
         <ModalOverlay />

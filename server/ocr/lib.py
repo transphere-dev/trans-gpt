@@ -1,3 +1,4 @@
+from json import encoder
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -5,9 +6,10 @@ import os
 import csv
 from PIL import Image
 from paddleocr import PaddleOCR,draw_ocr
+import json
+import base64
 
-
-ocr = PaddleOCR(use_angle_cls=True, lang='ch')  
+ocr = PaddleOCR(use_angle_cls=True, lang='ch',show_log=False)  
 # find all speech bubbles in the given comic page and return a list of cropped speech bubbles (with possible false positives)
 def findSpeechBubbles(imagePath, method, filename):
     cropped_comic_dir = os.path.dirname(os.path.join(imagePath,'dialog'))
@@ -17,7 +19,8 @@ def findSpeechBubbles(imagePath, method, filename):
     try:
         os.mkdir(os.path.join(croped_dir,fn))
     except:
-        print("Could not create cropped photo directory")
+        # print("Could not create cropped photo directory")
+        pass
     # read image
     image = cv2.imread(imagePath)
     # gray scale
@@ -35,7 +38,7 @@ def findSpeechBubbles(imagePath, method, filename):
 
     # find contours
     contours = cv2.findContours(
-        binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[0]
+    binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[0]
 
     # get the list of cropped speech bubbles
 
@@ -55,24 +58,33 @@ def findSpeechBubbles(imagePath, method, filename):
         if w < 500 and w > 100 and h < 300 and h > 30:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             croppedImage = image[y:y+h, x:x+w]
-            croppedImageList.append(croppedImage)
-            path = os.path.join(croped_dir,fn, str(
-                id)+'-'+str(filename))
-            print(path)
-            # if not cv2.imwrite(path, croppedImage):
-            #      raise Exception("Could not write image")
-            # else:
+
+            path = os.path.join(croped_dir,fn, str(id)+'-'+str(filename))
+
             cv2.imwrite(path, croppedImage)
             result = ocr.ocr(path, cls=True)
             txts = [line[1][0] for line in result[0]]
-            sentence = ''.join(txts).encode('gb18030').decode('gbk')
-            print(sentence)
-            textList.append(sentence)
+            sentence = ''.join(txts)
+
+            if sentence != "":
+                # image_data = cv2.imencode(".jpg", image)[1].tobytes()
+                # b64_img = base64.b64encode(image_data)
+                    
+                # print(image_data)
+                textList.append(dict({
+                    "_id":id,
+                    "source":sentence,
+                    "page":fn,
+                    "image_path":os.path.relpath(path).replace('\\','/')
+                }))
 
 
             id += 1
-    print(textList)
-    f = open('xxxx.txt','w')
-    f.write(str(textList))
-    f.close()
-    return croppedImageList
+    # print(textList)
+    # f = open('result.json','a')
+    # # f.write(str("\n".join(textList)))
+    # f.write(json.dumps({"data": textList}))
+    # f.close()
+    # return dict({"page-%s" % str(fn) :textList})
+    return textList
+

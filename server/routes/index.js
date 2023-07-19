@@ -11,10 +11,12 @@ const chatRoutes = require('./chats');
 const buildRoutes = require('./build');
 const translateRoutes = require('./translate');
 const extractRoutes = require('./extract');
+const assetsRoute = require('./assets');
 
 router.use('/users', userRoutes);
 router.use('/chats', chatRoutes);
 router.use('/app', buildRoutes);
 router.use('/translate', translateRoutes);
 router.use('/extract', extractRoutes);
+router.use('/assets', assetsRoute);
 module.exports = router;
