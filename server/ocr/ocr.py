@@ -7,7 +7,7 @@ import json
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='gb18030')
 
-COMIC_DIR_PATH = r"C:\Users\Administrator\Desktop\trans-gpt\server\uploads\comics"
+COMIC_DIR_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'uploads', 'comics')
 arguments = sys.argv[1:]
 userId = arguments[1]
 comic_name =  arguments[3]
