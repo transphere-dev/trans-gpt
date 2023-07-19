@@ -14,7 +14,7 @@ export default function ComicDialog({imagePath}) {
         const imgData = {image_path: imagePath}
 
       try {
-        const response =  fetch(`http://192.168.4.62:3000/api/assets`,{
+        const response =  fetch(`http://192.168.4.62:8080/api/assets`,{
           method: 'POST',
           mode:"cors",
           headers: new Headers({
