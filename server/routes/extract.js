@@ -16,9 +16,9 @@ router.post('/', upload.single('file'), (req, res) => {
 
   // Create the directory to save the extracted images
  
-  const directory = path.join('uploads/comics', `${user_id}/${name}`); 
-  const crop_dir = path.join('uploads/comics', `${user_id}/${name}/dialog`);
-  fs.mkdirSync(directory, { recursive: true });;
+  const directory = path.join(path.dirname(__dirname),'uploads/comics', `${user_id}/${name}`); 
+  const crop_dir = path.join(path.dirname(__dirname),'uploads/comics', `${user_id}/${name}/dialog`);
+  fs.mkdirSync(directory, { recursive: true })
   fs.mkdirSync(crop_dir, { recursive: true });
 
   const fileExtension = path.extname(req.file.originalname).toLowerCase();
@@ -37,7 +37,8 @@ router.post('/', upload.single('file'), (req, res) => {
 
       // Read directory files
       //  Call python OCR script
-      const extract  = cmd.runSync(`python ../server/ocr/ocr.py --userId ${user_id} --cname ${name} --fname ${fileName}`)
+
+      const extract  = cmd.runSync(`python ./server/ocr/ocr.py --userId ${user_id} --cname ${name} --fname ${fileName}`)
       
       console.log(`
       Data ----> ${extract.data}
