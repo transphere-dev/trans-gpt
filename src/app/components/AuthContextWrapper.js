@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       const response = await fetch(
-        "http://192.168.4.62:8080/api/users/resend-verification",
+        `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/users/resend-verification`,
         {
           method: "POST",
           headers: {

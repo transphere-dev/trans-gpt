@@ -13,5 +13,4 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false,
   },
 });
-console.log(process.env.EMAIL_USER);
 module.exports = transporter;

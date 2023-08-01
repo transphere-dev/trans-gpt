@@ -30,7 +30,7 @@ export const TranslationProvider = ({children}) => {
 
 
     useEffect(() => {
-        fetch(`http://192.168.4.62:8080/glossaries/${user?.id}`).then(response => {
+        fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/glossaries/${user?.id}`).then(response => {
     if (response.ok) {
     
         return response.json();
@@ -52,7 +52,7 @@ export const TranslationProvider = ({children}) => {
   }, [])
 
    const fetchTerms = async (translation_id) => {
-    await fetch(`http://192.168.4.62:8080/glossaries/${user?.id}/translation/${translation_id}`).then(response => {
+    await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/glossaries/${user?.id}/translation/${translation_id}`).then(response => {
       if (response.ok) {
         return response.json();
       } else {

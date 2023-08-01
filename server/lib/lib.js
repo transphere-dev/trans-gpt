@@ -6,10 +6,10 @@ async function sendVerificationEmail(email, token) {
   // Implement your email sending logic here
   // You can use nodemailer or any other email sending library
 
-  const verificationLink = `http://192.168.4.62:8080/verify/${token}`;
+  const verificationLink = `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/verify/${token}`;
   // Send the verification link to the user's email
   const mailOptions = {
-    from: process.env.EMAIL_FROM || "noreply@transphere.com", // The email address the verification email is sent from
+    from: process.env.EMAIL_FROM, // The email address the verification email is sent from
     to: email, // The user's email address
     subject: 'Email Verification',
     text: `Please click the following link to verify your email: ${verificationLink}`,
@@ -26,10 +26,10 @@ async function sendVerificationEmail(email, token) {
 
 const sendResetPasswordEmail = async (email, token) => {
   try {
-    const resetLink = `http://192.168.4.62:8080/ResetPassword/${token}`;
+    const resetLink = `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/ResetPassword/${token}`;
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'noreply@transphere.com',
+      from: process.env.EMAIL_FROM,
       to: email,
       subject: 'Password Reset',
       text: `To reset your password, please click the following link: ${resetLink}`,

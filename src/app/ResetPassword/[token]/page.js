@@ -35,7 +35,7 @@ import { useState } from 'react';
       try {
         setSuccess('');
         setError('');
-        const response = await fetch('http://192.168.4.62:8080/api/users/reset-password', {
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/users/reset-password`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

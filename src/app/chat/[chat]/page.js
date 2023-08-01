@@ -19,7 +19,7 @@ export default function Page({ params }) {
 
   // Fetch chat messages for a specific chat session
   async function fetchChatMessages(sessionId) {
-    const response = await fetch(`http://192.168.4.62:8080/api/chats/sessions/${sessionId}/messages/${user.id}`);
+    const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/chats/sessions/${sessionId}/messages/${user.id}`);
 
     if (!response.ok) {
       throw new Error(`Error fetching chat messages: ${response.statusText}`);
@@ -92,7 +92,7 @@ export default function Page({ params }) {
         >
           <ChatInput />
           <Text mt={3} fontSize={"xs"} align={"center"} color={"#ACACBE"}>
-            TransGPT March 29 Version. This a pre-release for testing and
+            TransGPT Aug 1 Version. This a pre-release for testing and
             evaluation purposes.
           </Text>
         </Box>

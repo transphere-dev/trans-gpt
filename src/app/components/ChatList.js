@@ -28,7 +28,7 @@ export default function ChatList() {
     const { colorMode } = useColorMode();
 
     async function fetchChatSessions() {
-        const response = await fetch(`http://192.168.4.62:8080/api/chats/sessions/${user.id}`);
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/chats/sessions/${user.id}`);
     
         if (!response.ok) {
           setLoading(false)

@@ -7,11 +7,10 @@ const { getUserById } = require('../models/users');
 const jwt = require('jsonwebtoken');
 const { getUserByEmail, checkPassword } = require('../db');
 const { sendVerificationEmail , sendResetPasswordEmail, verifyPasswordResetToken} = require('../lib/lib');
-const SECRET_KEY = 'your-secret-key'; // Replace this with your actual secret key
+
 // Generate a password reset token
 const crypto = require('crypto');
 
-const EMAIL_VERIFICATION_SECRET = "yugetfu5e6865r85erd85dar8a"
 
 router.use('/me', authMiddleware);
 
@@ -58,7 +57,7 @@ router.post('/register', async (req, res) => {
       // Generate an email verification token
   const emailVerificationToken = jwt.sign(
     { email },
-    EMAIL_VERIFICATION_SECRET ,
+    process.env.EMAIL_VERIFICATION_SECRET ,
     { expiresIn: '24h' }
   );
 
@@ -88,7 +87,7 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Invalid password' });
   }
 
-  const token = jwt.sign({ id: user.id }, SECRET_KEY, {
+  const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
     expiresIn: '1h', // Set the token expiration time as needed
   });
 
@@ -102,7 +101,7 @@ router.get('/verify/:token', async (req, res) => {
   const { token } = req.params;
 
   try {
-    const decoded = jwt.verify(token, EMAIL_VERIFICATION_SECRET );
+    const decoded = jwt.verify(token, process.env.EMAIL_VERIFICATION_SECRET );
   
     const email = decoded.email;
     // Update the user's email verification status in the database
@@ -124,7 +123,7 @@ router.post('/resend-verification', async (req, res) => {
     if (user && !user.emailverified) {
       const token = jwt.sign( 
         { email },
-       EMAIL_VERIFICATION_SECRET ,
+       process.env.EMAIL_VERIFICATION_SECRET ,
         { expiresIn: '24h' }
       );
       await sendVerificationEmail(user.email, token);
@@ -147,7 +146,7 @@ router.post('/forgot-password', async (req, res) => {
     if (user) {
       const token = jwt.sign(
         { email },
-        process.env.SECRET_KEY || 'ewew',
+        process.env.SECRET_KEY ,
         { expiresIn: '24h' })
       
       

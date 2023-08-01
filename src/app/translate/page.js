@@ -166,7 +166,7 @@ export default function Page() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://192.168.4.62:8080/api/comics/extract', {
+      const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/comics/extract`, {
         method: 'POST',
         body: formData,
       });

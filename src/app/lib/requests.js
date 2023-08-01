@@ -5,7 +5,7 @@ export async function registerUser(username, email, password, confirmPassword) {
     }
   
     try {
-      const response = await fetch('http://192.168.4.62:8080/api/users/register', {
+      const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/users/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export async function registerUser(username, email, password, confirmPassword) {
 
 export  async function loginUser(email, password) {
     try {
-      const response = await fetch('http://192.168.4.62:8080/api/users/login', {
+      const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export  async function loginUser(email, password) {
 
   export async function getUser(token) {
     try {
-      const response = await fetch('http://192.168.4.62:8080/api/users/me', {
+      const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/users/me`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`

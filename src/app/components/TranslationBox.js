@@ -112,84 +112,90 @@ export default function TranslationBox({
     };
   }, [allTranslation]);
 
+  // Translate the source text function
   const translate = async (id) => {
     const text = document.getElementById(id).innerText;
     setTranslation("");
     setTranslated(false);
     setLoading(true);
-    // console.log([
-    //   ...generateTranslationPrompt(systemPrompt, [text], terms),
-    //   ...translationHistory,
-    // ]);
+try {
+  const response = await fetch("/api/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-    const response = await fetch("/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    body: JSON.stringify({
+      prompt: generateTranslationPrompt(systemPrompt, [text], terms),
+      temperature: temperature,
+      model: model,
+    }),
+  });
 
-      body: JSON.stringify({
-        prompt: generateTranslationPrompt(systemPrompt, [text], terms),
-        temperature: temperature,
-        model: model,
-      }),
-    });
-
-    if (!response.ok) {
-      setLoading(false);
-      throw new Error(response.statusText);
-    }
-
-    const data = response.body;
-    if (!data) {
-      toast({
-        // id,
-        title: "Too many translation requests",
-        duration: 7000,
-        status: "warning",
-        description:
-          "Please wait for less than 60 seconds before you translate the next string",
-      })
-      return;
-    }
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let isDone = false;
-    let completeResp = "";
-
-    while (!isDone) {
-      const { value, done } = await reader.read();
-      isDone = done;
-      const chunkValue = decoder.decode(value);
-
-      completeResp += chunkValue;
-
-      chunkValue !== "[object Response]"
-        ? setTranslation((prev) => prev + chunkValue)
-        : toast({
-            // id,
-            title: "Too many translation requests",
-            duration: 7000,
-            status: "warning",
-            description:
-              "Please wait for less than 60 seconds before you translate the next string",
-          });
-
-      // if (isDone) {
-
-      //   setTranslationHistory((prevHistory) =>
-      //     setTranslationHistory([
-      //       ...prevHistory,
-      //       { role: "assistant", content: completeResp },
-      //       generateTranslationPrompt(systemPrompt, [text], terms)[1],
-      //     ])
-      //   );
-      // }
-    }
-
+  if (!response.ok) {
     setLoading(false);
-    setTranslated(true);
+    const err = await response.json()
+    console.log(err);
+    throw new Error(err.error);
+  }
+
+  const data = response.body;
+
+  if (!data) {
+    return;
+  }
+  const reader = data.getReader();
+  const decoder = new TextDecoder();
+  let isDone = false;
+  let completeResp = "";
+
+  while (!isDone) {
+    const { value, done } = await reader.read();
+    isDone = done;
+    const chunkValue = decoder.decode(value);
+
+    completeResp += chunkValue;
+
+    chunkValue !== "[object Response]"
+      ? setTranslation((prev) => prev + chunkValue)
+      : toast({
+          // id,
+          title: "Too many translation requests",
+          duration: 7000,
+          status: "warning",
+          description:
+            "Please wait for less than 60 seconds before you translate the next string",
+        });
+
+    // if (isDone) {
+
+    //   setTranslationHistory((prevHistory) =>
+    //     setTranslationHistory([
+    //       ...prevHistory,
+    //       { role: "assistant", content: completeResp },
+    //       generateTranslationPrompt(systemPrompt, [text], terms)[1],
+    //     ])
+    //   );
+    // }
+
+  }
+  setLoading(false);
+  setTranslated(true)
+} catch (error) {
+  toast({
+    // id,
+    title: error.message,
+    duration: 7000,
+    status: "warning",
+    description:"",
+  });
+  setLoading(false);
+
+}
+ ;
   };
+
+  // Google translate function
   const googleTranslate = async (id) => {
     const text = document.getElementById(id).innerText;
     setGoogleTranslation("");
@@ -200,7 +206,7 @@ export default function TranslationBox({
     //   ...translationHistory,
     // ]);
 
-    const response = await fetch("http://192.168.4.62:8080/api/translate/g", {
+    const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/translate/g`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -228,12 +234,13 @@ export default function TranslationBox({
     setTranslated(true);
   };
 
+  // DeepL translation
   const deeplTranslate = async (id) => {
     const text = document.getElementById(id).innerText;
     setDeeplTranslation("");
     setTranslated(false);
     setDeeplLoading(true);
-    const res = await fetch("http://192.168.4.62:8080/api/translate/d/", {
+    const res = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/translate/d/`, {
       method: "POST",
       mode: "cors",
       

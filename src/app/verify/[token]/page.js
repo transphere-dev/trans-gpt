@@ -13,7 +13,7 @@ function Page({params}) {
     const verifyEmail = async () => {
       const token = params.token;
       try {
-        const response = await fetch(`http://192.168.4.62:8080/api/users/verify/${token}`);
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/users/verify/${token}`);
         if (response.ok) {
           setVerificationStatus('success');
         } else {

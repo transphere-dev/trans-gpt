@@ -1,6 +1,5 @@
 // authMiddleware.js
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'your-secret-key'; // Replace this with your actual secret key
 
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -22,7 +21,7 @@ const authMiddleware = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
     req.id = decoded.id; // Pass the user ID to the request object for later use
 

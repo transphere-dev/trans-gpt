@@ -1,7 +1,5 @@
 const { Pool } = require("pg");
-const connectionString =
-  // process.env.DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5432/transgpt-db";
+const connectionString = process.env.DATABASE_URL;
 const bcrypt = require("bcrypt");
 const { matchSourceTargetTerms } = require("../lib/lib");
 

@@ -33,7 +33,7 @@ function ChatContextWrapper({ children }) {
   // Save chat Messages
   async function saveChatMessage(chat_message_data) {
     const response = await fetch(
-      "http://192.168.4.62:8080/api/chats/chat-msg",
+      `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/chats/chat-msg`,
       {
         method: "POST",
         headers: {
@@ -54,7 +54,7 @@ function ChatContextWrapper({ children }) {
   // Save chat sessions
   async function saveChatSession(chatSession) {
     const response = await fetch(
-      "http://192.168.4.62:8080/api/chats/chat-session",
+      `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/chats/chat-session`,
       {
         method: "POST",
         headers: {

@@ -16,7 +16,7 @@ export const ComicProvider = ({children}) => {
  
 
   const fetchComics = async () => {
-    await fetch(`http://192.168.4.62:8080/api/comics/${user?.id}`).then(response => {
+    await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/comics/${user?.id}`).then(response => {
       if (response.ok) {
         return response.json();
       } else {
@@ -38,7 +38,7 @@ export const ComicProvider = ({children}) => {
       comicName: comic
     }
     
-   await fetch(`http://192.168.4.62:8080/api/comics/ocr`,{
+   await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/comics/ocr`,{
 
      method:"POST",
      mode:"cors",

@@ -1,5 +1,6 @@
 
 import { OpenAIStream } from "../../lib/OpenAIStream";
+import { NextRequest, NextResponse } from "next/server";
 
 export const config = {
   runtime: "edge",
@@ -19,11 +20,19 @@ export async function POST(req) {
     stream: true
   };
 
+try {
   const stream = await OpenAIStream(payload);
 
   const res = new Response(stream)
 
 
+
   return res;
+} catch (error) {
+
+
+
+  return NextResponse.json({ error: error.message }, { status: 500 });
+}
 };
 

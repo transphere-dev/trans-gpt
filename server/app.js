@@ -8,7 +8,6 @@ const app = express();
 const routes = require('./routes');
 const glossariesRoutes = require('./routes/glossaries');
 
-
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
