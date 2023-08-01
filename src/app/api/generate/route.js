@@ -2,12 +2,12 @@
 import { OpenAIStream } from "../../lib/OpenAIStream";
 
 export const config = {
-    runtime: "edge",
-  };
+  runtime: "edge",
+};
 
 
-  export async function POST(req) {
-  const { prompt ,temperature , model} = (await req.json())
+export async function POST(req) {
+  const { prompt, temperature, model } = (await req.json())
 
   const payload = {
     messages: prompt,
@@ -16,14 +16,14 @@ export const config = {
     n: 1,
     // stop: '\nGlossary',
     model: model,
-    stream:true
+    stream: true
   };
-  
-    const stream = await OpenAIStream(payload);
 
-    const res = new Response(stream)
-    console.info(`API - ${res.status}`)
+  const stream = await OpenAIStream(payload);
 
-    return res;
-  };
+  const res = new Response(stream)
+
+
+  return res;
+};
 

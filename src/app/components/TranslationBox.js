@@ -44,11 +44,10 @@ export default function TranslationBox({
   allTranslation,
   imagePath
 }) {
-  const { temperature, setTemperature } = useGPT();
-  const { terms, highlight, systemPrompt, model } = useGlossary();
+  const { temperature, setTemperature, systemPrompt, model } = useGPT();
+  const { terms, highlight } = useGlossary();
   const [highlightGlossary, setHighlightGlossaryTerms] = useState();
   const [clicked, setClicked] = useState(false);
-  const { sendTranslationRequest, setTimer } = useTranslation();
   const [translation, setTranslation] = useState("");
   const [googleTranslation, setGoogleTranslation] = useState("");
   const [deeplTranslation, setDeeplTranslation] = useState("");
@@ -143,6 +142,14 @@ export default function TranslationBox({
 
     const data = response.body;
     if (!data) {
+      toast({
+        // id,
+        title: "Too many translation requests",
+        duration: 7000,
+        status: "warning",
+        description:
+          "Please wait for less than 60 seconds before you translate the next string",
+      })
       return;
     }
     const reader = data.getReader();
@@ -293,14 +300,13 @@ export default function TranslationBox({
       <Td
         bg={index === activeRowIndex && "orange.300"}
         color={index === activeRowIndex && "#000"}
-        onFocus={() => console.info("i")}
         w={"50%"}
         onClick={() => setClicked(true)}
       >
         {highlight && terms.length > 0 ? (
           <div
             id={index}
-            sourceId={index}
+            source-id={index}
             className="source"
             style={{ padding: "2% 0px" }}
             onClick={clickOnHighlightedTerm}
@@ -311,7 +317,7 @@ export default function TranslationBox({
         ) : (
           <Editable
             id={index}
-            sourceId={index}
+            source-id={index}
             ref={(element) => (editableDivRefs.current[index] = element)}
             className="source"
             defaultValue={source}

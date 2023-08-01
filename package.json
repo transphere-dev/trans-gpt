@@ -50,7 +50,7 @@
     "electron-builder": "^23.6.0"
   },
   "build": {
-    "appId": "com.yourdomain.yourapp",
+    "appId": "transgpt.com",
     "productName": "TransGPT",
     "directories": {
       "buildResources": "resources",

@@ -55,7 +55,7 @@ def findSpeechBubbles(imagePath, method, filename):
         [x, y, w, h] = rect
 
         # filter out speech bubble candidates with unreasonable size
-        if w < 500 and w > 100 and h < 300 and h > 30:
+        if w < 700 and w > 60 and h < 300 and h > 30:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             croppedImage = image[y:y+h, x:x+w]
 
@@ -71,7 +71,8 @@ def findSpeechBubbles(imagePath, method, filename):
                     "_id":id,
                     "source":sentence,
                     "page":fn,
-                    "image_path":os.path.relpath(path).replace('\\','/')
+                    "image_path":os.path.relpath(path).replace('\\','/'),
+                    "dialog_box": True
                 }))
 
 

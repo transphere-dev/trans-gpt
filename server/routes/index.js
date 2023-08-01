@@ -10,13 +10,13 @@ const userRoutes = require('./users');
 const chatRoutes = require('./chats');
 const buildRoutes = require('./build');
 const translateRoutes = require('./translate');
-const extractRoutes = require('./extract');
-const assetsRoute = require('./assets');
+// const extractRoutes = require('./extract');
+const comicsRoute = require('./comics');
 
 router.use('/users', userRoutes);
 router.use('/chats', chatRoutes);
 router.use('/app', buildRoutes);
 router.use('/translate', translateRoutes);
-router.use('/extract', extractRoutes);
-router.use('/assets', assetsRoute);
+// router.use('/extract', extractRoutes);
+router.use('/comics', comicsRoute);
 module.exports = router;

@@ -4,10 +4,14 @@ import React, { useEffect, useState } from 'react'
 import { highlightGlossaryTerms } from '../lib/misc';
 import { useGlossary } from './GlossaryProvider';
 import { useTranslation } from './TranslationProvider';
+import { useComic } from './ComicProvider';
 import ExportButton from '../components/ExportButton'
+import { useGPT } from './GptProvider';
 
 export default function GloassaryOptions() {
-    const {glossaries,fetchTerms,terms,glossary,setGlossary,setHighlight,highlight,onOpen,setModel,models,model} = useGlossary()
+    const {glossaries,fetchTerms,terms,glossary,setGlossary,setHighlight,highlight} = useGlossary()
+    const {onOpen,setModel,models,model} = useGPT()
+    const {comics,setComic,comic,fetchComics} = useComic()
     const {fileData, setFileData} = useTranslation();
     const router = useRouter()
     const [glossaryMap, setGlossaryMap] = useState(null);
@@ -45,6 +49,10 @@ export default function GloassaryOptions() {
        }
     }, [glossary,terms]);
 
+    useEffect(() => {
+      fetchComics()
+    }, [])
+
     const selectGlossary = (e) => {
       setGlossary(e.target.innerText); 
       fetchTerms(e.target.value)
@@ -72,22 +80,24 @@ export default function GloassaryOptions() {
         <Text fontSize={14} ml={'2%'}>Select the GPT model</Text>
 
         </Flex> */}
-        <Select mt={'5%'} mb={'7%'} onChange={ e =>{ setModel(e.target.value)}}    placeholder='GPT model'>
+
+    <Select mt={'5%'} mb={'7%'} onChange={ e =>{ selectGlossary(e)}} placeholder='Select Glossary'>
             {
-                models?.map((each,i) => {
+                glossaries?.map((each,i) => {
                     return(
-                        <option  key={i} value={each?.id}>{each?.id}</option>
+                        <option key={i} value={each?.id}>{each?.name}</option>
 
                     )
                 })
             }
 
     </Select>
-    <Select mt={'5%'} mb={'7%'} onChange={ e =>{ selectGlossary(e)}} placeholder='Select Glossary'>
+
+    <Select mt={'5%'} mb={'7%'} onChange={ e =>{ setComic(e.target.value)}} placeholder='Select Comic'>
             {
-                glossaries?.map((each,i) => {
+                comics?.map((each,i) => {
                     return(
-                        <option key={i} value={each?.id}>{each?.name}</option>
+                        <option key={i} value={each}>{each}</option>
 
                     )
                 })

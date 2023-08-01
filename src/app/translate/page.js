@@ -7,7 +7,6 @@ import {
   TableContainer,
   useColorModeValue,
   Tbody,
-  Td,
   Th,
   Thead,
   Tr,
@@ -33,44 +32,44 @@ import {
   FormLabel,
   FormControl,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import TranslationBox from "../components/TranslationBox";
 import DragFile from "../components/DragFile";
 import { read, utils } from "xlsx";
 import { useTranslation } from "../components/TranslationProvider";
 import {
-  RiChat1Line,
+  RiFileTextLine,
   RiPieChartLine,
   RiTranslate2,
   RiUpload2Fill,
 } from "react-icons/ri";
 import { generateTranslationPrompt } from "../lib/misc";
-import { useGlossary } from "../components/GlossaryProvider";
 import { useGPT } from "../components/GptProvider";
 import Analysis from "../components/Analysis";
 import { FiUpload } from "react-icons/fi";
 import { useAuth } from "../components/AuthContextWrapper";
+import { useComic } from "../components/ComicProvider";
 
 export default function Page() {
   const { colorMode } = useColorMode();
   const [text, setText] = useState();
-  const [name,setName] = useState();
+  const [name, setName] = useState();
   const { fileData, setFileData } = useTranslation();
   const [activeRowIndex, setActiveRowIndex] = useState(0);
   const [allTranslation, setAllTranslation] = useState(false);
   const tableRef = useRef();
   const toast = useToast();
   const scheme = useColorMode();
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { totalAccuracy } = useTranslation();
-  const { terms, highlight, systemPrompt } = useGlossary();
+  const { comic, handleOCR, ocrLoading } = useComic();
   const { temperature, setTemperature } = useGPT();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [modalOpen,setModelOpen] = useState(false);
-  const [modalClose,setModalClose] = useState(false);
+  const [modalOpen, setModelOpen] = useState(false);
+  const [modalClose, setModalClose] = useState(false);
   const btnRef = React.useRef();
   const fileInput = useRef();
-  const {user} = useAuth();
+  const { user } = useAuth();
 
 
   const translateAll = async () => {
@@ -82,7 +81,7 @@ export default function Page() {
 
     // Store the inner text of each div in an array
     const innerTextArray = Array.from(editableDivs).map(
-      (div) => `${div.getAttribute("sourceId")}.${div.innerText}`
+      (div) => `${div.getAttribute("source-id")}.${div.innerText}`
     );
 
     // Output the inner text of each div
@@ -157,50 +156,47 @@ export default function Page() {
   const handleUploadComic = async (e) => {
 
     e.preventDefault();
-  
-        setLoading(true)
 
-        const file = fileInput.current.files[0];
-        const formData = new FormData();
-        formData.append('user_id', user.id);
-        formData.append('name', name);
-        formData.append('file', file);
-    
-        try {
-          const response = await fetch('http://192.168.4.62:8080/api/extract', {
-            method: 'POST',
-            body: formData,
-          });
-          const data = await response.json()
-          toast({
-            // id,
-            title: data?.message || "Uploaded successfully",
-            duration: 7000,
-            status: data?.success ? "success" : "warning",
-            description: data?.success && !data?.success &&  'Ensure the glossary file has Source and Target column headers'
+    setLoading(true)
 
-          })
+    const file = fileInput.current.files[0];
+    const formData = new FormData();
+    formData.append('user_id', user.id);
+    formData.append('name', name);
+    formData.append('file', file);
 
-          const comicData = JSON.parse(data.data)
+    try {
+      const response = await fetch('http://192.168.4.62:8080/api/comics/extract', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json()
+      toast({
+        // id,
+        title: data?.message || "Uploaded successfully",
+        duration: 7000,
+        status: data?.success ? "success" : "warning",
+        description: data?.success && !data?.success && 'Ensure the glossary file has Source and Target column headers'
 
-          data?.data && setFileData(comicData.comic)
-          setModelOpen(false)
-          setLoading(false)
-        } catch (error) {
-          setLoading(false)
-          console.error('Error uploading glossaries:', error);
+      })
+      setModelOpen(false)
+      setComics(prev => [...prev,])
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      console.error('Error uploading glossaries:', error);
 
-          toast({
-            // id,
-            title: "Required headers not found!",
-            duration: 7000,
-            status: "warning",
-            description: 'Ensure the glossary file has Source and Target column headers'
-          })
-        }
-      
-     
+      toast({
+        // id,
+        title: "Required headers not found!",
+        duration: 7000,
+        status: "warning",
+        description: 'Ensure the glossary file has Source and Target column headers'
+      })
     }
+
+
+  }
 
   useEventListener("keydown", handleKeyDown);
 
@@ -258,18 +254,18 @@ export default function Page() {
         event.target.style.backgroundColor = "#ffffff20";
       }}
     >
-      
-        <TableContainer
-          whiteSpace={"break-spaces"}
-          h={"100%"}
-          w={"100%"}
-          borderRadius={10}
-        >
-         
-            <Flex w={"100%"} p={"2%"}>
-            {fileData && (   
-                 <>
-                 <Button
+
+      <TableContainer
+        whiteSpace={"break-spaces"}
+        h={"100%"}
+        w={"100%"}
+        borderRadius={10}
+      >
+
+        <Flex w={"100%"} p={"2%"}>
+          {fileData && (
+            <>
+              <Button
                 leftIcon={<RiTranslate2 />}
                 onClick={handleTranslateAll}
                 size={"sm"}
@@ -287,21 +283,33 @@ export default function Page() {
               >
                 Analytics
               </Button>
-                 </>
-               )}
-              <Button
-                ml={"2%"}
-                leftIcon={<RiUpload2Fill />}
-                onClick={() => setModelOpen(!modalOpen)}
-                size={"sm"}
-                colorScheme={"orange"}
-              >
-                Upload Comic
+            </>
+          )}
+          <Button
+            ml={"2%"}
+            leftIcon={<RiUpload2Fill />}
+            onClick={() => setModelOpen(!modalOpen)}
+            size={"sm"}
+            colorScheme={"orange"}
+          >
+            Upload Comic
+               </Button>
+          <Button
+            ml={"2%"}
+            loadingText={'Extracting Texts...'}
+            isLoading={ocrLoading}
+            leftIcon={<RiFileTextLine />}
+            onClick={() => handleOCR(comic)}
+            size={"sm"}
+            colorScheme={"orange"}
+            bgGradient={comic && 'linear(to-l, #7928CA, #FF0080)'}
+          >
+            Extract Comic Text
               </Button>
-            </Flex>
-            {!fileData ? (
-        <DragFile />
-      ) : (
+        </Flex>
+        {!fileData ? (
+          <DragFile />
+        ) : (
           <Table
             colorScheme={scheme.colorMode === "light" ? "facebook" : null}
             mt={"2%"}
@@ -335,46 +343,46 @@ export default function Page() {
               })}
             </Tbody>
           </Table>
-           )}
-        </TableContainer>
-     
+        )}
+      </TableContainer>
 
-<Modal  isCentered isOpen={modalOpen} onClose={() => setModelOpen(false)}>
+
+      <Modal isCentered isOpen={modalOpen} onClose={() => setModelOpen(false)}>
         <ModalOverlay />
         <ModalContent color={useColorModeValue("#444654", "#fff")} >
           <ModalHeader>Upload comic assets</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-        <form onSubmit={handleUploadComic}>
-        <FormControl mb='5%' _hover={{border: '#F79229'}} border={'#27272F'} id="name">
-              <FormLabel>Name</FormLabel>
-              <Input required onInput={(e) => setName(e.target.value)} type="text" />
-            </FormControl>
+            <form onSubmit={handleUploadComic}>
+              <FormControl mb='5%' _hover={{ border: '#F79229' }} border={'#27272F'} id="name">
+                <FormLabel>Name</FormLabel>
+                <Input required onInput={(e) => setName(e.target.value)} type="text" />
+              </FormControl>
 
-            <input type="file" ref={fileInput} accept=".zip,.rar" required />
+              <input type="file" ref={fileInput} accept=".zip,.rar" required />
 
-            <Button
+              <Button
                 mt={'2%'}
-          color={"#F79229"}
-          borderColor={"#F79229"}
-          mb={0}
-          variant={"outline"}
-          borderWidth={2}
-          w={"fit-content"}
-          leftIcon={<FiUpload />}
+                color={"#F79229"}
+                borderColor={"#F79229"}
+                mb={0}
+                variant={"outline"}
+                borderWidth={2}
+                w={"fit-content"}
+                leftIcon={<FiUpload />}
 
-          isLoading={loading}
-          loadingText={'Uploading...'}
-          type="submit"
-          >
-          Upload comic
+                isLoading={loading}
+                loadingText={'Uploading...'}
+                type="submit"
+              >
+                Upload comic
         </Button>
-        </form>
+            </form>
           </ModalBody>
 
           <ModalFooter>
-      
-      
+
+
           </ModalFooter>
         </ModalContent>
       </Modal>

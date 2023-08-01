@@ -4,19 +4,19 @@ import { usePathname } from "next/navigation";
 import { SSE } from "sse.js";
 import { useAuth } from "./AuthContextWrapper.js";
 import { getCurrentDateTime } from "../lib/requests.js";
+import { useGPT } from "./GptProvider.js";
 
 const url = "https://api.openai.com/v1";
 const endpoint = "/chat/completions";
-const apiKey = "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";
 
 function ChatContextWrapper({ children }) {
   const { user } = useAuth();
   const [chatList, setChatList] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const [messageHistory,setMessageHistory] = useState([]);
+  const [messageHistory, setMessageHistory] = useState([]);
   const [newChat, setNewChat] = useState(true);
-  const [model, setModel] = useState("gpt-3.5-turbo");
+  const { model, apiKey } = useGPT();
   const [streaming, setStreaming] = useState(false);
   const chatRoomId = usePathname().split("/")[2];
   const [result, setResult] = useState("");
@@ -100,25 +100,25 @@ function ChatContextWrapper({ children }) {
         content: each.content || each?.choices[0].delta.content,
       }
     }
-     );
+    );
 
-     
+
     // Create request body
     const payload = {
       model: model,
-      messages: [...filteredChatMessages,{ role: "user", content: message }],
+      messages: [...filteredChatMessages, { role: "user", content: message }],
 
       stream: true,
     };
 
     await postRequest(payload, promptObj)
       .then(() => {
-          
+
         // Save prompt to db
         saveChatMessage(promptObj)
-        .catch(e => {
-          console.log(e.message)
-        })
+          .catch(e => {
+            console.log(e.message)
+          })
 
       })
       .catch((e) => {
@@ -142,30 +142,30 @@ function ChatContextWrapper({ children }) {
 
       if (e.data != "[DONE]") {
         let payload = JSON.parse(e.data);
-        
+
         let text = payload.choices[0].delta.content;
 
         if (text != undefined) {
- 
+
           if (payload && !payload.id && !payload.title) {
             payload.id = chatRoomId;
             payload.title = text.substring(0, 40);
           }
-          
+
           // Stream-like part
           setChatMessages((prevResult) => {
 
             let foundObject = prevResult.find((obj) => obj?.id === payload?.id) || {};
 
             if (foundObject && foundObject.id) {
-              tempText = foundObject.choices[0].delta.content ;
+              tempText = foundObject.choices[0].delta.content;
               // if(text == '\n' || text == ':') foundObject.choices[0].delta.content +='<br/>'
               foundObject.choices[0].delta.content += text;
-              
+
               foundObject.sender = 'ai'
               foundObject.role = 'assistant'
-              
-              
+
+
               return [...prevResult, foundObject].filter((obj, index, self) => {
                 return index === self.findIndex((t) => t.id === obj.id);
               });
@@ -190,16 +190,16 @@ function ChatContextWrapper({ children }) {
           chatRoomId: chatRoomId,
           role: "assistant",
         };
-        const chats = [ promptObj,respObj]
+        const chats = [promptObj, respObj]
 
-        
+
 
         // Check if Chat ID exists
         // Create one if not
         if (idExists(chatRoomId, chatList)) {
           console.log("chatroom Id exists");
           saveChatMessage(chats)
-        } else { 
+        } else {
           const data = {
             user_id: user.id,
             created_at: getCurrentDateTime(),
@@ -208,27 +208,27 @@ function ChatContextWrapper({ children }) {
           };
 
 
-          
-              
-         saveChatSession(data)
-         .then(() =>{ 
-           console.log('Session created');
-        
-                  // Update Chat List
-                  setChatList((prevChatList) => {
-                    return [data, ...prevChatList];
-                  });
-                              // Create response object
-    
-          saveChatMessage(chats)
-          .then(() =>{ 
-            console.log('msg saved');
-        
-         })
-          .catch((err) => console.log(err.message))
-        })
-         .catch((err) => console.log(err.message))
-      }
+
+
+          saveChatSession(data)
+            .then(() => {
+              console.log('Session created');
+
+              // Update Chat List
+              setChatList((prevChatList) => {
+                return [data, ...prevChatList];
+              });
+              // Create response object
+
+              saveChatMessage(chats)
+                .then(() => {
+                  console.log('msg saved');
+
+                })
+                .catch((err) => console.log(err.message))
+            })
+            .catch((err) => console.log(err.message))
+        }
 
       }
     });
@@ -238,12 +238,12 @@ function ChatContextWrapper({ children }) {
         // setIsLoading(false);
       }
     });
-// Add an event listener for the 'error' event
-source.addEventListener('error', function(event) {
-  // Handle connection errors
-  console.log('Error connecting to the server:', event.data);
-  setStreaming(false)
-});
+    // Add an event listener for the 'error' event
+    source.addEventListener('error', function (event) {
+      // Handle connection errors
+      console.log('Error connecting to the server:', event.data);
+      setStreaming(false)
+    });
     source.stream();
 
   }

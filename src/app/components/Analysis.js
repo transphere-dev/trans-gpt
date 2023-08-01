@@ -30,8 +30,7 @@ export default function Analysis({ accuracy }) {
     totalStrings
     
   } = useTranslation();
-  const {model} = useGlossary()
-  const { temperature, setTemperature } = useGPT();
+  const { temperature ,model} = useGPT();
 
   const textColor = useColorModeValue("#333333", "#D1D5DB");
 

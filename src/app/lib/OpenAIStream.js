@@ -11,7 +11,7 @@ export async function OpenAIStream(payload) {
     headers: {
       "Content-Type": "application/json",
       "access-control-allow-origin": "*",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY || "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"}`,
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     method: "POST",
     body: JSON.stringify(payload)
@@ -56,8 +56,9 @@ export async function OpenAIStream(payload) {
   
     return stream;
     } else {
-    console.log(res?.headers)
-    return res
+      const err = await res.json()
+    console.log(err)
+    // return JSON.stringify(err)
   }
 
   

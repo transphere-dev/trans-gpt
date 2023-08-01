@@ -13,7 +13,7 @@ COMIC_DIR_PATH = os.path.join(server_dir, 'uploads', 'comics')
 arguments = sys.argv[1:]
 userId = arguments[1]
 comic_name =  arguments[3]
-filename =  arguments[5]
+# filename =  arguments[5]
 user_comic_dir = os.path.join(COMIC_DIR_PATH, userId ,comic_name )
 contents = os.listdir(user_comic_dir)
 

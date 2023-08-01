@@ -1,63 +1,35 @@
-import React, { ReactNode, useContext, useState } from "react";
+import React, { } from "react";
 import {
-  IconButton,
-  Avatar,
   Box,
   CloseButton,
   Flex,
-  HStack,
-  VStack,
-  Icon,
   useColorModeValue,
-  Link,
-  Drawer,
-  DrawerContent,
   Text,
-  useDisclosure,
-  BoxProps,
-  FlexProps,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
   useColorMode,
   Button,
   Image,
-  Skeleton,
+  FormControl,
+  Input,
+  Select,
 } from "@chakra-ui/react";
 import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-  FiBell,
-  FiChevronDown,
   FiMoon,
   FiSun,
-  FiMessageCircle,
   FiPlus,
   FiLogOut,
-  FiUpload,
 } from "react-icons/fi";
-import { IconType } from "react-icons";
-import { ReactText } from "react";
-import ChatContext from "../contexts/ChatContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { useAuth } from "./AuthContextWrapper";
+import { useGPT } from "./GptProvider";
 
 const light_logo = "/images/logo-color.png";
 const dark_logo = "/images/logo-white.png";
 
-export const SidebarContent = ({ module,onClose, ...rest }) => {
+export const SidebarContent = ({ module, onClose, ...rest }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const router = useRouter();
-  const pathname = usePathname();
-  const { logout,user } = useAuth();
+  const { logout } = useAuth();
+  const { models,setApiKey,apiKey,setModel, model } = useGPT()
 
   // Add new chat to the chat list
 
@@ -103,8 +75,22 @@ export const SidebarContent = ({ module,onClose, ...rest }) => {
         >
           New Chat
         </Button>
+        <FormControl mt="5%">
+          <Input placeholder="OpenAI API Key" onInput={e => { setApiKey(e.target.value);localStorage.setItem('AK',e.target.value); }} type="password"  value={apiKey}/>
+        </FormControl>
+        <Select mt={'5%'} mb={'7%'} onChange={e => { setModel(e.target.value) }} placeholder='GPT model'>
+          {
+            models?.map((each, i) => {
+              return (
+                <option key={i} value={each?.id}>{each?.id}</option>
 
-            {module}
+              )
+            })
+          }
+
+        </Select>
+
+        {module}
 
       </Box>
       <Box p={"4"}>
