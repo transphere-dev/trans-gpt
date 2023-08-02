@@ -27,21 +27,28 @@ TransGPT is a GPT-powered comimc translation tool for tranlators to improve thei
 
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your `.env` file
+To run this project, you will need to add the following environment variables to your `.env` file.
+
+Run ``` cp .env.example .env ```
 
 Read more on Environment variables in Next.js 13 [here](https://nextjs.org/docs/pages/building-your-application/configuring/environment-variables)
 
 ```
-OPENAI_API_KEY = xxxxxx
-NEXT_PUBLIC_SERVER_URL = xxxxxx
-NEXT_PUBLIC_PORT = xxxxxx
+OPENAI_API_KEY = xxxxx
+
+NEXT_PUBLIC_SERVER_URL = xxxx
+NEXT_PUBLIC_PORT = xxxxx
 NEXT_PUBLIC_VERSION_DATE = Aug 2
-DATABASE_URL=
-PORT=
+
+DATABASE_URL= 
+
 EMAIL_VERIFICATION_SECRET=
 EMAIL_FROM=
 EMAIL_USER=
 EMAIL_PASSWORD=
+EMAIL_HOST = 
+EMAIL_PORT = 
+
 SECRET_KEY=
 ```
 
