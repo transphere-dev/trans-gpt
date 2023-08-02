@@ -18,6 +18,8 @@ TransGPT is a GPT-powered comimc translation tool for tranlators to improve thei
 
 To run this project, you will need to add the following environment variables to your `.env.development` file
 
+Read more on Environment variables in Next.js 13 [here](https://nextjs.org/docs/pages/building-your-application/configuring/environment-variables)
+
 ```
 OPEN_API_KEY = xxxx
 NEXT_PUBLIC_SERVER_URL = 
@@ -58,6 +60,12 @@ Go to the server directory and install dependencies
 
 ```bash
   cd server && npm install
+```
+
+Install python packages
+
+```bash
+  pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 Start the Next.js development server
@@ -111,18 +119,24 @@ Start pm2
 
 ## Further Improvement
 
-- Experiment on Prompt design
+- More focus should be put in prompt engineering to realize better GPT output
 
 - Improve batch OCR text extraction
 
-- Add a management panel to manage gloassaries preferrebly with react-admin
+- Add a management panel to manage glossaries preferrebly with [react-admin](https://marmelab.com/react-admin/NextJs.html)
 
-- Develop a mechanism to control and limit the number of tokens used, especially with the "Translate All" feature
+- Develop a mechanism to count and control the number of tokens used, especially with the "Translate All" feature. Check this [repository](https://github.com/niieani/gpt-tokenizer)
 
 - Support internationalization
 
-- Support for `.rar` file upload and extraction
+- Support for `.rar` file upload and extraction. Currently supports .zip files
 
+- [Fine-tuning](https://platform.openai.com/docs/guides/fine-tuning) GPT. Fine-tuning lets you get more out of the models available through the API by providing:
+
+    - Higher quality results than prompt design
+    - Ability to train on more examples than can fit in a prompt
+    - Token savings due to shorter prompts
+    - Lower latency requests
 
 ## Support
 
