@@ -92,7 +92,7 @@ export default function Page({ params }) {
         >
           <ChatInput />
           <Text mt={3} fontSize={"xs"} align={"center"} color={"#ACACBE"}>
-            TransGPT Aug 1 Version. This a pre-release for testing and
+            TransGPT {process.env.NEXT_PUBLIC_VERSION_DATE} Version. This a pre-release for testing and
             evaluation purposes.
           </Text>
         </Box>
