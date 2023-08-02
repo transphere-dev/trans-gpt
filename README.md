@@ -150,7 +150,7 @@ In the screenshot below, an additional requirement was added to instruct GPT to 
 
 - Support for `.rar` file upload and extraction. Currently supports .zip files
 
-- [Fine-tuning](https://platform.openai.com/docs/guides/fine-tuning) GPT. Fine-tuning lets you get more out of the models available through the API by providing:
+- [Fine-tuning](https://platform.openai.com/docs/guides/fine-tuning) GPT. Fine-tuning lets you get more out of the models available through the Open AI's API by providing:
 
     - Higher quality results than prompt design
     - Ability to train on more examples than can fit in a prompt
