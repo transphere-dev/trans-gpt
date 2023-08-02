@@ -27,7 +27,9 @@ TransGPT is a GPT-powered comimc translation tool for tranlators to improve thei
 
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your `.env` file
+To run this project, you will need to add the following environment variables to your `.env` file.
+
+Run ``` cp .env.example .env ```
 
 Read more on Environment variables in Next.js 13 [here](https://nextjs.org/docs/pages/building-your-application/configuring/environment-variables)
 
