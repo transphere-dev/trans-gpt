@@ -1,4 +1,4 @@
-import React, { } from "react";
+import React from "react";
 import {
   Box,
   CloseButton,
@@ -12,12 +12,7 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
-import {
-  FiMoon,
-  FiSun,
-  FiPlus,
-  FiLogOut,
-} from "react-icons/fi";
+import { FiMoon, FiSun, FiPlus, FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthContextWrapper";
 import { useGPT } from "./GptProvider";
@@ -29,7 +24,7 @@ export const SidebarContent = ({ module, onClose, ...rest }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const router = useRouter();
   const { logout } = useAuth();
-  const { models,setApiKey,apiKey,setModel, model } = useGPT()
+  const { models, setApiKey, apiKey, setModel, model } = useGPT();
 
   // Add new chat to the chat list
 
@@ -76,22 +71,34 @@ export const SidebarContent = ({ module, onClose, ...rest }) => {
           New Chat
         </Button>
         <FormControl mt="5%">
-          <Input placeholder="OpenAI API Key" onInput={e => { setApiKey(e.target.value);localStorage.setItem('AK',e.target.value); }} type="password"  value={apiKey}/>
+          <Input
+            placeholder="OpenAI API Key"
+            onInput={(e) => {
+              setApiKey(e.target.value);
+              localStorage.setItem("AK", e.target.value);
+            }}
+            type="password"
+            value={apiKey}
+          />
         </FormControl>
-        <Select mt={'5%'} mb={'7%'} onChange={e => { setModel(e.target.value) }} placeholder='GPT model'>
-          {
-            models?.map((each, i) => {
-              return (
-                <option key={i} value={each?.id}>{each?.id}</option>
-
-              )
-            })
-          }
-
+        <Select
+          mt={"5%"}
+          mb={"7%"}
+          onChange={(e) => {
+            setModel(e.target.value);
+          }}
+          placeholder="GPT model"
+        >
+          {models?.map((each, i) => {
+            return (
+              <option key={i} value={each?.id}>
+                {each?.id}
+              </option>
+            );
+          })}
         </Select>
 
         {module}
-
       </Box>
       <Box p={"4"}>
         <Button
@@ -120,4 +127,3 @@ export const SidebarContent = ({ module, onClose, ...rest }) => {
     </Box>
   );
 };
-

@@ -26,7 +26,14 @@ import {
 } from "@chakra-ui/react";
 import { set } from "nprogress";
 import React, { useEffect, useRef, useState } from "react";
-import { RiCheckLine, RiCloseLine, RiEdit2Line, RiGoogleFill, RiTranslate, RiTranslate2 } from "react-icons/ri";
+import {
+  RiCheckLine,
+  RiCloseLine,
+  RiEdit2Line,
+  RiGoogleFill,
+  RiTranslate,
+  RiTranslate2,
+} from "react-icons/ri";
 import { TailSpin } from "react-loader-spinner";
 import { generateTranslationPrompt } from "../lib/misc";
 import ComicDialog from "./comicDialog";
@@ -42,7 +49,7 @@ export default function TranslationBox({
   scheme,
   translateAll,
   allTranslation,
-  imagePath
+  imagePath,
 }) {
   const { temperature, setTemperature, systemPrompt, model } = useGPT();
   const { terms, highlight } = useGlossary();
@@ -69,28 +76,29 @@ export default function TranslationBox({
       getSubmitButtonProps,
       getCancelButtonProps,
       getEditButtonProps,
-    } = useEditableControls()
+    } = useEditableControls();
 
     return isEditing ? (
-      <ButtonGroup justifyContent='center' size='sm'>
+      <ButtonGroup justifyContent="center" size="sm">
         <IconButton icon={<RiCheckLine />} {...getSubmitButtonProps()} />
         <IconButton icon={<RiCloseLine />} {...getCancelButtonProps()} />
       </ButtonGroup>
     ) : (
-      <Flex justifyContent='center'>
-        <IconButton size='sm' icon={<RiEdit2Line />} {...getEditButtonProps()} />
+      <Flex justifyContent="center">
+        <IconButton
+          size="sm"
+          icon={<RiEdit2Line />}
+          {...getEditButtonProps()}
+        />
       </Flex>
-    )
+    );
   }
-
-
 
   useEffect(() => {
     if (terms.length > 0) {
       setHighlightGlossaryTerms(highlightGlossaryTerms(source, terms));
     }
   }, [terms]);
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -118,81 +126,78 @@ export default function TranslationBox({
     setTranslation("");
     setTranslated(false);
     setLoading(true);
-try {
-  const response = await fetch("/api/generate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-    body: JSON.stringify({
-      prompt: generateTranslationPrompt(systemPrompt, [text], terms),
-      temperature: temperature,
-      model: model,
-    }),
-  });
+        body: JSON.stringify({
+          prompt: generateTranslationPrompt(systemPrompt, [text], terms),
+          temperature: temperature,
+          model: model,
+        }),
+      });
 
-  if (!response.ok) {
-    setLoading(false);
-    const err = await response.json()
-    console.log(err);
-    throw new Error(err.error);
-  }
+      if (!response.ok) {
+        setLoading(false);
+        const err = await response.json();
+        console.log(err);
+        throw new Error(err.error);
+      }
 
-  const data = response.body;
+      const data = response.body;
 
-  if (!data) {
-    return;
-  }
-  const reader = data.getReader();
-  const decoder = new TextDecoder();
-  let isDone = false;
-  let completeResp = "";
+      if (!data) {
+        return;
+      }
+      const reader = data.getReader();
+      const decoder = new TextDecoder();
+      let isDone = false;
+      let completeResp = "";
 
-  while (!isDone) {
-    const { value, done } = await reader.read();
-    isDone = done;
-    const chunkValue = decoder.decode(value);
+      while (!isDone) {
+        const { value, done } = await reader.read();
+        isDone = done;
+        const chunkValue = decoder.decode(value);
 
-    completeResp += chunkValue;
+        completeResp += chunkValue;
 
-    chunkValue !== "[object Response]"
-      ? setTranslation((prev) => prev + chunkValue)
-      : toast({
-          // id,
-          title: "Too many translation requests",
-          duration: 7000,
-          status: "warning",
-          description:
-            "Please wait for less than 60 seconds before you translate the next string",
-        });
+        chunkValue !== "[object Response]"
+          ? setTranslation((prev) => prev + chunkValue)
+          : toast({
+              // id,
+              title: "Too many translation requests",
+              duration: 7000,
+              status: "warning",
+              description:
+                "Please wait for less than 60 seconds before you translate the next string",
+            });
 
-    // if (isDone) {
+        // if (isDone) {
 
-    //   setTranslationHistory((prevHistory) =>
-    //     setTranslationHistory([
-    //       ...prevHistory,
-    //       { role: "assistant", content: completeResp },
-    //       generateTranslationPrompt(systemPrompt, [text], terms)[1],
-    //     ])
-    //   );
-    // }
-
-  }
-  setLoading(false);
-  setTranslated(true)
-} catch (error) {
-  toast({
-    // id,
-    title: error.message,
-    duration: 7000,
-    status: "warning",
-    description:"",
-  });
-  setLoading(false);
-
-}
- ;
+        //   setTranslationHistory((prevHistory) =>
+        //     setTranslationHistory([
+        //       ...prevHistory,
+        //       { role: "assistant", content: completeResp },
+        //       generateTranslationPrompt(systemPrompt, [text], terms)[1],
+        //     ])
+        //   );
+        // }
+      }
+      setLoading(false);
+      setTranslated(true);
+    } catch (error) {
+      toast({
+        // id,
+        title: error.message,
+        duration: 7000,
+        status: "warning",
+        description: "",
+      });
+      setLoading(false);
+    }
   };
 
   // Google translate function
@@ -206,30 +211,34 @@ try {
     //   ...translationHistory,
     // ]);
 
-    const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/translate/g`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await fetch(
+      `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/translate/g`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-      body: JSON.stringify({
-        target: 'en',
-        source: text
-      }),
-    });
+        body: JSON.stringify({
+          target: "en",
+          source: text,
+        }),
+      }
+    );
 
     if (!response.ok) {
       setLoading(false);
       throw new Error(response.statusText);
     }
 
-    response.json()
-    .then(data => console.log(data))
-    .catch(err => {
-      console.log(err.message);
-      setGoogleLoading(false);
-    })
-    
+    response
+      .json()
+      .then((data) => console.log(data))
+      .catch((err) => {
+        console.log(err.message);
+        setGoogleLoading(false);
+      });
+
     setGoogleLoading(false);
     setTranslated(true);
   };
@@ -240,21 +249,23 @@ try {
     setDeeplTranslation("");
     setTranslated(false);
     setDeeplLoading(true);
-    const res = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/translate/d/`, {
-      method: "POST",
-      mode: "cors",
-      
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: `&text=${text}&target_lang=${'en-US'}&source_lang=${'zh'}`
-    })
+    const res = await fetch(
+      `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/translate/d/`,
+      {
+        method: "POST",
+        mode: "cors",
 
-    const translations = await res.json()
-    
-     setDeeplTranslation(JSON.parse(translations).translation)
-     setDeeplLoading(false)
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `&text=${text}&target_lang=${"en-US"}&source_lang=${"zh"}`,
+      }
+    );
 
+    const translations = await res.json();
+
+    setDeeplTranslation(JSON.parse(translations).translation);
+    setDeeplLoading(false);
   };
   const highlightGlossaryTerms = (text, glossary) => {
     let highlightedSentence = text;
@@ -335,7 +346,7 @@ try {
         )}
 
         <Collapse in={clicked} animateOpacity>
-        <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
+          <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
             <Button
               w={"20%"}
               colorScheme={scheme.colorMode === "light" ? "orange" : null}
@@ -367,8 +378,8 @@ try {
                 </Slider>
               </Box>
             )}
-                  </Flex>      
-              {/* <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
+          </Flex>
+          {/* <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
             <Button
               w={"20%"}
               loadingText={'Translating'}
@@ -406,7 +417,7 @@ try {
           <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
             <Button
               w={"20%"}
-              loadingText={'Translating'}
+              loadingText={"Translating"}
               isLoading={deeplLoading}
               colorScheme={scheme.colorMode === "light" ? "orange" : null}
               leftIcon={<RiTranslate />}
@@ -455,8 +466,12 @@ try {
             </Flex>
           )}
 
-{ clicked && <ComicDialog fallbackSrc='https://via.placeholder.com/150' imagePath={imagePath} />}
-
+          {clicked && (
+            <ComicDialog
+              fallbackSrc="https://via.placeholder.com/150"
+              imagePath={imagePath}
+            />
+          )}
         </Collapse>
       </Td>
       <Td w={"50%"}>
@@ -474,50 +489,65 @@ try {
         )}
 
         <Flex flexDirection={"column"}>
-          <div style={{marginBottom: translation && 17}} suppressContentEditableWarning contentEditable className={translation ? `gpt-translation` : null}>{translation}</div>
-          
+          <div
+            style={{ marginBottom: translation && 17 }}
+            suppressContentEditableWarning
+            contentEditable
+            className={translation ? `gpt-translation` : null}
+          >
+            {translation}
+          </div>
         </Flex>
-     
+
         <Collapse in={clicked} animateOpacity>
-        <Flex mt={"2%"} w={"100%"} alignItems={"center"}>
+          <Flex mt={"2%"} w={"100%"} alignItems={"center"}></Flex>
 
-          </Flex>      
-              
           {googleLoading && (
-          <TailSpin
-            height="15"
-            width="15"
-            color="#f3843f"
-            ariaLabel="tail-spin-loading"
-            radius="2"
-            wrapperStyle={{}}
-            wrapperClass="loader"
-            visible
-          />
-        )}
+            <TailSpin
+              height="15"
+              width="15"
+              color="#f3843f"
+              ariaLabel="tail-spin-loading"
+              radius="2"
+              wrapperStyle={{}}
+              wrapperClass="loader"
+              visible
+            />
+          )}
 
-        <Flex flexDirection={"column"}>
-          <div style={{marginBottom:deeplTranslation && 17}} suppressContentEditableWarning contentEditable className={deeplTranslation ? `deepl-translation` : null}>{deeplTranslation}</div>
-          
-        </Flex>
-        {deeplLoading && (
-          <TailSpin
-            height="15"
-            width="15"
-            color="#f3843f"
-            ariaLabel="tail-spin-loading"
-            radius="2"
-            wrapperStyle={{}}
-            wrapperClass="loader"
-            visible
-          />
-        )}
+          <Flex flexDirection={"column"}>
+            <div
+              style={{ marginBottom: deeplTranslation && 17 }}
+              suppressContentEditableWarning
+              contentEditable
+              className={deeplTranslation ? `deepl-translation` : null}
+            >
+              {deeplTranslation}
+            </div>
+          </Flex>
+          {deeplLoading && (
+            <TailSpin
+              height="15"
+              width="15"
+              color="#f3843f"
+              ariaLabel="tail-spin-loading"
+              radius="2"
+              wrapperStyle={{}}
+              wrapperClass="loader"
+              visible
+            />
+          )}
 
-        <Flex flexDirection={"column"}>
-          <div style={{marginBottom:googleTranslation && 17}} suppressContentEditableWarning contentEditable className={googleTranslation ? `google-translation` : null}>{googleTranslation}</div>
-          
-        </Flex>
-          
+          <Flex flexDirection={"column"}>
+            <div
+              style={{ marginBottom: googleTranslation && 17 }}
+              suppressContentEditableWarning
+              contentEditable
+              className={googleTranslation ? `google-translation` : null}
+            >
+              {googleTranslation}
+            </div>
+          </Flex>
         </Collapse>
       </Td>
     </Tr>

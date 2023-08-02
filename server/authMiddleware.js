@@ -1,23 +1,23 @@
 // authMiddleware.js
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({ error: 'No token provided' });
+    return res.status(401).json({ error: "No token provided" });
   }
 
-  const parts = authHeader.split(' ');
+  const parts = authHeader.split(" ");
 
   if (parts.length !== 2) {
-    return res.status(401).json({ error: 'Token error' });
+    return res.status(401).json({ error: "Token error" });
   }
 
   const [scheme, token] = parts;
 
   if (!/^Bearer$/i.test(scheme)) {
-    return res.status(401).json({ error: 'Token malformatted' });
+    return res.status(401).json({ error: "Token malformatted" });
   }
 
   try {
@@ -27,7 +27,7 @@ const authMiddleware = async (req, res, next) => {
 
     return next();
   } catch (err) {
-    return res.status(401).json({ error: 'Token invalid' });
+    return res.status(401).json({ error: "Token invalid" });
   }
 };
 

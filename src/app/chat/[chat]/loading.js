@@ -1,20 +1,16 @@
-"use client"
-import { Center, Skeleton, Stack } from '@chakra-ui/react'
-import React from 'react'
+"use client";
+import { Center, Skeleton, Stack } from "@chakra-ui/react";
+import React from "react";
 
 export default function Loading() {
-    let arr = [1,2,3,4,5,6]
+  let arr = [1, 2, 3, 4, 5, 6];
   return (
-<Stack>
-    {
-        arr.map((each,i) => (
+    <Stack>
+      {arr.map((each, i) => (
         <Center key={i}>
-        <Skeleton mt={'1%'} w={'90%'} height='90px' />
+          <Skeleton mt={"1%"} w={"90%"} height="90px" />
         </Center>
-        ))
-    }
-
-  
-
-</Stack>  )
+      ))}
+    </Stack>
+  );
 }

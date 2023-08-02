@@ -1,9 +1,9 @@
-import { useEffect, useState, useContext } from 'react';
-import ChatContext from '../contexts/ChatContext';
+import { useEffect, useState, useContext } from "react";
+import ChatContext from "../contexts/ChatContext";
 
 export default function useChatStream(chat) {
   const { stream } = useContext(ChatContext);
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState("");
 
   useEffect(() => {
     if (!stream || !chat) return;
@@ -14,10 +14,10 @@ export default function useChatStream(chat) {
       }
     };
 
-    stream.addEventListener('data', handleStreamData);
+    stream.addEventListener("data", handleStreamData);
 
     return () => {
-      stream.removeEventListener('data', handleStreamData);
+      stream.removeEventListener("data", handleStreamData);
     };
   }, [stream, chat]);
 

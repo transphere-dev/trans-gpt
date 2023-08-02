@@ -18,7 +18,7 @@ export function highlightGlossaryTerms(glossary) {
   });
 }
 
-export function generateTranslationPrompt(systemMsg,sentences, glossary) {
+export function generateTranslationPrompt(systemMsg, sentences, glossary) {
   // Format sentences array
   const formattedSentences = sentences.map((each) => each);
 
@@ -34,8 +34,15 @@ export function generateTranslationPrompt(systemMsg,sentences, glossary) {
   Sentence:
 ${formattedSentences.join("\n")}
 Glossary:
-${glossaryTerm.length > 0 ? glossaryTerm.join("\n") : "No glossary terms provided. Translate without a glossary"}`;
-  return [{role: "system", content:systemMsg},{ role: "user", content: prompt }];
+${
+  glossaryTerm.length > 0
+    ? glossaryTerm.join("\n")
+    : "No glossary terms provided. Translate without a glossary"
+}`;
+  return [
+    { role: "system", content: systemMsg },
+    { role: "user", content: prompt },
+  ];
 }
 
 function matchGlossaryTerms(sentence, glossary) {
@@ -57,7 +64,8 @@ export function getTableData() {
   const data = [];
 
   for (let i = 0; i < tableRows.length; i++) {
-    const source = tableRows[i].children[0].getElementsByClassName('source')[0].innerText;
+    const source =
+      tableRows[i].children[0].getElementsByClassName("source")[0].innerText;
     const target = tableRows[i].children[1].innerText;
 
     data.push({ source, target });

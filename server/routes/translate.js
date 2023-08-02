@@ -1,4 +1,4 @@
-const {Translate} = require('@google-cloud/translate').v2;
+const { Translate } = require("@google-cloud/translate").v2;
 const deepl = require("deepl-node");
 const translator = new deepl.Translator(
   "beb3055e-402a-3bb9-68fa-13815e7876ff:fx"
@@ -6,14 +6,12 @@ const translator = new deepl.Translator(
 const express = require("express");
 const router = express();
 var serviceAccount = require("../serviceAccountKey.json");
-var cors = require('cors');
+var cors = require("cors");
 
 const translate = new Translate({
   credentials: serviceAccount,
   projectId: serviceAccount.project_id,
 });
-
-
 
 router.use(cors());
 router.use(express.json());
@@ -24,7 +22,7 @@ router.post("/d", (req, res) => {
     const target_lang = req.body.target_lang;
     const source_lang = req.body.source_lang;
     const text = req.body.text;
- 
+
     const result = await translator.translateText(
       text,
       source_lang,
@@ -55,9 +53,8 @@ router.post("/g", (req, res) => {
   const target_lang = req.body.target;
   const source_lang = req.body.source_lang;
   const source = req.body.source;
-  
+
   (async () => {
- 
     let [translations] = await translate.translate(source, target_lang);
     // translations = Array.isArray(translations) ? translations : [translations];
     console.log(translations);
@@ -65,15 +62,13 @@ router.post("/g", (req, res) => {
       translation: translations,
     };
     res.status(200).json(JSON.stringify(payload));
-    })();
-
+  })();
 });
 
 router.get("/g/languages", (req, res) => {
-  (async  () => {
+  (async () => {
     // Lists available translation language with their names in English (the default).
     const [languages] = await translate.getLanguages();
-  
 
     const payload = {
       target_langs: languages,
@@ -82,6 +77,5 @@ router.get("/g/languages", (req, res) => {
     res.status(200).json(JSON.stringify(payload));
   })();
 });
-
 
 module.exports = router;

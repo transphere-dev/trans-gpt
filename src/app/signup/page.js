@@ -1,26 +1,21 @@
 "use client";
 import {
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
   Heading,
   Input,
-  Link,
   Stack,
   Image,
   Text,
-  useColorModeValue,
 } from "@chakra-ui/react";
-import { Updock } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/AuthContextWrapper";
-import { registerUser } from "../lib/requests";
 
 export default function Page() {
-  const {signup,error,loading,setError} = useAuth();
+  const { signup, error, loading, setError } = useAuth();
   const [emailSent, setEmailSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,20 +23,22 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-
-
     return () => {
-      setError(null)
+      setError(null);
     };
   }, []);
 
-    const register = async () => {
-      const result = await signup( `U-${Date.now()}` , email, password , confirmPassword)
-      if (result) {
-        setEmailSent(true);
-      }
-      
+  const register = async () => {
+    const result = await signup(
+      `U-${Date.now()}`,
+      email,
+      password,
+      confirmPassword
+    );
+    if (result) {
+      setEmailSent(true);
     }
+  };
   return (
     <Stack
       bgColor={"#27272F"}
@@ -79,14 +76,16 @@ export default function Page() {
         justify={"center"}
       >
         <Heading pb={["5%", "5%", "5%", "11%", "11%"]}>Sign up now</Heading>
-        <Text fontWeight={"500"} color={'red'}>{error}</Text>
-        
-        {emailSent &&
-         <Text>
-               Registration successful! Please check your email for a verification link.
+        <Text fontWeight={"500"} color={"red"}>
+          {error}
+        </Text>
 
+        {emailSent && (
+          <Text>
+            Registration successful! Please check your email for a verification
+            link.
           </Text>
-          }
+        )}
         <Stack spacing={4} w={"full"} maxW={"md"}>
           <FormControl
             _hover={{ border: "#F79229" }}
@@ -102,7 +101,10 @@ export default function Page() {
             id="password"
           >
             <FormLabel>Password</FormLabel>
-            <Input onInput={(e) => setPassword(e.target.value)} type="password" />
+            <Input
+              onInput={(e) => setPassword(e.target.value)}
+              type="password"
+            />
           </FormControl>
           <FormControl
             _hover={{ border: "#F79229" }}
@@ -110,24 +112,25 @@ export default function Page() {
             id="con-password"
           >
             <FormLabel>Confirm Password</FormLabel>
-            <Input onInput={(e) => setConfirmPassword(e.target.value)} type="password" />
+            <Input
+              onInput={(e) => setConfirmPassword(e.target.value)}
+              type="password"
+            />
           </FormControl>
           <Stack spacing={6}>
             <Stack
               direction={{ base: "column", sm: "row" }}
               align={"start"}
               justify={"space-between"}
-            >
-
-            </Stack>
+            ></Stack>
             <Button
-            isLoading={loading}
-            loadingText={"Signing Up..."}
+              isLoading={loading}
+              loadingText={"Signing Up..."}
               onClick={register}
               _hover={{ background: "#27272F" }}
               color={"#fff"}
-              bg={error ? 'red' : '#F79229'}
-                            variant={"solid"}
+              bg={error ? "red" : "#F79229"}
+              variant={"solid"}
             >
               Sign up
             </Button>

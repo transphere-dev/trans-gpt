@@ -17,7 +17,9 @@ export const GlossaryProvider = ({ children }) => {
 
   // Fetch user glossaries
   useEffect(() => {
-    fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/glossaries/${user?.id}`)
+    fetch(
+      `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/glossaries/${user?.id}`
+    )
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -37,7 +39,6 @@ export const GlossaryProvider = ({ children }) => {
       null;
     };
   }, []);
-
 
   // Fetch terms of a specific glossary
   const fetchTerms = async (glossary_id) => {
@@ -73,7 +74,6 @@ export const GlossaryProvider = ({ children }) => {
       }}
     >
       {children}
-
     </GlossaryContext.Provider>
   );
 };

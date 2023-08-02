@@ -1,44 +1,22 @@
-import React, { ReactNode, useContext } from "react";
+import React, {  } from "react";
 import {
   IconButton,
   Avatar,
   Box,
-  CloseButton,
   Flex,
   HStack,
   VStack,
-  Icon,
   useColorModeValue,
-  Link,
-  Drawer,
-  DrawerContent,
   Text,
-  useDisclosure,
-  BoxProps,
-  FlexProps,
   Menu,
   MenuButton,
-  MenuDivider,
-  MenuItem,
   MenuList,
   useColorMode,
   Button,
-  Image,
 } from "@chakra-ui/react";
 import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
   FiMenu,
-  FiBell,
   FiChevronDown,
-  FiMoon,
-  FiSun,
-  FiMessageCircle,
-  FiPlus,
-  FiLogOut,
 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthContextWrapper";

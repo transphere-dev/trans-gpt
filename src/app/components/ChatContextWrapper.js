@@ -28,8 +28,6 @@ function ChatContextWrapper({ children }) {
 
   // Save Message to LocalStorage
 
-
-
   // Save chat Messages
   async function saveChatMessage(chat_message_data) {
     const response = await fetch(
@@ -98,10 +96,8 @@ function ChatContextWrapper({ children }) {
       return {
         role: each?.role,
         content: each.content || each?.choices[0].delta.content,
-      }
-    }
-    );
-
+      };
+    });
 
     // Create request body
     const payload = {
@@ -113,13 +109,10 @@ function ChatContextWrapper({ children }) {
 
     await postRequest(payload, promptObj)
       .then(() => {
-
         // Save prompt to db
-        saveChatMessage(promptObj)
-          .catch(e => {
-            console.log(e.message)
-          })
-
+        saveChatMessage(promptObj).catch((e) => {
+          console.log(e.message);
+        });
       })
       .catch((e) => {
         console.log(e.messsage);
@@ -137,16 +130,14 @@ function ChatContextWrapper({ children }) {
       method: "POST",
       payload: JSON.stringify(payload),
     });
-    let tempText = ''
+    let tempText = "";
     source.addEventListener("message", (e) => {
-
       if (e.data != "[DONE]") {
         let payload = JSON.parse(e.data);
 
         let text = payload.choices[0].delta.content;
 
         if (text != undefined) {
-
           if (payload && !payload.id && !payload.title) {
             payload.id = chatRoomId;
             payload.title = text.substring(0, 40);
@@ -154,22 +145,20 @@ function ChatContextWrapper({ children }) {
 
           // Stream-like part
           setChatMessages((prevResult) => {
-
-            let foundObject = prevResult.find((obj) => obj?.id === payload?.id) || {};
+            let foundObject =
+              prevResult.find((obj) => obj?.id === payload?.id) || {};
 
             if (foundObject && foundObject.id) {
               tempText = foundObject.choices[0].delta.content;
               // if(text == '\n' || text == ':') foundObject.choices[0].delta.content +='<br/>'
               foundObject.choices[0].delta.content += text;
 
-              foundObject.sender = 'ai'
-              foundObject.role = 'assistant'
-
+              foundObject.sender = "ai";
+              foundObject.role = "assistant";
 
               return [...prevResult, foundObject].filter((obj, index, self) => {
                 return index === self.findIndex((t) => t.id === obj.id);
               });
-
             } else {
               return [...prevResult, payload];
             }
@@ -178,7 +167,6 @@ function ChatContextWrapper({ children }) {
       } else {
         source.close();
         setStreaming(false);
-
 
         const respObj = {
           id: Date.now().toString(),
@@ -190,15 +178,13 @@ function ChatContextWrapper({ children }) {
           chatRoomId: chatRoomId,
           role: "assistant",
         };
-        const chats = [promptObj, respObj]
-
-
+        const chats = [promptObj, respObj];
 
         // Check if Chat ID exists
         // Create one if not
         if (idExists(chatRoomId, chatList)) {
           console.log("chatroom Id exists");
-          saveChatMessage(chats)
+          saveChatMessage(chats);
         } else {
           const data = {
             user_id: user.id,
@@ -207,12 +193,9 @@ function ChatContextWrapper({ children }) {
             title: promptObj.content.substring(0, 20),
           };
 
-
-
-
           saveChatSession(data)
             .then(() => {
-              console.log('Session created');
+              console.log("Session created");
 
               // Update Chat List
               setChatList((prevChatList) => {
@@ -222,14 +205,12 @@ function ChatContextWrapper({ children }) {
 
               saveChatMessage(chats)
                 .then(() => {
-                  console.log('msg saved');
-
+                  console.log("msg saved");
                 })
-                .catch((err) => console.log(err.message))
+                .catch((err) => console.log(err.message));
             })
-            .catch((err) => console.log(err.message))
+            .catch((err) => console.log(err.message));
         }
-
       }
     });
 
@@ -239,13 +220,12 @@ function ChatContextWrapper({ children }) {
       }
     });
     // Add an event listener for the 'error' event
-    source.addEventListener('error', function (event) {
+    source.addEventListener("error", function (event) {
       // Handle connection errors
-      console.log('Error connecting to the server:', event.data);
-      setStreaming(false)
+      console.log("Error connecting to the server:", event.data);
+      setStreaming(false);
     });
     source.stream();
-
   }
 
   const values = {

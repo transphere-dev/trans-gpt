@@ -24,14 +24,13 @@ import {
   Box,
   Tooltip,
 } from "@chakra-ui/react";
-import { createContext ,useState ,useEffect, useContext } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import { FiRefreshCcw, FiSave } from "react-icons/fi";
 import { RiInformationLine } from "react-icons/ri";
 const GptContext = createContext({});
 
 // GPT provider stores all GPT-related data
 export const GptProvider = ({ children }) => {
-
   const defaultSystemPrompt = `You are a veteran translator.\nYou will be provided with short sentences to translate.\nYou have these requirements:
 1. Translate the short sentences into English.
 2. Use the glossary only if glossary terms are provided, for reference and ensure you replace any matching glossary terms in the sentences with matching translations. 
@@ -50,41 +49,41 @@ export const GptProvider = ({ children }) => {
 14. Use abbreviations whenever possible. For example, use OK instead of Okay.
 15. Avoid real game names like Fortnite, Honor of Kings.`;
 
-  const [temperature, setTemperature] = useState(0.3)
+  const [temperature, setTemperature] = useState(0.3);
   const [systemPrompt, setSystemPrompt] = useState(defaultSystemPrompt);
-  const [apiKey,setApiKey] = useState(localStorage.getItem('AK') ? localStorage.getItem('AK') : null)
+  const [apiKey, setApiKey] = useState(
+    localStorage.getItem("AK") ? localStorage.getItem("AK") : null
+  );
   const [models, setModels] = useState([]);
   const [model, setModel] = useState(null);
-  const {isOpen,onOpen,onClose} = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Fetch GPT models for the organization
   // TODO: Debounce apiKey when it is typed
   useEffect(() => {
-   if(apiKey) {
-    fetch(`https://api.openai.com/v1/models`,{
-      headers: {
-        "Content-Type": "application/json",
-        "access-control-allow-origin": "*",
-        Authorization:`Bearer ${apiKey}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Failed to fetch models");
-        }
+    if (apiKey) {
+      fetch(`https://api.openai.com/v1/models`, {
+        headers: {
+          "Content-Type": "application/json",
+          "access-control-allow-origin": "*",
+          Authorization: `Bearer ${apiKey}`,
+        },
       })
-      .then((data) => {
-        // Process the fetched glossaries
-        setModels(data.data);
-        
-
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-   }
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Failed to fetch models");
+          }
+        })
+        .then((data) => {
+          // Process the fetched glossaries
+          setModels(data.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
 
     return () => {
       null;
@@ -92,13 +91,21 @@ export const GptProvider = ({ children }) => {
   }, [apiKey]);
 
   return (
-    <GptContext.Provider value={{ 
-      systemPrompt, setSystemPrompt,
-      temperature, setTemperature,
-      models, setModels,
-      model, setModel,apiKey,
-      onOpen,setApiKey
-    }}>
+    <GptContext.Provider
+      value={{
+        systemPrompt,
+        setSystemPrompt,
+        temperature,
+        setTemperature,
+        models,
+        setModels,
+        model,
+        setModel,
+        apiKey,
+        onOpen,
+        setApiKey,
+      }}
+    >
       {children}
       <Modal size={"lg"} isCentered isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

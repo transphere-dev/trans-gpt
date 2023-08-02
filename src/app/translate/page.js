@@ -62,7 +62,7 @@ export default function Page() {
   const scheme = useColorMode();
   const [loading, setLoading] = useState(false);
   const { totalAccuracy } = useTranslation();
-  const { comic, handleOCR, ocrLoading,setComics } = useComic();
+  const { comic, handleOCR, ocrLoading, setComics } = useComic();
   const { temperature, setTemperature } = useGPT();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalOpen, setModelOpen] = useState(false);
@@ -70,7 +70,6 @@ export default function Page() {
   const btnRef = React.useRef();
   const fileInput = useRef();
   const { user } = useAuth();
-
 
   const translateAll = async () => {
     // Get all editable divs with className "source"
@@ -154,49 +153,51 @@ export default function Page() {
   };
 
   const handleUploadComic = async (e) => {
-
     e.preventDefault();
 
-    setLoading(true)
+    setLoading(true);
 
     const file = fileInput.current.files[0];
     const formData = new FormData();
-    formData.append('user_id', user.id);
-    formData.append('name', name);
-    formData.append('file', file);
+    formData.append("user_id", user.id);
+    formData.append("name", name);
+    formData.append("file", file);
 
     try {
-      const response = await fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/comics/extract`, {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await response.json()
+      const response = await fetch(
+        `http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/comics/extract`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
       toast({
         // id,
         title: data?.message || "Uploaded successfully",
         duration: 7000,
         status: data?.success ? "success" : "warning",
-        description: data?.success && !data?.success && 'Ensure the glossary file has Source and Target column headers'
-
-      })
-      setModelOpen(false)
-      setComics(prev => [...prev,name])
-      setLoading(false)
+        description:
+          data?.success &&
+          !data?.success &&
+          "Ensure the glossary file has Source and Target column headers",
+      });
+      setModelOpen(false);
+      setComics((prev) => [...prev, name]);
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-      console.error('Error uploading glossaries:', error);
+      setLoading(false);
+      console.error("Error uploading glossaries:", error);
 
       toast({
         // id,
         title: error.message,
         duration: 7000,
         status: "warning",
-        description: ''
-      })
+        description: "",
+      });
     }
-
-
-  }
+  };
 
   useEventListener("keydown", handleKeyDown);
 
@@ -254,14 +255,12 @@ export default function Page() {
         event.target.style.backgroundColor = "#ffffff20";
       }}
     >
-
       <TableContainer
         whiteSpace={"break-spaces"}
         h={"100%"}
         w={"100%"}
         borderRadius={10}
       >
-
         <Flex w={"100%"} p={"2%"}>
           {fileData && (
             <>
@@ -293,19 +292,19 @@ export default function Page() {
             colorScheme={"orange"}
           >
             Upload Comic
-               </Button>
+          </Button>
           <Button
             ml={"2%"}
-            loadingText={'Extracting Texts...'}
+            loadingText={"Extracting Texts..."}
             isLoading={ocrLoading}
             leftIcon={<RiFileTextLine />}
             onClick={() => handleOCR(comic)}
             size={"sm"}
             colorScheme={"orange"}
-            bgGradient={comic && 'linear(to-l, #7928CA, #FF0080)'}
+            bgGradient={comic && "linear(to-l, #7928CA, #FF0080)"}
           >
             Extract Comic Text
-              </Button>
+          </Button>
         </Flex>
         {!fileData ? (
           <DragFile />
@@ -346,23 +345,31 @@ export default function Page() {
         )}
       </TableContainer>
 
-
       <Modal isCentered isOpen={modalOpen} onClose={() => setModelOpen(false)}>
         <ModalOverlay />
-        <ModalContent color={useColorModeValue("#444654", "#fff")} >
+        <ModalContent color={useColorModeValue("#444654", "#fff")}>
           <ModalHeader>Upload comic assets</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleUploadComic}>
-              <FormControl mb='5%' _hover={{ border: '#F79229' }} border={'#27272F'} id="name">
+              <FormControl
+                mb="5%"
+                _hover={{ border: "#F79229" }}
+                border={"#27272F"}
+                id="name"
+              >
                 <FormLabel>Name</FormLabel>
-                <Input required onInput={(e) => setName(e.target.value)} type="text" />
+                <Input
+                  required
+                  onInput={(e) => setName(e.target.value)}
+                  type="text"
+                />
               </FormControl>
 
               <input type="file" ref={fileInput} accept=".zip,.rar" required />
 
               <Button
-                mt={'2%'}
+                mt={"2%"}
                 color={"#F79229"}
                 borderColor={"#F79229"}
                 mb={0}
@@ -370,20 +377,16 @@ export default function Page() {
                 borderWidth={2}
                 w={"fit-content"}
                 leftIcon={<FiUpload />}
-
                 isLoading={loading}
-                loadingText={'Uploading...'}
+                loadingText={"Uploading..."}
                 type="submit"
               >
                 Upload comic
-        </Button>
+              </Button>
             </form>
           </ModalBody>
 
-          <ModalFooter>
-
-
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
       <Drawer

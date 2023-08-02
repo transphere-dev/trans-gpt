@@ -2,24 +2,20 @@ import {
   Box,
   Center,
   FormControl,
-  Input,
   useColorModeValue,
   Text,
-  Button,
   Textarea,
 } from "@chakra-ui/react";
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { FiSend } from "react-icons/fi";
 import ChatContext from "../contexts/ChatContext";
 import { TailSpin } from "react-loader-spinner";
-import { Kbd } from '@chakra-ui/react'
 
 export default function ChatInput() {
   const { chatMessage, message, setMessage, sendMessage, streaming } =
     useContext(ChatContext);
   const bgColor = useColorModeValue("#fff", "#444654");
   const textColor = useColorModeValue("#444654", "#fff");
-
 
   return (
     <>
@@ -36,7 +32,6 @@ export default function ChatInput() {
             width={"fit-content"}
           >
             <TailSpin
-            
               height="24"
               width="24"
               color="#f3843f"
@@ -58,33 +53,29 @@ export default function ChatInput() {
         borderRadius={6}
         pr={5}
       >
-        <form style={{width: "100%"}} onSubmit={!streaming && message ? sendMessage : null}>
-        <FormControl>
-          <Textarea
-          
-          placeholder="Enter your text here. Press Shift + Enter to start on a new line."
-            onChange={(e) =>{ 
-              setMessage(e.target.value)
-              
-            }}
-            border={0}
-            type="text"
-            value={message}
-            
-            onKeyDown={e => {
-
-              // If KeyDown is "Enter"
-              // Submit form
-              if(e.keyCode === 13 && !e.shiftKey && !streaming && message){
-                e.preventDefault(); 
-                sendMessage(e)
-              }              
-              
-             
-
-            }}
-          />
-        </FormControl>
+        <form
+          style={{ width: "100%" }}
+          onSubmit={!streaming && message ? sendMessage : null}
+        >
+          <FormControl>
+            <Textarea
+              placeholder="Enter your text here. Press Shift + Enter to start on a new line."
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+              border={0}
+              type="text"
+              value={message}
+              onKeyDown={(e) => {
+                // If KeyDown is "Enter"
+                // Submit form
+                if (e.keyCode === 13 && !e.shiftKey && !streaming && message) {
+                  e.preventDefault();
+                  sendMessage(e);
+                }
+              }}
+            />
+          </FormControl>
         </form>
         <Box
           _hover={{

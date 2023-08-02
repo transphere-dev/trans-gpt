@@ -50,25 +50,28 @@ export default function NewChat() {
             icon={<RiTranslate2 fontSize={20} />}
             title={"Translations"}
             description={"Use TransGPT to translate to any language"}
-            path={'translate'}
+            path={"translate"}
           />
           <HomeCard
             icon={<RiSearch2Line fontSize={20} />}
             title={"Glossary"}
             description={"Use TransGPT with your own glossaries"}
-            path={'glossary'}
+            path={"glossary"}
           />
         </Flex>
-        <Center justify={'left'} color={textColor} flexDirection={'column'}>
-        <Text>To start, Click on New Chat</Text>
-        <br/>
+        <Center justify={"left"} color={textColor} flexDirection={"column"}>
+          <Text>To start, Click on New Chat</Text>
+          <br />
           <Flex>
-            New Line: <Kbd ml={4} mr={4}>shift</Kbd> + <Kbd ml={4}>Enter</Kbd>
-            
+            New Line:{" "}
+            <Kbd ml={4} mr={4}>
+              shift
+            </Kbd>{" "}
+            + <Kbd ml={4}>Enter</Kbd>
           </Flex>
-          <br/>
+          <br />
           <Flex>
-          Submit: <Kbd ml={4}>Enter</Kbd>
+            Submit: <Kbd ml={4}>Enter</Kbd>
           </Flex>
         </Center>
       </Flex>

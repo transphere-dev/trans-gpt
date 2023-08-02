@@ -43,8 +43,6 @@ export const AuthProvider = ({ children }) => {
     initUser();
   }, []);
 
-
-
   useEffect(() => {
     return () => {
       null;

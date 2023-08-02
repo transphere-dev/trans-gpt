@@ -3,10 +3,7 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  StatHelpText,
-  StatArrow,
   StatGroup,
-  Flex,
   Text,
   Center,
   useColorModeValue,
@@ -16,7 +13,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { useTranslation } from "./TranslationProvider";
 import { useGPT } from "./GptProvider";
-import { useGlossary } from "./GlossaryProvider";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -27,10 +23,9 @@ export default function Analysis({ accuracy }) {
     setTotalTranslation,
     totalTranslation,
     setTotalStrings,
-    totalStrings
-    
+    totalStrings,
   } = useTranslation();
-  const { temperature ,model} = useGPT();
+  const { temperature, model } = useGPT();
 
   const textColor = useColorModeValue("#333333", "#D1D5DB");
 
@@ -51,7 +46,7 @@ export default function Analysis({ accuracy }) {
   useEffect(() => {
     const translations = document.getElementsByClassName("gpt-translation");
     const sourceStrings = document.getElementsByClassName("source");
-    setTotalStrings(sourceStrings.length)
+    setTotalStrings(sourceStrings.length);
 
     setTotalTranslation(Array.from(translations).length);
 
@@ -100,13 +95,14 @@ export default function Analysis({ accuracy }) {
 
         <Stat>
           <StatLabel>Translated string(s)</StatLabel>
-          <StatNumber fontSize={18} >{totalTranslation}</StatNumber>
+          <StatNumber fontSize={18}>{totalTranslation}</StatNumber>
           {/* <StatHelpText>
         <StatArrow type='decrease' />
         9.05%
       </StatHelpText> */}
         </Stat>
-      </StatGroup>      <StatGroup>
+      </StatGroup>{" "}
+      <StatGroup>
         <Stat>
           <StatLabel>Temperature</StatLabel>
           <StatNumber fontSize={18}>{temperature}</StatNumber>

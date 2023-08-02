@@ -1,23 +1,20 @@
-from json import encoder
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 import os
-import csv
-from PIL import Image
-from paddleocr import PaddleOCR,draw_ocr
-import json
-import base64
+from paddleocr import PaddleOCR
 
-ocr = PaddleOCR(use_angle_cls=True, lang='ch',show_log=False)  
+ocr = PaddleOCR(use_angle_cls=True, lang='ch', show_log=False)
 # find all speech bubbles in the given comic page and return a list of cropped speech bubbles (with possible false positives)
+
+
 def findSpeechBubbles(imagePath, method, filename):
-    cropped_comic_dir = os.path.dirname(os.path.join(imagePath,'dialog'))
-    parent_dir = os.path.abspath(os.path.join(cropped_comic_dir, os.pardir)) # Change the current working directory to the parent directory 
-    croped_dir = os.path.join(parent_dir,'dialog')
+    cropped_comic_dir = os.path.dirname(os.path.join(imagePath, 'dialog'))
+    # Change the current working directory to the parent directory
+    parent_dir = os.path.abspath(os.path.join(cropped_comic_dir, os.pardir))
+    croped_dir = os.path.join(parent_dir, 'dialog')
     fn = filename.split('.')[0]
     try:
-        os.mkdir(os.path.join(croped_dir,fn))
+        os.mkdir(os.path.join(croped_dir, fn))
     except:
         # print("Could not create cropped photo directory")
         pass
@@ -38,7 +35,7 @@ def findSpeechBubbles(imagePath, method, filename):
 
     # find contours
     contours = cv2.findContours(
-    binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[0]
+        binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[0]
 
     # get the list of cropped speech bubbles
 
@@ -59,7 +56,7 @@ def findSpeechBubbles(imagePath, method, filename):
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             croppedImage = image[y:y+h, x:x+w]
 
-            path = os.path.join(croped_dir,fn, str(id)+'-'+str(filename))
+            path = os.path.join(croped_dir, fn, str(id)+'-'+str(filename))
 
             cv2.imwrite(path, croppedImage)
             result = ocr.ocr(path, cls=True)
@@ -68,15 +65,13 @@ def findSpeechBubbles(imagePath, method, filename):
 
             if sentence != "":
                 textList.append(dict({
-                    "_id":id,
-                    "source":sentence,
-                    "page":fn,
-                    "image_path":os.path.relpath(path).replace('\\','/'),
+                    "_id": id,
+                    "source": sentence,
+                    "page": fn,
+                    "image_path": os.path.relpath(path).replace('\\', '/'),
                     "dialog_box": True
                 }))
-
 
             id += 1
 
     return textList
-

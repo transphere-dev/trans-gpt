@@ -1,14 +1,13 @@
 // app/layout.tsx
-'use client'
-import { CacheProvider } from '@chakra-ui/next-js'
-import { Box, ChakraProvider } from '@chakra-ui/react'
-import { AuthProvider } from './components/AuthContextWrapper'
-import ChatContextWrapper from './components/ChatContextWrapper'
-import './globals.css'
-import { GptProvider } from './components/GptProvider'
+"use client";
+import { CacheProvider } from "@chakra-ui/next-js";
+import { Box, ChakraProvider } from "@chakra-ui/react";
+import { AuthProvider } from "./components/AuthContextWrapper";
+import ChatContextWrapper from "./components/ChatContextWrapper";
+import "./globals.css";
+import { GptProvider } from "./components/GptProvider";
 
 // import '../../node_modules/nprogress/nprogress.css';
-
 
 // NProgress.configure({ showSpinner: true });
 
@@ -22,7 +21,7 @@ import { GptProvider } from './components/GptProvider'
 
 export default function RootLayout({ children }) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <head />
       <title>TransGPT | Your assistant AI language model</title>
       <body>
@@ -31,7 +30,7 @@ export default function RootLayout({ children }) {
             <AuthProvider>
               <GptProvider>
                 <ChatContextWrapper>
-                  <Box h={'100%'} position={'relative'}>
+                  <Box h={"100%"} position={"relative"}>
                     {children}
                   </Box>
                 </ChatContextWrapper>
@@ -41,5 +40,5 @@ export default function RootLayout({ children }) {
         </CacheProvider>
       </body>
     </html>
-  )
+  );
 }

@@ -45,8 +45,8 @@ router.get("/:userId", async (req, res) => {
     // Fetch glossaries from the database
     const gloss = await getGlossary(user_id);
     // Send the glossaries as the response
-    res.setHeader('Content-Range',`glossaries 0-${10}/${gloss.length}`)
-    res.setHeader('Access-Control-Expose-Headers','Content-Range')
+    res.setHeader("Content-Range", `glossaries 0-${10}/${gloss.length}`);
+    res.setHeader("Access-Control-Expose-Headers", "Content-Range");
     res.json(gloss);
   } catch (error) {
     console.error("Error fetching glossaries:", error);
@@ -61,8 +61,8 @@ router.get("/:userId/glossary/:glossarId", async (req, res) => {
     // Fetch glossaries from the database
     const terms = await getTerms(user_id, glossary_id);
     // Send the glossaries as the response
-    res.setHeader('Content-Range',`glossary 0-1/1`)
-    res.setHeader('Access-Control-Expose-Headers','Content-Range')
+    res.setHeader("Content-Range", `glossary 0-1/1`);
+    res.setHeader("Access-Control-Expose-Headers", "Content-Range");
     res.json(terms);
   } catch (error) {
     console.error("Error fetching terms:", error);
