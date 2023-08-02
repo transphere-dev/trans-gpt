@@ -62,7 +62,7 @@ export default function Page() {
   const scheme = useColorMode();
   const [loading, setLoading] = useState(false);
   const { totalAccuracy } = useTranslation();
-  const { comic, handleOCR, ocrLoading } = useComic();
+  const { comic, handleOCR, ocrLoading,setComics } = useComic();
   const { temperature, setTemperature } = useGPT();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalOpen, setModelOpen] = useState(false);
@@ -180,7 +180,7 @@ export default function Page() {
 
       })
       setModelOpen(false)
-      setComics(prev => [...prev,])
+      setComics(prev => [...prev,name])
       setLoading(false)
     } catch (error) {
       setLoading(false)
@@ -188,10 +188,10 @@ export default function Page() {
 
       toast({
         // id,
-        title: "Required headers not found!",
+        title: error.message,
         duration: 7000,
         status: "warning",
-        description: 'Ensure the glossary file has Source and Target column headers'
+        description: ''
       })
     }
 
