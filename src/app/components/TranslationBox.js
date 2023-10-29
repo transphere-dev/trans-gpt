@@ -36,7 +36,7 @@ import {
 } from "react-icons/ri";
 import { TailSpin } from "react-loader-spinner";
 import { generateTranslationPrompt } from "../lib/misc";
-import ComicDialog from "./comicDialog";
+import ComicDialog from "./ComicDialog";
 import { useGlossary } from "./GlossaryProvider";
 import { useGPT } from "./GptProvider";
 import { useTranslation } from "./TranslationProvider";
