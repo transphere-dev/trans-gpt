@@ -27,6 +27,7 @@ import {
 import { createContext, useState, useEffect, useContext } from "react";
 import { FiRefreshCcw, FiSave } from "react-icons/fi";
 import { RiInformationLine } from "react-icons/ri";
+import { useAuth } from "./AuthContextWrapper";
 const GptContext = createContext({});
 
 // GPT provider stores all GPT-related data
@@ -56,13 +57,14 @@ export const GptProvider = ({ children }) => {
   );
   const [models, setModels] = useState([]);
   const [model, setModel] = useState(null);
+  const { user } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Fetch GPT models for the organization
   // TODO: Debounce apiKey when it is typed
   useEffect(() => {
-    if (apiKey) {
-      fetch(`https://api.openai.com/v1/models`, {
+    if (apiKey && user) {
+      fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/chats/models`, {
         headers: {
           "Content-Type": "application/json",
           "access-control-allow-origin": "*",

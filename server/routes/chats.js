@@ -3,6 +3,10 @@ const db = require("../db");
 
 const router = express.Router();
 const { createChatSession, saveChatMessage } = require("../db");
+const { default: OpenAI } = require("openai");
+const { default: fetch } = require("node-fetch");
+
+const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
 
 router.post("/chat-session", async (req, res) => {
   const { user_id, created_at, id, title } = req.body;
@@ -68,6 +72,56 @@ router.get("/sessions/:sessionId/messages/:userId", async (req, res) => {
   } catch (error) {
     console.error("Error fetching chat messages:", error);
     res.status(500).json({ error: "Error fetching chat messages" });
+  }
+});
+
+// OpenAI Models API endpoint request
+
+router.get('/models', async (req, res) => {
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/models', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+     
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching models:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// OpenAI Completions API endpoint request
+router.post("/completions", async (req, res) => {
+  const { model, messages} = req.body;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: model,
+      messages: messages,
+      stream: true,
+    });
+  
+    for await (const chunk of completion) {
+      console.log(chunk.choices[0].delta.content);
+    }
+  
+  
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
