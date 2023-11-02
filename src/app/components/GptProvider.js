@@ -74,7 +74,6 @@ export const GptProvider = ({ children }) => {
       })
         .then((response) => {
           if (response.ok) {
-            setLoadingModels(false)
             return response.json();
           } else {
             setLoadingModels(false)
