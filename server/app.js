@@ -20,8 +20,7 @@ app.use('/api', routes);
 app.use('/glossaries', glossariesRoutes);
 
 // Start the server
-const port =  8080;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(process.env.NEXT_PUBLIC_PORT, () => {
+  console.log(`Server is running on port ${process.env.NEXT_PUBLIC_PORT}`);
 });
 
