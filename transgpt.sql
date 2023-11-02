@@ -1,9 +1,10 @@
--- Create users table
+-- Create users table with an emailverified column
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
+    emailverified BOOLEAN DEFAULT FALSE NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
@@ -23,10 +24,13 @@ CREATE TYPE sender_enum AS ENUM ('user', 'ai');
 -- Create chat_messages table
 CREATE TABLE chat_messages (
     id SERIAL PRIMARY KEY,
-    chat_session_id INTEGER NOT NULL REFERENCES chat_sessions(id),
+    chat_session_id BIGINT NOT NULL REFERENCES chat_sessions(id),
     content TEXT NOT NULL,
     sender sender_enum NOT NULL,
-    created_at TIMESTAMP NOT NULL
+    created_at TIMESTAMP NOT NULL,
+    sender_id INTEGER,
+    model VARCHAR(255),
+    role VARCHAR(255)
 );
 
 -- Index for faster query performance on chat_messages
