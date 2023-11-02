@@ -96,9 +96,10 @@ export const GptProvider = ({ children }) => {
     }
 
     return () => {
-      null;
+      setApiKey(null);
     };
   }, [apiKey]);
+  
 
   return (
     <GptContext.Provider
