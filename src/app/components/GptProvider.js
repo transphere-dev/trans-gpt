@@ -57,13 +57,14 @@ export const GptProvider = ({ children }) => {
   );
   const [models, setModels] = useState([]);
   const [model, setModel] = useState(null);
+  const [loadingModels, setLoadingModels] = useState(true);
   const { user } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Fetch GPT models for the organization
   // TODO: Debounce apiKey when it is typed
   useEffect(() => {
-    if (apiKey && user) {
+    if (apiKey ) {
       fetch(`http://${process.env.NEXT_PUBLIC_SERVER_URL}:${process.env.NEXT_PUBLIC_PORT}/api/chats/models`, {
         headers: {
           "Content-Type": "application/json",
@@ -73,17 +74,25 @@ export const GptProvider = ({ children }) => {
       })
         .then((response) => {
           if (response.ok) {
+            setLoadingModels(false)
             return response.json();
           } else {
+            setLoadingModels(false)
+
             throw new Error("Failed to fetch models");
           }
         })
         .then((data) => {
           // Process the fetched glossaries
+
           setModels(data.data);
+          setLoadingModels(false)
+
         })
         .catch((error) => {
           console.error("Error:", error);
+          setLoadingModels(false)
+
         });
     }
 
@@ -106,6 +115,7 @@ export const GptProvider = ({ children }) => {
         apiKey,
         onOpen,
         setApiKey,
+        loadingModels, setLoadingModels
       }}
     >
       {children}

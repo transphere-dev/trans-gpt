@@ -33,7 +33,7 @@ router.post("/chat-msg", async (req, res) => {
     const chatMSg = await saveChatMessage(chat_message_data);
     res.status(201).json({ msg: "Success!" });
   } catch (error) {
-    console.error("Error creating chat session:", error);
+    console.error( error.message);
     res.status(500).json({ msg: "Error creating chat session" });
   }
 });
