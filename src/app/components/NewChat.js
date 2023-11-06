@@ -27,9 +27,10 @@ export default function NewChat() {
       <Flex flexDirection={"column"}>
         <Center mb={"3%"} mt={"3%"}>
           {colorMode === "light" ? (
-            <Image src={logoLight} alt={"TransGPT Logo"} />
+            // <Image src={logoLight} alt={"TransGPT Logo"} />
+            <Heading color={textColor} >TransGPT</Heading>
           ) : (
-            <Image src={logoDark} alt={"TransGPT Logo"} />
+            <Heading color={textColor} >TransGPT</Heading>
           )}
         </Center>
         <Heading

@@ -176,7 +176,7 @@ async function getChatMessages(sessionId, userId) {
   );
 
   if (sessionResult.rowCount === 0) {
-    throw new Error("Chat session not found or not authorized");
+    throw new Error("Chat session not found");
   }
 
   const result = await pool.query(

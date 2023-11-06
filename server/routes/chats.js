@@ -2,7 +2,7 @@ const express = require("express");
 const db = require("../db");
 
 const router = express.Router();
-const { createChatSession, saveChatMessage } = require("../db");
+const { createChatSession, saveChatMessage , getChatMessages} = require("../db");
 const { default: OpenAI } = require("openai");
 const { default: fetch } = require("node-fetch");
 
@@ -67,7 +67,7 @@ router.get("/sessions/:sessionId/messages/:userId", async (req, res) => {
   }
 
   try {
-    const chatMessages = await db.getChatMessages(sessionId, userId);
+    const chatMessages = await getChatMessages(sessionId, userId);
     res.json(chatMessages);
   } catch (error) {
     console.error("Error fetching chat messages:", error);
