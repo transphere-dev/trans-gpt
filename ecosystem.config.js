@@ -3,7 +3,7 @@ module.exports = {
         {
             name: "frontend",
             script: "start.js",
-            args : "run dev",
+            args : "run start",
             watch: "false",
             restart_delay: 3000,
             env: {

@@ -65,7 +65,7 @@ async function createChatSession(user_id, created_at, id, title) {
     );
     return rows[0];
   } catch (error) {
-    console.error("Error creating chat session:", error);
+    console.error("Error saving chat session:", error);
     throw error;
   }
 }
@@ -123,7 +123,7 @@ async function saveChatMessage(chat_message_data) {
     }
     return "Success";
   } catch (error) {
-    console.error("Error creating chat session:", error);
+    console.error("Error saving chat msg:", error);
     throw error;
   }
 }
@@ -176,7 +176,7 @@ async function getChatMessages(sessionId, userId) {
   );
 
   if (sessionResult.rowCount === 0) {
-    throw new Error("Chat session not found or not authorized");
+    throw new Error("Chat session not found");
   }
 
   const result = await pool.query(

@@ -24,7 +24,7 @@ export const SidebarContent = ({ module, onClose, ...rest }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const router = useRouter();
   const { logout } = useAuth();
-  const { models, setApiKey, apiKey, setModel, model } = useGPT();
+  const { models, setApiKey, apiKey, setModel, model ,loadingModels} = useGPT();
 
   // Add new chat to the chat list
 
@@ -87,7 +87,7 @@ export const SidebarContent = ({ module, onClose, ...rest }) => {
           onChange={(e) => {
             setModel(e.target.value);
           }}
-          placeholder="GPT model"
+          placeholder={loadingModels ? `Loading models...` : `GPT model`}
         >
           {models?.map((each, i) => {
             return (

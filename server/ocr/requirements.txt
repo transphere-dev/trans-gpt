@@ -8,17 +8,11 @@ blinker==1.6.2
 cachetools==5.3.1
 certifi==2023.5.7
 charset-normalizer==3.2.0
-click==8.1.5
-colorama==0.4.6
-contourpy==1.1.0
 cssselect==1.2.0
 cssutils==2.7.1
 cycler==0.11.0
 Cython==0.29.36
 decorator==5.1.1
-et-xmlfile==1.1.0
-exceptiongroup==1.1.2
-fire==0.5.0
 Flask==2.3.2
 flask-babel==3.1.0
 fonttools==4.41.0

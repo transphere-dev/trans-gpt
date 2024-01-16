@@ -1,6 +1,7 @@
 
 // Load environment variables
-require('dotenv').config();
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
 const express = require('express');
 const cors = require('cors');
@@ -19,8 +20,7 @@ app.use('/api', routes);
 app.use('/glossaries', glossariesRoutes);
 
 // Start the server
-const port =  8080;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(process.env.NEXT_PUBLIC_PORT, () => {
+  console.log(`Server is running on port ${process.env.NEXT_PUBLIC_PORT}`);
 });
 

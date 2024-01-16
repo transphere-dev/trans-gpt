@@ -237,7 +237,7 @@ export default function Page() {
           duration: 5000,
           status: "warning",
           description:
-            "Ensure the glossary file has Source or 正文 and Target or 目标 column headers",
+            "Ensure the translation file has Source or 正文 and Target or 目标 column headers",
         });
         console.log("Required headers not found");
       }
